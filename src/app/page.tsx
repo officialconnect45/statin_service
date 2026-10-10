@@ -1,7 +1,12 @@
 import Link from "next/link";
-import { ButtonLink } from "@/components/button-link";
+import { CaseStudiesGrid } from "@/components/case-studies-grid";
+import { ComparisonMatrix } from "@/components/comparison-matrix";
 import { Container } from "@/components/container";
-import { Specimen } from "@/components/specimens";
+import { EnterpriseFaq } from "@/components/enterprise-faq";
+import { EnterpriseLeadForm } from "@/components/enterprise-lead-form";
+import { LeadCalculator } from "@/components/lead-calculator";
+import { SaasInteractiveHero } from "@/components/saas-interactive-hero";
+import { SocialProofMarquee } from "@/components/social-proof-marquee";
 import {
   engagements,
   fit,
@@ -13,260 +18,357 @@ import {
 export default function Home() {
   return (
     <>
-      <section className="border-b border-line">
-        <Container className="grid items-end gap-14 py-16 md:py-24 lg:grid-cols-12 lg:py-28">
-          <div className="lg:col-span-7">
-            <p className="rise font-mono text-[11px] tracking-[0.22em] text-brass uppercase font-semibold">
-              Product studio for startup founders
-            </p>
-            <h1 className="rise rise-delay-1 mt-6 font-serif text-[clamp(3.2rem,7vw,6.5rem)] leading-[0.9] tracking-[-0.035em] text-balance">
-              Websites, SaaS,
-              <br />
-              and commerce
-              <br />
-              <span className="italic text-[#244df5]">for founders.</span>
+      {/* ========================================================
+          HERO SECTION: ENTERPRISE POSITIONING & LEAD MAGNET
+      ======================================================== */}
+      <section className="relative overflow-hidden border-b border-line bg-gradient-to-b from-white via-blue-50/20 to-white py-16 md:py-24">
+        {/* Ambient background glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-tr from-blue-600/15 via-[#38bdf8]/10 to-transparent blur-3xl"
+        />
+
+        <Container className="space-y-12">
+          {/* Top Headline block */}
+          <div className="mx-auto max-w-4xl text-center">
+            {/* Live cohort availability badge */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/25 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold text-[#244df5] shadow-xs backdrop-blur-sm">
+              <span className="h-2 w-2 rounded-full bg-[#244df5] animate-pulse" />
+              <span>Now Accepting Q4 Founder Cohorts · 3 Sprint Slots Remaining</span>
+            </div>
+
+            <h1 className="mt-6 font-serif text-[clamp(2.8rem,6vw,5.5rem)] leading-[0.96] tracking-[-0.035em] text-balance text-slate-900">
+              Enterprise-Grade SaaS & Websites{" "}
+              <span className="italic text-[#244df5]">for startups & SMBs.</span>
             </h1>
-            <p className="rise rise-delay-2 mt-8 max-w-xl text-lg leading-relaxed text-ink-soft">
-              Statin designs and engineers the systems a young company has to
-              trust on day one: the site that explains the offer, the product
-              customers can pay for, and the store that can take the order.
+
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
+              Skip the technical debt, fragmented freelancers, and 6-month agency meetings. Statin designs, engineers, and launches production-grade digital products in 3 to 6 weeks with 100% source code ownership.
             </p>
-            <div className="rise rise-delay-3 mt-8 flex flex-col gap-3 sm:flex-row">
-              <ButtonLink href="/contact">Start a project</ButtonLink>
-              <ButtonLink href="/work" variant="line">
-                See the builds
-              </ButtonLink>
+
+            {/* Hero CTAs */}
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <a
+                href="#lead-intake"
+                className="inline-flex h-12 items-center justify-center rounded-xl bg-[#244df5] px-6 text-sm font-semibold tracking-wide text-white shadow-md transition-all hover:bg-[#1a3ee8] hover:shadow-lg"
+              >
+                Get Custom Scope & Proposal →
+              </a>
+              <a
+                href="#calculator"
+                className="inline-flex h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-6 text-sm font-semibold tracking-wide text-slate-800 shadow-xs transition-all hover:border-[#244df5] hover:text-[#244df5] hover:bg-blue-50/40"
+              >
+                Estimate Scope & Timeline
+              </a>
+            </div>
+
+            {/* Quick Guarantees */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-slate-500">
+              <span className="flex items-center gap-1.5">
+                <span className="text-emerald-500">✓</span> 100% IP & Code Ownership
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="text-emerald-500">✓</span> Fixed-Scope & Price Guarantee
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="text-emerald-500">✓</span> 14–28 Day MVP Sprints
+              </span>
             </div>
           </div>
-          <div className="lg:col-span-5">
-            <Specimen variant="saas" />
-            <p className="mt-3 font-mono text-[11px] tracking-[0.16em] text-mist uppercase">
-              SaaS · accounts, billing, daily use
-            </p>
+
+          {/* Interactive SaaS and Web Specimen */}
+          <div className="pt-2">
+            <SaasInteractiveHero />
           </div>
         </Container>
       </section>
 
-      <section aria-label="How an engagement runs">
-        <Container className="grid border-b border-line sm:grid-cols-2 lg:grid-cols-4">
+      {/* ========================================================
+          SOCIAL PROOF MARQUEE & CLIENT METRICS
+      ======================================================== */}
+      <SocialProofMarquee />
+
+      {/* ========================================================
+          HOW ENGAGEMENTS RUN (STANDARDS)
+      ======================================================== */}
+      <section aria-label="How an engagement runs" className="border-b border-line bg-white">
+        <Container className="grid sm:grid-cols-2 lg:grid-cols-4">
           {standards.map((item, index) => (
             <div
               key={item.label}
-              className={`px-0 py-6 lg:px-6 lg:py-8 ${
+              className={`py-8 px-4 lg:px-6 ${
                 index > 0 ? "lg:border-l lg:border-line" : "lg:pl-0"
               } ${index % 2 === 1 ? "sm:border-l sm:border-line sm:pl-6" : ""} ${
                 index > 1 ? "border-t border-line sm:border-t-0" : ""
               }`}
             >
-              <p className="font-medium">{item.label}</p>
-              <p className="mt-2 text-sm leading-relaxed text-mist">{item.detail}</p>
+              <p className="font-sans text-sm font-bold text-slate-900">{item.label}</p>
+              <p className="mt-2 text-xs leading-relaxed text-slate-500">{item.detail}</p>
             </div>
           ))}
         </Container>
       </section>
 
-      <section className="border-b border-line">
-        <Container className="py-20 md:py-28">
+      {/* ========================================================
+          CORE SERVICE PRACTICES (TAILORED FOR STARTUPS & SMBs)
+      ======================================================== */}
+      <section id="services" className="border-b border-line bg-slate-50/50 py-20 md:py-28">
+        <Container>
           <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
-              <p className="font-mono text-[11px] tracking-[0.22em] text-brass uppercase">
-                Practices
+              <p className="font-mono text-[11px] font-semibold tracking-[0.22em] text-[#244df5] uppercase">
+                Core Service Capabilities
               </p>
-              <h2 className="mt-4 max-w-xl font-serif text-4xl tracking-tight text-balance md:text-5xl">
-                Three ways a founder company has to show up.
+              <h2 className="mt-3 max-w-xl font-serif text-4xl font-normal tracking-tight text-slate-900 md:text-5xl">
+                Engineered for rapid growth and revenue capture.
               </h2>
             </div>
             <Link
               href="/services"
-              className="text-sm font-medium tracking-wide text-ink underline decoration-line underline-offset-4 hover:decoration-ink"
+              className="text-sm font-semibold tracking-wide text-[#244df5] underline decoration-blue-200 underline-offset-4 hover:decoration-[#244df5]"
             >
-              All services
+              Explore all technical practices →
             </Link>
           </div>
-          <div className="mt-12 border-t border-ink">
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
             {services.map((service) => (
-              <Link
+              <div
                 key={service.slug}
-                href={`/services/${service.slug}`}
-                className="group grid gap-4 border-b border-line py-7 transition-colors hover:bg-paper-deep md:grid-cols-12 md:items-baseline md:gap-6 md:px-3"
+                className="group flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all hover:border-[#244df5]/40 hover:shadow-md"
               >
-                <span className="font-mono text-xs text-brass md:col-span-1">
-                  {service.index}
-                </span>
-                <span className="font-serif text-3xl tracking-tight md:col-span-4 md:text-4xl">
-                  {service.title}
-                </span>
-                <span className="text-sm leading-relaxed text-ink-soft md:col-span-6">
-                  {service.summary}
-                </span>
-                <span className="font-mono text-xs tracking-[0.16em] text-mist uppercase transition-transform group-hover:translate-x-1 md:col-span-1 md:text-right">
-                  View
-                </span>
-              </Link>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold text-[#244df5]">
+                      {service.index}
+                    </span>
+                    <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500">
+                      {service.timeline}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-4 text-xl font-bold tracking-tight text-slate-900 group-hover:text-[#244df5] transition-colors">
+                    {service.title}
+                  </h3>
+
+                  <p className="mt-3 text-xs leading-relaxed text-slate-600">
+                    {service.summary}
+                  </p>
+
+                  <ul className="mt-5 space-y-2 border-t border-slate-100 pt-4 text-xs text-slate-600">
+                    {service.includes.slice(0, 3).map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <span className="text-[#244df5]">✦</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="mt-6 border-t border-slate-100 pt-4">
+                  <Link
+                    href={`/services/${service.slug}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#244df5] hover:underline"
+                  >
+                    <span>View deliverables & process</span>
+                    <span>→</span>
+                  </Link>
+                </div>
+              </div>
             ))}
           </div>
         </Container>
       </section>
 
-      <section className="bg-forest text-paper">
-        <Container className="grid gap-12 py-20 md:grid-cols-12 md:py-28">
+      {/* ========================================================
+          INTERACTIVE LEAD CALCULATOR (PROJECT SCOPE ESTIMATOR)
+      ======================================================== */}
+      <LeadCalculator />
+
+      {/* ========================================================
+          PROVEN CASE STUDIES GRID
+      ======================================================== */}
+      <CaseStudiesGrid />
+
+      {/* ========================================================
+          THE STANDARD SECTION (DEEP OBSIDIAN BLUE ACCENT)
+      ======================================================== */}
+      <section className="border-b border-line bg-[#070b1e] text-white py-20 md:py-28">
+        <Container className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-7">
-            <p className="font-mono text-[11px] tracking-[0.22em] text-brass-line uppercase">
-              The standard
+            <p className="font-mono text-[11px] font-semibold tracking-[0.22em] text-[#38bdf8] uppercase">
+              The Engineering Standard
             </p>
             <p className="mt-6 font-serif text-[clamp(2.2rem,4.5vw,3.7rem)] leading-[1.05] tracking-[-0.03em] text-balance">
-              A first version can be small. It cannot be careless.
+              An MVP can be tight in scope. It must never be sloppy in code.
             </p>
           </div>
           <div className="flex flex-col justify-end md:col-span-5">
-            <p className="text-base leading-relaxed text-paper/80">
-              Founders come to Statin when the deck is no longer the product.
-              The website has to explain the offer. The software has to hold a
-              customer. The store has to take payment. We build those systems
-              so they belong to the same company.
+            <p className="text-base leading-relaxed text-slate-300">
+              Startup founders and growing businesses partner with Statin when slide decks and mockups aren&apos;t enough. The website must capture real customers. The SaaS product must process payments securely. We engineer those foundations to handle scale on day one.
             </p>
           </div>
         </Container>
       </section>
 
-      <section className="border-b border-line">
-        <Container className="grid gap-12 py-20 md:grid-cols-2 md:py-28">
+      {/* ========================================================
+          COMPARISON MATRIX TABLE (WHY STATIN WINS)
+      ======================================================== */}
+      <ComparisonMatrix />
+
+      {/* ========================================================
+          FIT CRITERIA (FOUNDER ALIGNMENT)
+      ======================================================== */}
+      <section className="border-b border-line bg-white py-20 md:py-28">
+        <Container className="grid gap-12 md:grid-cols-2">
           <div>
-            <p className="font-mono text-[11px] tracking-[0.22em] text-brass uppercase">
-              A fit
+            <p className="font-mono text-[11px] font-semibold tracking-[0.22em] text-[#244df5] uppercase">
+              Ideal Fit
             </p>
-            <h2 className="mt-4 font-serif text-4xl tracking-tight md:text-5xl">
-              Built for the founder who is still in the work.
+            <h2 className="mt-4 font-serif text-4xl font-normal tracking-tight text-slate-900 md:text-5xl">
+              Built for founders with a clear market focus.
             </h2>
             <ul className="mt-8 space-y-4">
               {fit.yes.map((item) => (
-                <li key={item} className="flex gap-3 text-sm leading-relaxed text-ink-soft">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#244df5]" />
+                <li key={item} className="flex gap-3 text-sm leading-relaxed text-slate-700">
+                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#244df5]" />
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="border border-line bg-paper-deep p-7 md:p-10">
-            <p className="font-mono text-[11px] tracking-[0.22em] text-brass uppercase">
-              Not a fit
+
+          <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-7 md:p-10">
+            <p className="font-mono text-[11px] font-semibold tracking-[0.22em] text-slate-400 uppercase">
+              When We Are Not A Fit
             </p>
             <ul className="mt-6 space-y-4">
               {fit.no.map((item) => (
-                <li key={item} className="text-sm leading-relaxed text-ink-soft">
-                  {item}
+                <li key={item} className="flex gap-3 text-sm leading-relaxed text-slate-600">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
-            <p className="mt-8 text-sm leading-relaxed text-ink">
-              If the offer is specific and you can stay in a weekly review, we
-              should talk.
+            <p className="mt-8 border-t border-slate-200 pt-5 text-sm font-medium text-slate-900">
+              If your offer is specific and you value direct founder-to-engineer collaboration, we should talk.
             </p>
           </div>
         </Container>
       </section>
 
-      <section className="border-b border-line">
-        <Container className="py-20 md:py-28">
+      {/* ========================================================
+          METHODOLOGY / PROCESS TIMELINE
+      ======================================================== */}
+      <section className="border-b border-line bg-slate-50/50 py-20 md:py-28">
+        <Container>
           <div className="max-w-2xl">
-            <p className="font-mono text-[11px] tracking-[0.22em] text-brass uppercase">
-              Method
+            <p className="font-mono text-[11px] font-semibold tracking-[0.22em] text-[#244df5] uppercase">
+              Methodology
             </p>
-            <h2 className="mt-4 font-serif text-4xl tracking-tight text-balance md:text-5xl">
-              A plan you can read before a screen is designed.
+            <h2 className="mt-4 font-serif text-4xl font-normal tracking-tight text-balance text-slate-900 md:text-5xl">
+              A transparent plan before any code is written.
             </h2>
           </div>
-          <ol className="mt-12 grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">
+          <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {method.map((step) => (
-              <li key={step.index} className="bg-paper p-6">
-                <p className="font-mono text-[11px] text-brass">
+              <li key={step.index} className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs">
+                <p className="font-mono text-xs font-bold text-[#244df5]">
                   {step.index} · {step.time}
                 </p>
-                <h3 className="mt-4 font-serif text-3xl tracking-tight">{step.name}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-mist">{step.detail}</p>
+                <h3 className="mt-4 text-xl font-bold tracking-tight text-slate-900">{step.name}</h3>
+                <p className="mt-2 text-xs leading-relaxed text-slate-600">{step.detail}</p>
               </li>
             ))}
           </ol>
-          <Link
-            href="/approach"
-            className="mt-8 inline-flex text-sm font-medium tracking-wide underline decoration-line underline-offset-4 hover:decoration-ink"
-          >
-            Read the approach
-          </Link>
         </Container>
       </section>
 
-      <section className="border-b border-line">
-        <Container className="py-20 md:py-28">
-          <p className="font-mono text-[11px] tracking-[0.22em] text-brass uppercase">
-            Engagements
-          </p>
-          <h2 className="mt-4 max-w-2xl font-serif text-4xl tracking-tight text-balance md:text-5xl">
-            Scoped to the company you are actually building.
-          </h2>
-          <div className="mt-12 grid gap-4 lg:grid-cols-3">
-            {engagements.map((engagement) => (
-              <article
-                key={engagement.name}
-                className={`flex flex-col border p-7 md:p-8 ${
-                  "featured" in engagement && engagement.featured
-                    ? "border-forest bg-forest text-paper"
-                    : "border-line bg-white text-ink"
-                }`}
-              >
-                <h3 className="font-serif text-3xl tracking-tight">{engagement.name}</h3>
-                <p
-                  className={`mt-2 text-sm ${
-                    "featured" in engagement && engagement.featured
-                      ? "text-brass-line"
-                      : "text-brass"
-                  }`}
-                >
-                  {engagement.fit}
-                </p>
-                <p
-                  className={`mt-5 flex-1 text-sm leading-relaxed ${
-                    "featured" in engagement && engagement.featured
-                      ? "text-paper/80"
-                      : "text-ink-soft"
-                  }`}
-                >
-                  {engagement.detail}
-                </p>
-                <ul className="mt-8 space-y-2 border-t border-current/15 pt-5 text-sm">
-                  {engagement.points.map((point) => (
-                    <li key={point}>{point}</li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-          <p className="mt-8 max-w-2xl text-sm leading-relaxed text-mist">
-            Investment is confirmed in a written proposal after the brief. We
-            do not publish a rate card for work that has not been scoped.
-          </p>
-        </Container>
-      </section>
-
-      <section>
-        <Container className="grid gap-8 py-20 md:grid-cols-12 md:items-end md:py-28">
-          <div className="md:col-span-8">
-            <p className="font-mono text-[11px] tracking-[0.22em] text-brass uppercase">
-              Next
+      {/* ========================================================
+          ENGAGEMENT MODELS / PRICING STRUCTURE
+      ======================================================== */}
+      <section id="pricing" className="border-b border-line bg-white py-20 md:py-28">
+        <Container>
+          <div className="text-center">
+            <p className="font-mono text-[11px] font-semibold tracking-[0.22em] text-[#244df5] uppercase">
+              Engagement Models
             </p>
-            <h2 className="mt-4 font-serif text-[clamp(2.6rem,5vw,4.6rem)] leading-[0.96] tracking-[-0.03em] text-balance">
-              Tell us what you are building.
+            <h2 className="mt-3 font-serif text-4xl font-normal tracking-tight text-balance text-slate-900 md:text-5xl">
+              Transparent, Milestone-Based Models
             </h2>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink-soft">
-              You will get a point of view, a proposed shape, and a clear no if
-              we are the wrong studio.
+            <p className="mx-auto mt-4 max-w-xl text-sm text-slate-600">
+              Choose the engagement structure that aligns with your runway and release milestones.
             </p>
           </div>
-          <div className="md:col-span-4 md:justify-self-end">
-            <ButtonLink href="/contact">Start a project</ButtonLink>
+
+          <div className="mt-12 grid gap-6 lg:grid-cols-3">
+            {engagements.map((engagement) => {
+              const isFeatured = "featured" in engagement && engagement.featured;
+              return (
+                <article
+                  key={engagement.name}
+                  className={`flex flex-col justify-between rounded-2xl border p-7 md:p-8 transition-all ${
+                    isFeatured
+                      ? "border-blue-500/40 bg-[#070b1e] text-white shadow-xl ring-1 ring-blue-500/20"
+                      : "border-slate-200 bg-white text-slate-900 shadow-sm hover:border-slate-300"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-serif text-3xl tracking-tight">{engagement.name}</h3>
+                      {isFeatured && (
+                        <span className="rounded-full bg-[#244df5] px-2.5 py-0.5 text-[10px] font-bold text-white uppercase">
+                          Most Popular
+                        </span>
+                      )}
+                    </div>
+
+                    <p className={`mt-2 text-xs font-semibold ${isFeatured ? "text-[#38bdf8]" : "text-[#244df5]"}`}>
+                      {engagement.fit}
+                    </p>
+
+                    <p className={`mt-5 text-xs leading-relaxed ${isFeatured ? "text-slate-300" : "text-slate-600"}`}>
+                      {engagement.detail}
+                    </p>
+
+                    <ul className={`mt-6 space-y-2.5 border-t pt-5 text-xs ${isFeatured ? "border-white/10" : "border-slate-100"}`}>
+                      {engagement.points.map((point) => (
+                        <li key={point} className="flex items-center gap-2">
+                          <span className={isFeatured ? "text-[#38bdf8]" : "text-[#244df5]"}>✓</span>
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="mt-8 pt-4">
+                    <a
+                      href="#lead-intake"
+                      className={`block w-full rounded-xl py-3 text-center text-xs font-semibold transition-all ${
+                        isFeatured
+                          ? "bg-[#244df5] text-white hover:bg-[#1a3ee8] shadow-md"
+                          : "border border-slate-200 bg-slate-50 text-slate-800 hover:bg-slate-100"
+                      }`}
+                    >
+                      Inquire for this model →
+                    </a>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </Container>
       </section>
+
+      {/* ========================================================
+          FREQUENTLY ASKED QUESTIONS
+      ======================================================== */}
+      <EnterpriseFaq />
+
+      {/* ========================================================
+          ENTERPRISE LEAD CAPTURE FORM SECTION
+      ======================================================== */}
+      <EnterpriseLeadForm />
     </>
   );
 }

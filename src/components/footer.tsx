@@ -15,26 +15,26 @@ export function Footer() {
           </p>
         </div>
         <div className="md:col-span-2">
-          <p className="font-mono text-[11px] tracking-[0.18em] text-brass uppercase">
+          <p className="font-mono text-[11px] tracking-[0.18em] text-brass uppercase font-semibold">
             Visit
           </p>
           <ul className="mt-4 space-y-2.5 text-sm">
             {nav.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="text-ink-soft hover:text-ink">
+                <Link href={item.href} className="text-ink-soft hover:text-[#244df5] transition-colors">
                   {item.label}
                 </Link>
               </li>
             ))}
             <li>
-              <Link href="/contact" className="text-ink-soft hover:text-ink">
+              <Link href="/contact" className="text-ink-soft hover:text-[#244df5] transition-colors">
                 Contact
               </Link>
             </li>
           </ul>
         </div>
         <div className="md:col-span-3">
-          <p className="font-mono text-[11px] tracking-[0.18em] text-brass uppercase">
+          <p className="font-mono text-[11px] tracking-[0.18em] text-brass uppercase font-semibold">
             Practices
           </p>
           <ul className="mt-4 space-y-2.5 text-sm">
@@ -42,7 +42,7 @@ export function Footer() {
               <li key={service.slug}>
                 <Link
                   href={`/services/${service.slug}`}
-                  className="text-ink-soft hover:text-ink"
+                  className="text-ink-soft hover:text-[#244df5] transition-colors"
                 >
                   {service.title}
                 </Link>
@@ -51,21 +51,21 @@ export function Footer() {
           </ul>
         </div>
         <div className="md:col-span-2">
-          <p className="font-mono text-[11px] tracking-[0.18em] text-brass uppercase">
+          <p className="font-mono text-[11px] tracking-[0.18em] text-brass uppercase font-semibold">
             Studio
           </p>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li>
               <a
                 href={`mailto:${site.email}`}
-                className="text-ink-soft hover:text-ink"
+                className="text-ink-soft hover:text-[#244df5] transition-colors"
               >
                 {site.email}
               </a>
             </li>
             <li className="text-mist">Remote engagements</li>
             <li>
-              <Link href="/privacy" className="text-ink-soft hover:text-ink">
+              <Link href="/privacy" className="text-ink-soft hover:text-[#244df5] transition-colors">
                 Privacy
               </Link>
             </li>

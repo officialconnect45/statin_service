@@ -4,18 +4,21 @@
   --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --color-ink: #141816;
-  --color-ink-soft: #2a3530;
-  --color-paper: #f4f1ea;
-  --color-paper-deep: #e7e1d4;
-  --color-line: #d8d1c4;
-  --color-brass: #6d4c28;
-  --color-brass-line: #b08a55;
-  --color-forest: #14352c;
-  --color-forest-mid: #1c463a;
-  --color-mist: #4e5853;
-  --color-danger: #8b332c;
-  --color-white: #fffcf7;
+  --color-ink: #090d1f;
+  --color-ink-soft: #334155;
+  --color-paper: #f8fafd;
+  --color-paper-deep: #eff4fb;
+  --color-line: #e2e8f0;
+  --color-brass: #244df5;
+  --color-brass-line: #38bdf8;
+  --color-forest: #080d21;
+  --color-forest-mid: #101c4a;
+  --color-cobalt: #244df5;
+  --color-cobalt-hover: #1a3ee8;
+  --color-cyan-slash: #38bdf8;
+  --color-mist: #64748b;
+  --color-danger: #dc2626;
+  --color-white: #ffffff;
 }
 
 html {
@@ -32,12 +35,12 @@ body {
 }
 
 ::selection {
-  background: #14352c;
-  color: #f4f1ea;
+  background: #244df5;
+  color: #ffffff;
 }
 
 :focus-visible {
-  outline: 2px solid #14352c;
+  outline: 2px solid #244df5;
   outline-offset: 3px;
 }
 

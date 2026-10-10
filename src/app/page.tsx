@@ -16,7 +16,7 @@ export default function Home() {
       <section className="border-b border-line">
         <Container className="grid items-end gap-14 py-16 md:py-24 lg:grid-cols-12 lg:py-28">
           <div className="lg:col-span-7">
-            <p className="rise font-mono text-[11px] tracking-[0.22em] text-brass uppercase">
+            <p className="rise font-mono text-[11px] tracking-[0.22em] text-brass uppercase font-semibold">
               Product studio for startup founders
             </p>
             <h1 className="rise rise-delay-1 mt-6 font-serif text-[clamp(3.2rem,7vw,6.5rem)] leading-[0.9] tracking-[-0.035em] text-balance">
@@ -24,7 +24,7 @@ export default function Home() {
               <br />
               and commerce
               <br />
-              <span className="italic text-forest">for founders.</span>
+              <span className="italic text-[#244df5]">for founders.</span>
             </h1>
             <p className="rise rise-delay-2 mt-8 max-w-xl text-lg leading-relaxed text-ink-soft">
               Statin designs and engineers the systems a young company has to
@@ -141,7 +141,7 @@ export default function Home() {
             <ul className="mt-8 space-y-4">
               {fit.yes.map((item) => (
                 <li key={item} className="flex gap-3 text-sm leading-relaxed text-ink-soft">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 bg-forest" />
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#244df5]" />
                   <span>{item}</span>
                 </li>
               ))}

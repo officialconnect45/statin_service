@@ -2,9 +2,12 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 const styles = {
-  solid: "bg-ink text-paper hover:bg-forest",
-  line: "border border-ink/20 bg-transparent text-ink hover:border-ink hover:bg-white",
-  light: "bg-paper text-ink hover:bg-white",
+  solid:
+    "bg-[#244df5] text-white shadow-sm shadow-blue-600/25 hover:bg-[#1a3ee8] hover:shadow-md hover:shadow-blue-600/35 transition-all font-medium",
+  line:
+    "border border-line bg-white text-ink hover:border-[#244df5] hover:text-[#244df5] hover:bg-blue-50/40 shadow-xs transition-all font-medium",
+  light:
+    "bg-white text-ink shadow-sm hover:bg-blue-50/70 hover:text-[#244df5] transition-all font-medium",
 } as const;
 
 export function ButtonLink({

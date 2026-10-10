@@ -38,7 +38,7 @@ function InquiryForm({ onAnother }: { onAnother: () => void }) {
         <button
           type="button"
           onClick={onAnother}
-          className="mt-8 inline-flex h-11 items-center border border-ink/20 px-4 text-sm hover:border-ink"
+          className="mt-8 inline-flex h-11 items-center border border-[#244df5]/30 px-4 text-sm font-medium text-[#244df5] transition-colors hover:bg-blue-50/50"
         >
           Send another brief
         </button>
@@ -119,7 +119,7 @@ function InquiryForm({ onAnother }: { onAnother: () => void }) {
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex h-12 items-center justify-center bg-ink px-5 text-sm font-medium tracking-wide text-paper transition-colors hover:bg-forest disabled:cursor-wait disabled:opacity-70"
+          className="inline-flex h-12 items-center justify-center bg-[#244df5] px-5 text-sm font-medium tracking-wide text-white shadow-sm transition-colors hover:bg-[#1a3ee8] disabled:cursor-wait disabled:opacity-70"
         >
           {pending ? "Sending the brief" : "Send the brief"}
         </button>
@@ -211,6 +211,6 @@ function FieldError({ id, children }: { id: string; children: string }) {
 
 function inputClass(invalid: boolean) {
   return `mt-2 w-full border bg-paper px-3 py-3 text-sm outline-none transition-colors placeholder:text-mist/70 ${
-    invalid ? "border-danger" : "border-line focus:border-ink"
+    invalid ? "border-danger" : "border-line focus:border-[#244df5] focus:ring-1 focus:ring-[#244df5]"
   }`;
 }

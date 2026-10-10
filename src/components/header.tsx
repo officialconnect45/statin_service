@@ -57,7 +57,9 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 className={`text-sm tracking-wide transition-colors ${
-                  active ? "text-ink" : "text-mist hover:text-ink"
+                  active
+                    ? "font-semibold text-[#244df5]"
+                    : "text-mist hover:text-[#244df5]"
                 }`}
                 aria-current={active ? "page" : undefined}
               >
@@ -115,7 +117,7 @@ export function Header() {
             ))}
             <Link
               href="/contact"
-              className="mt-8 inline-flex h-12 items-center justify-center bg-ink text-sm font-medium tracking-wide text-paper"
+              className="mt-8 inline-flex h-12 items-center justify-center bg-[#244df5] text-sm font-medium tracking-wide text-white shadow-sm hover:bg-[#1a3ee8]"
             >
               Start a project
             </Link>

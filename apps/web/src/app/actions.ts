@@ -76,7 +76,8 @@ export async function submitInquiry(
   };
 
   try {
-    const directory = path.join(process.cwd(), "data");
+    // Resolve to the monorepo root data/ directory (repo-root/data)
+    const directory = path.join(process.cwd(), "..", "..", "data");
     await mkdir(directory, { recursive: true });
     await appendFile(
       path.join(directory, "inquiries.jsonl"),

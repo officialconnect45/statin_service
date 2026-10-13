@@ -1,20 +1,25 @@
-import type { Metadata } from "next";
-import { ButtonLink } from "@/components/button-link";
-import { Container } from "@/components/container";
-import { PageHero } from "@/components/page-hero";
-import { method } from "@/lib/site";
+import type { CSSProperties } from "react";
+import { ClosingCta } from "@/components/home/closing-cta";
+import { Process } from "@/components/home/process";
+import { Container } from "@/components/ui/container";
+import { Faq } from "@/components/ui/faq";
+import { PageHero } from "@/components/ui/page-hero";
+import { Eyebrow, SectionHeading } from "@/components/ui/typography";
+import { faqs } from "@/lib/content";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Approach",
+export const metadata = pageMetadata({
+  title: "Our approach",
   description:
-    "How a Statin engagement runs: a written brief, a weekly demo, one named lead, and a launch the founder can operate.",
-};
+    "How a Statin engagement runs: discovery, a written scope with milestones and acceptance criteria, weekly working software, and a handover your team can operate.",
+  path: "/approach",
+});
 
 const rules = [
   {
     title: "A weekly review, forty-five minutes",
     detail:
-      "Working software or a decision that unblocks it. We do not spend the meeting rereading last week’s notes.",
+      "Working software or a decision that unblocks it. We do not spend the meeting rereading last week's notes.",
   },
   {
     title: "One decision log",
@@ -34,83 +39,101 @@ const rules = [
 ];
 
 const needs = [
-  "A founder, or one person who can decide, in the weekly review.",
-  "Access to the current site, product, or store, and to the people who fulfill orders or support users.",
+  "One person who can make decisions, in the weekly review.",
+  "Access to the current site, store, or system, and to the people who fulfill orders or support users.",
   "The commercial facts: who pays, what the first release must do, and what can wait.",
   "A willingness to cut. The date depends on the boundary.",
 ];
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
 
 export default function ApproachPage() {
   return (
     <>
       <PageHero
-        eyebrow="Approach"
+        eyebrow="Our approach"
         title="How an engagement actually runs."
-        lede="Statin is a small studio on purpose. The method is there so a founder can see the work, change it in time, and leave with something the company can operate."
+        lede="The method exists so you can see the work, change it in time, and leave with something your team can operate. It starts with the problem, not a tool list."
       />
-      <section className="border-b border-line">
-        <Container className="py-16 md:py-24">
-          <ol className="border-l border-line">
-            {method.map((step) => (
-              <li key={step.index} className="relative grid gap-3 py-8 pl-8 md:grid-cols-12 md:py-10">
-                <span className="absolute top-10 left-0 h-3 w-3 -translate-x-1/2 border border-brass-line bg-paper" />
-                <div className="md:col-span-3">
-                  <p className="font-mono text-[11px] tracking-[0.18em] text-brass uppercase">
-                    {step.index} · {step.time}
-                  </p>
-                  <h2 className="mt-2 font-serif text-3xl tracking-tight">{step.name}</h2>
-                </div>
-                <p className="max-w-xl text-base leading-relaxed text-ink-soft md:col-span-7">
-                  {step.detail}
-                </p>
+
+      <Process />
+
+      <section aria-labelledby="rules-title" className="bg-white py-24 md:py-32">
+        <Container className="grid gap-14 lg:grid-cols-12">
+          <SectionHeading
+            id="rules-title"
+            eyebrow="Working rules"
+            title="The cadence is part of the product."
+            className="lg:col-span-5"
+          />
+          <ul className="border-t border-line lg:col-span-6 lg:col-start-7">
+            {rules.map((rule, index) => (
+              <li
+                key={rule.title}
+                data-reveal
+                style={{ "--d": index * 80 } as CSSProperties}
+                className="border-b border-line py-6"
+              >
+                <h3 className="text-lg font-medium tracking-tight">{rule.title}</h3>
+                <p className="mt-2 text-base leading-relaxed text-ink-soft">{rule.detail}</p>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      <section aria-labelledby="needs-title" className="bg-paper py-24 md:py-32">
+        <Container className="grid gap-14 lg:grid-cols-12">
+          <SectionHeading
+            id="needs-title"
+            eyebrow="From you"
+            title="We move quickly when decisions have an owner."
+            className="lg:col-span-5"
+          />
+          <ol className="space-y-3 lg:col-span-6 lg:col-start-7">
+            {needs.map((item, index) => (
+              <li
+                key={item}
+                data-reveal
+                style={{ "--d": index * 80 } as CSSProperties}
+                className="flex gap-5 rounded-2xl border border-line bg-white p-6"
+              >
+                <span className="font-mono text-xs text-cobalt">0{index + 1}</span>
+                <span className="text-base leading-relaxed text-ink-soft">{item}</span>
               </li>
             ))}
           </ol>
         </Container>
       </section>
-      <section className="border-b border-line">
-        <Container className="grid gap-12 py-16 md:grid-cols-2 md:py-24">
-          <div>
-            <p className="font-mono text-[11px] tracking-[0.22em] text-brass uppercase">
-              Working rules
-            </p>
-            <h2 className="mt-4 font-serif text-4xl tracking-tight">
-              The cadence is part of the product.
+
+      <section aria-labelledby="faq-title" className="bg-white py-24 md:py-32">
+        <Container className="grid gap-14 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <Eyebrow>Questions</Eyebrow>
+            <h2 id="faq-title" className="t-h2 mt-6 max-w-[12ch]">
+              What teams ask first.
             </h2>
           </div>
-          <ul className="divide-y divide-line border-y border-line">
-            {rules.map((rule) => (
-              <li key={rule.title} className="py-5">
-                <h3 className="font-medium">{rule.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-mist">{rule.detail}</p>
-              </li>
-            ))}
-          </ul>
-        </Container>
-      </section>
-      <section>
-        <Container className="grid gap-10 py-16 md:grid-cols-12 md:py-24">
-          <div className="md:col-span-5">
-            <p className="font-mono text-[11px] tracking-[0.22em] text-brass uppercase">
-              From you
-            </p>
-            <h2 className="mt-4 font-serif text-4xl tracking-tight text-balance">
-              We can move quickly when the decisions have an owner.
-            </h2>
-            <div className="mt-8">
-              <ButtonLink href="/contact">Bring the brief</ButtonLink>
-            </div>
+          <div className="lg:col-span-8">
+            <Faq items={faqs} />
           </div>
-          <ul className="space-y-4 md:col-span-6 md:col-start-7">
-            {needs.map((item, index) => (
-              <li key={item} className="flex gap-4 border border-line bg-white p-5">
-                <span className="font-mono text-xs text-brass">0{index + 1}</span>
-                <span className="text-sm leading-relaxed text-ink-soft">{item}</span>
-              </li>
-            ))}
-          </ul>
         </Container>
       </section>
+
+      <ClosingCta />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c") }}
+      />
     </>
   );
 }

@@ -1,18 +1,23 @@
-import type { Metadata } from "next";
-import { ButtonLink } from "@/components/button-link";
-import { Container } from "@/components/container";
-import { PageHero } from "@/components/page-hero";
-import { principles } from "@/lib/site";
+import type { CSSProperties } from "react";
+import { ClosingCta } from "@/components/home/closing-cta";
+import { SocialSection } from "@/components/home/social-section";
+import { WhyStatin } from "@/components/home/why-statin";
+import { Container } from "@/components/ui/container";
+import { PageHero } from "@/components/ui/page-hero";
+import { Eyebrow, SectionHeading } from "@/components/ui/typography";
+import { principles, story } from "@/lib/content";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: "About",
   description:
-    "Statin is a product studio for startup founders who need a website, a SaaS product, or a store built to a serious standard.",
-};
+    "Statin is a small, founder-led product engineering company building web apps, commerce systems, and backend, data, and AI integrations.",
+  path: "/about",
+});
 
-const staff = [
+const roles = [
   {
-    role: "Product lead",
+    role: "Lead",
     detail: "Owns the scope, the weekly review, and the release boundary.",
   },
   {
@@ -29,60 +34,81 @@ export default function AboutPage() {
   return (
     <>
       <PageHero
-        eyebrow="About"
-        title="A studio for the company, not the pitch."
-        lede="Statin works with startup founders who need the website, the software, or the store to carry real weight: a buyer, a customer, an order. We stay small so the person who scopes the work is still in it when it ships."
+        eyebrow="About Statin"
+        title="We're early. We're focused."
+        lede="Statin works with teams whose website, store, or software has to carry real weight: a buyer, a customer, an order. We stay small so the person who scopes the work is still in it when it ships."
       />
-      <section className="border-b border-line">
-        <Container className="grid gap-6 py-16 md:grid-cols-2 md:py-24">
-          {principles.map((principle) => (
-            <article key={principle.index} className="border border-line bg-white p-7 md:p-9">
-              <p className="font-mono text-[11px] tracking-[0.18em] text-brass">
-                {principle.index}
-              </p>
-              <h2 className="mt-4 font-serif text-3xl tracking-tight">{principle.title}</h2>
-              <p className="mt-4 text-sm leading-relaxed text-ink-soft">{principle.detail}</p>
-            </article>
-          ))}
+
+      <section aria-labelledby="story-heading" className="bg-white py-24 md:py-32">
+        <Container className="grid gap-14 lg:grid-cols-12">
+          <SectionHeading
+            id="story-heading"
+            eyebrow="Our story"
+            title="Software that has to work, built properly."
+            className="lg:col-span-5"
+          />
+          <dl className="space-y-10 lg:col-span-6 lg:col-start-7">
+            {story.map((item, index) => (
+              <div
+                key={item.label}
+                data-reveal
+                style={{ "--d": index * 100 } as CSSProperties}
+                className="border-t border-line pt-6"
+              >
+                <dt className="t-eyebrow text-mist">{item.label}</dt>
+                <dd className="mt-4 text-lg leading-relaxed text-ink-soft">{item.detail}</dd>
+              </div>
+            ))}
+          </dl>
         </Container>
       </section>
-      <section className="border-b border-line bg-forest text-paper">
-        <Container className="grid gap-10 py-16 md:grid-cols-12 md:py-24">
-          <div className="md:col-span-5">
-            <p className="font-mono text-[11px] tracking-[0.22em] text-brass-line uppercase">
-              Staffing
-            </p>
-            <h2 className="mt-4 font-serif text-4xl tracking-tight text-balance">
-              Every engagement has names, not a pool.
-            </h2>
-            <p className="mt-5 text-sm leading-relaxed text-paper/75">
-              Statin is founder-led. We do not publish a bench of anonymous
-              specialists. You know who is designing, who is engineering, and
-              who answers when the week goes sideways.
-            </p>
-          </div>
-          <ul className="md:col-span-6 md:col-start-7">
-            {staff.map((item) => (
-              <li key={item.role} className="border-t border-white/15 py-5">
-                <h3 className="font-serif text-2xl">{item.role}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-paper/75">{item.detail}</p>
+
+      <section aria-labelledby="beliefs-title" className="bg-paper py-24 md:py-32">
+        <Container>
+          <SectionHeading id="beliefs-title" eyebrow="What we believe" title="Four principles we do not trade." />
+          <ul className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-line bg-line md:grid-cols-2">
+            {principles.map((item, index) => (
+              <li
+                key={item.index}
+                data-reveal
+                style={{ "--d": (index % 2) * 100 } as CSSProperties}
+                className="bg-paper p-8 md:p-10"
+              >
+                <p className="font-mono text-xs text-cobalt">{item.index}</p>
+                <h3 className="mt-8 text-2xl font-medium tracking-tight">{item.title}</h3>
+                <p className="mt-3 text-base leading-relaxed text-ink-soft">{item.detail}</p>
               </li>
             ))}
           </ul>
         </Container>
       </section>
-      <section>
-        <Container className="grid items-end gap-8 py-16 md:grid-cols-12 md:py-24">
-          <div className="md:col-span-8">
-            <h2 className="font-serif text-[clamp(2.4rem,5vw,4.2rem)] leading-[0.98] tracking-[-0.03em] text-balance">
-              If the company is ready to be taken seriously, start there.
+
+      <section aria-labelledby="staffing-title" className="tone-dark bg-night text-white">
+        <Container className="grid gap-12 py-24 md:py-32 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <Eyebrow className="text-signal">How we staff</Eyebrow>
+            <h2 id="staffing-title" className="t-h2 mt-6 max-w-[14ch] text-balance">
+              Every engagement has names, not a pool.
             </h2>
+            <p className="mt-6 max-w-md text-base leading-relaxed text-fog">
+              Statin is founder-led. You know who is designing, who is engineering, and who answers
+              when the week goes sideways.
+            </p>
           </div>
-          <div className="md:col-span-4 md:justify-self-end">
-            <ButtonLink href="/contact">Talk to the studio</ButtonLink>
-          </div>
+          <ul className="lg:col-span-6 lg:col-start-7">
+            {roles.map((item) => (
+              <li key={item.role} data-reveal className="border-t border-night-line py-6">
+                <h3 className="text-2xl font-medium tracking-tight">{item.role}</h3>
+                <p className="mt-2 text-base leading-relaxed text-fog">{item.detail}</p>
+              </li>
+            ))}
+          </ul>
         </Container>
       </section>
+
+      <WhyStatin />
+      <SocialSection />
+      <ClosingCta />
     </>
   );
 }

@@ -2,8 +2,8 @@
 
 import { appendFile, mkdir } from "node:fs/promises";
 import path from "node:path";
-import type { InquiryState } from "@/lib/inquiry";
-import { inquiryOptions, site } from "@/lib/site";
+import { inquiryOptions, type InquiryState } from "@/lib/inquiry";
+import { site } from "@/lib/site";
 
 export async function submitInquiry(
   _previous: InquiryState,

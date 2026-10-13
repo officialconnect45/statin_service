@@ -2,8 +2,8 @@
 
 import { useActionState, useState } from "react";
 import { submitInquiry } from "@/app/actions";
-import { initialInquiryState, type InquiryField } from "@/lib/inquiry";
-import { inquiryOptions, site } from "@/lib/site";
+import { initialInquiryState, inquiryOptions, type InquiryField } from "@/lib/inquiry";
+import { site } from "@/lib/site";
 
 export function ContactForm() {
   const [epoch, setEpoch] = useState(0);
@@ -21,11 +21,9 @@ function InquiryForm({ onAnother }: { onAnother: () => void }) {
 
   if (state.status === "success") {
     return (
-      <div className="border border-line bg-white p-8 md:p-10">
-        <p className="font-mono text-[11px] tracking-[0.22em] text-brass uppercase">
-          Brief received
-        </p>
-        <h2 className="mt-4 font-serif text-4xl tracking-tight text-balance">
+      <div className="rounded-3xl border border-line bg-white p-8 text-ink md:p-12" role="status">
+        <p className="t-eyebrow text-cobalt">Brief received</p>
+        <h2 className="mt-5 text-3xl font-medium tracking-tight text-balance md:text-4xl">
           {state.message}
         </h2>
         <p className="mt-4 max-w-md text-sm leading-relaxed text-mist">
@@ -38,7 +36,7 @@ function InquiryForm({ onAnother }: { onAnother: () => void }) {
         <button
           type="button"
           onClick={onAnother}
-          className="mt-8 inline-flex h-11 items-center border border-[#244df5]/30 px-4 text-sm font-medium text-[#244df5] transition-colors hover:bg-blue-50/50"
+          className="mt-8 inline-flex h-11 items-center rounded-full border border-cobalt/30 px-5 text-sm font-medium text-cobalt transition-colors hover:bg-cobalt hover:text-white"
         >
           Send another brief
         </button>
@@ -47,7 +45,7 @@ function InquiryForm({ onAnother }: { onAnother: () => void }) {
   }
 
   return (
-    <form action={action} className="relative border border-line bg-white p-6 md:p-10" noValidate>
+    <form action={action} className="relative rounded-3xl border border-line bg-white p-6 text-ink shadow-[0_40px_80px_-40px_rgb(6_9_20/0.5)] md:p-10" noValidate>
       <div className="grid gap-5 sm:grid-cols-2">
         <Field
           label="Name"
@@ -119,7 +117,7 @@ function InquiryForm({ onAnother }: { onAnother: () => void }) {
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex h-12 items-center justify-center bg-[#244df5] px-5 text-sm font-medium tracking-wide text-white shadow-sm transition-colors hover:bg-[#1a3ee8] disabled:cursor-wait disabled:opacity-70"
+          className="inline-flex h-12 items-center justify-center rounded-full bg-cobalt px-6 text-sm font-medium text-white transition-colors hover:bg-cobalt-hover disabled:cursor-wait disabled:opacity-70"
         >
           {pending ? "Sending the brief" : "Send the brief"}
         </button>
@@ -210,7 +208,7 @@ function FieldError({ id, children }: { id: string; children: string }) {
 }
 
 function inputClass(invalid: boolean) {
-  return `mt-2 w-full border bg-paper px-3 py-3 text-sm outline-none transition-colors placeholder:text-mist/70 ${
-    invalid ? "border-danger" : "border-line focus:border-[#244df5] focus:ring-1 focus:ring-[#244df5]"
+  return `mt-2 w-full rounded-xl border bg-paper px-3.5 py-3 text-sm text-ink outline-none transition-colors placeholder:text-mist ${
+    invalid ? "border-danger" : "border-line focus:border-cobalt focus:ring-1 focus:ring-cobalt"
   }`;
 }

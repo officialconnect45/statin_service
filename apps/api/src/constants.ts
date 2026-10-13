@@ -1,6 +1,6 @@
 // Validation constants mirrored from the web app's site config.
-// Keep in sync with apps/web/src/lib/site.ts → inquiryOptions
-export const VALID_PRACTICES = ["websites", "saas", "ecommerce", "unsure"] as const;
+// Keep in sync with apps/web/src/lib/inquiry.ts → inquiryOptions
+export const VALID_PRACTICES = ["saas", "ecommerce", "integrations", "websites", "agency", "unsure"] as const;
 export const VALID_STAGES = ["forming", "building", "live", "replacing"] as const;
 export const VALID_TIMELINES = ["exploring", "month", "quarter", "later"] as const;
 

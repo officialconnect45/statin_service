@@ -1,10 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Suspense } from "react";
-import { Footer } from "@/components/layout/footer";
-import { Header } from "@/components/layout/header";
-import { CursorLabel } from "@/components/ui/cursor-label";
-import { RevealObserver } from "@/components/ui/reveal-observer";
 import { services } from "@/lib/services";
 import { site, social } from "@/lib/site";
 import "./globals.css";
@@ -132,15 +127,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to content
         </a>
-        <Suspense fallback={null}>
-          <Header />
-        </Suspense>
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <Footer />
-        <RevealObserver />
-        <CursorLabel />
+        {children}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

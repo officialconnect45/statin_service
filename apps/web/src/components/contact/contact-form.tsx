@@ -2,7 +2,8 @@
 
 import { useActionState, useState } from "react";
 import { submitInquiry } from "@/app/actions";
-import { initialInquiryState, inquiryOptions, type InquiryField } from "@/lib/inquiry";
+import { initialInquiryState, type InquiryField } from "@/lib/inquiry";
+import { inquiryOptions } from "@/lib/inquiry-options";
 import { site } from "@/lib/site";
 
 export function ContactForm() {

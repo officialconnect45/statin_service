@@ -34,6 +34,9 @@ export const metadata: Metadata = {
     "API integration",
     "AI integration",
     "Next.js development",
+    "mobile app development",
+    "Flutter development",
+    "React Native development",
     "white-label development",
   ],
   icons: {
@@ -74,6 +77,12 @@ const jsonLd = {
       name: site.name,
       url: site.url,
       email: site.email,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: site.address.street,
+        addressLocality: site.address.city,
+        addressCountry: "EE",
+      },
       logo: `${site.url}/icon-512.png`,
       description: site.description,
       sameAs: social.map((item) => item.href),

@@ -48,6 +48,9 @@ export default function ContactPage() {
           >
             {site.email}
           </a>
+          <address className="fade-load mt-3 text-sm not-italic text-fog" style={{ "--d": 450 } as CSSProperties}>
+            {site.address.street}, {site.address.city}, {site.address.country}
+          </address>
           <ol className="mt-12 space-y-4 border-t border-night-line pt-8">
             {expects.map((item, index) => (
               <li key={item} className="grid grid-cols-[2rem_1fr] gap-2 text-sm leading-relaxed text-fog">

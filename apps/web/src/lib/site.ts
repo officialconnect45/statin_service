@@ -2,11 +2,16 @@ export const site = {
   name: "Statin",
   url: "https://statin.com",
   email: "hello@statin.com",
+  address: {
+    street: "Tartu mnt 67/1-13b",
+    city: "Tallinn",
+    country: "Estonia",
+  },
   title: "Statin · Engineering for web apps, commerce, and AI integrations",
   description:
-    "Statin is a product engineering company. We design and build custom web apps, SaaS platforms, commerce systems, and backend, data, and AI integrations, with security, performance, and measurement engineered in.",
+    "Statin is a product engineering company. We design and build custom web apps, SaaS platforms, mobile apps, commerce systems, and backend, data, and AI integrations, with security, performance, and measurement engineered in.",
   short:
-    "A product engineering company building web apps, commerce systems, and backend, data, and AI integrations.",
+    "A product engineering company building web apps, mobile apps, commerce systems, and backend, data, and AI integrations.",
   year: 2026,
   twitter: "@statin_26",
 } as const;

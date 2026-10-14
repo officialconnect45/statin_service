@@ -2,6 +2,7 @@
 export const inquiryOptions = {
   practices: [
     { value: "saas", label: "Web app or SaaS platform" },
+    { value: "mobile", label: "Mobile app" },
     { value: "ecommerce", label: "Commerce system" },
     { value: "integrations", label: "Backend, data, or AI integration" },
     { value: "websites", label: "Business website" },

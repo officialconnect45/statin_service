@@ -1,29 +1,50 @@
 @import "tailwindcss";
 
+/* ================================================================== */
+/* Design tokens                                                       */
+/* ================================================================== */
+
 @theme inline {
   --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --color-ink: #090d1f;
-  --color-ink-soft: #334155;
-  --color-paper: #f8fafd;
-  --color-paper-deep: #eff4fb;
-  --color-line: #e2e8f0;
-  --color-brass: #244df5;
-  --color-brass-line: #38bdf8;
-  --color-forest: #080d21;
-  --color-forest-mid: #101c4a;
-  --color-cobalt: #244df5;
-  --color-cobalt-hover: #1a3ee8;
-  --color-cyan-slash: #38bdf8;
-  --color-mist: #64748b;
+
+  /* Light surfaces */
+  --color-ink: #0a0d18;
+  --color-ink-soft: #363e52;
+  --color-mist: #5b6377;
+  --color-paper: #f6f7fb;
+  --color-paper-deep: #eceef5;
+  --color-line: #dde1ea;
+
+  /* Dark surfaces */
+  --color-night: #060914;
+  --color-night-2: #0b1020;
+  --color-night-3: #121a33;
+  --color-night-line: rgb(255 255 255 / 0.09);
+  --color-fog: #9ba4b9;
+
+  /* Brand */
+  --color-cobalt: #2a4ff6;
+  --color-cobalt-hover: #1d3fe0;
+  --color-signal: #6aa6ff;
+
   --color-danger: #dc2626;
-  --color-white: #ffffff;
 }
+
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --header-h: 4rem;
+}
+
+/* ================================================================== */
+/* Base                                                                */
+/* ================================================================== */
 
 html {
   scroll-behavior: smooth;
-  background: var(--color-paper);
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+  background: var(--color-night);
 }
 
 body {
@@ -31,23 +52,147 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
   overflow-x: clip;
 }
 
 ::selection {
-  background: #244df5;
+  background: var(--color-cobalt);
   color: #ffffff;
 }
 
 :focus-visible {
-  outline: 2px solid #244df5;
+  outline: 2px solid var(--color-cobalt);
   outline-offset: 3px;
 }
 
-@keyframes rise {
+.tone-dark :focus-visible {
+  outline-color: var(--color-signal);
+}
+
+/* ================================================================== */
+/* Typography                                                          */
+/* ================================================================== */
+
+.t-display {
+  font-size: clamp(2.75rem, 7.6vw, 7.25rem);
+  line-height: 0.93;
+  letter-spacing: -0.05em;
+  font-weight: 500;
+}
+
+.t-h1 {
+  font-size: clamp(2.6rem, 6vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+}
+
+.t-h2 {
+  font-size: clamp(2.1rem, 4.6vw, 4.1rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+}
+
+.t-h3 {
+  font-size: clamp(1.45rem, 2.3vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+}
+
+.t-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.t-lede {
+  font-size: clamp(1.05rem, 1.35vw, 1.22rem);
+  line-height: 1.6;
+}
+
+/* ================================================================== */
+/* Surfaces                                                            */
+/* ================================================================== */
+
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-color, rgb(255 255 255 / 0.055)) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color, rgb(255 255 255 / 0.055)) 1px, transparent 1px);
+  background-size: var(--grid-size, 64px) var(--grid-size, 64px);
+}
+
+.bg-grid-light {
+  --grid-color: rgb(10 13 24 / 0.06);
+}
+
+.mask-radial {
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 75%);
+}
+
+.mask-fade-x {
+  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+
+/* ================================================================== */
+/* Reveal on scroll                                                    */
+/* Initial hidden state only; RevealObserver animates elements in with */
+/* the Web Animations API so React-owned attributes are never touched.  */
+/* ================================================================== */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+}
+
+/* Split headings: the heading stays visible, its words rise */
+[data-reveal="split"] {
+  opacity: 1;
+  transform: none;
+}
+
+.split-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+
+.split-word > span {
+  display: inline-block;
+  transform: translate3d(0, 108%, 0);
+}
+
+/* Hero headline animates on load, no observer needed */
+.split-load .split-word > span {
+  transform: none;
+  animation: word-rise 1s var(--ease-out) both;
+  animation-delay: calc(var(--i) * 60ms + 120ms);
+}
+
+.fade-load {
+  animation: fade-rise 0.9s var(--ease-out) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+
+@keyframes word-rise {
+  from {
+    transform: translate3d(0, 108%, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes fade-rise {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translate3d(0, 14px, 0);
   }
   to {
     opacity: 1;
@@ -55,31 +200,149 @@ body {
   }
 }
 
-.rise {
-  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+/* ================================================================== */
+/* Motion primitives                                                   */
+/* ================================================================== */
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
-.rise-delay-1 {
-  animation-delay: 80ms;
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 48s linear infinite;
 }
 
-.rise-delay-2 {
-  animation-delay: 160ms;
+.marquee-host:hover .marquee {
+  animation-play-state: paused;
 }
 
-.rise-delay-3 {
-  animation-delay: 240ms;
+/* A short gradient segment that travels along a connector */
+@keyframes comet-x {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+  to {
+    transform: translate3d(500%, 0, 0);
+  }
 }
+
+@keyframes comet-y {
+  from {
+    transform: translate3d(0, -100%, 0);
+  }
+  to {
+    transform: translate3d(0, 500%, 0);
+  }
+}
+
+.comet-x {
+  animation: comet-x var(--dur, 3.2s) var(--ease-in-out) infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.comet-y {
+  animation: comet-y var(--dur, 3.2s) var(--ease-in-out) infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -48;
+  }
+}
+
+.dash-flow {
+  stroke-dasharray: 4 8;
+  animation: dash-flow 2.4s linear infinite;
+}
+
+@keyframes ping-soft {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.ping-soft {
+  animation: ping-soft 2.2s var(--ease-out) infinite;
+}
+
+/* Animated underline for editorial links */
+.link-line {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s var(--ease-out);
+}
+
+.link-line:hover,
+.group:hover .link-line,
+.link-line:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* ================================================================== */
+/* Reduced motion                                                      */
+/* ================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
-  .rise,
-  .rise-delay-1,
-  .rise-delay-2,
-  .rise-delay-3 {
+  .split-word > span {
+    animation: none !important;
+  }
+
+  .fade-load {
     animation: none;
+  }
+
+  .motion-only {
+    display: none !important;
+  }
+
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Problem story: systems drift while complexity builds */
+@keyframes story-jitter {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(calc(sin(var(--j) * 1rad) * 5px), 3px);
+  }
+  66% {
+    transform: translate(-3px, calc(cos(var(--j) * 1rad) * 5px));
+  }
+}
+
+.story-jitter {
+  animation: story-jitter 2.6s ease-in-out infinite;
+  animation-delay: calc(var(--j) * -0.3s);
+}
+
+/* Unrevealed content must still print */
+@media print {
+  [data-reveal],
+  .split-word > span {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

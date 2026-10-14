@@ -1,9 +1,10 @@
 "use server";
 
-import { appendFile, mkdir } from "node:fs/promises";
-import path from "node:path";
+import type { SubmitInquiryRequest, SubmitInquiryResponse } from "@statin/types";
+import { apiUrl } from "@/lib/api";
 import type { InquiryState } from "@/lib/inquiry";
-import { inquiryOptions, site } from "@/lib/site";
+import { inquiryOptions } from "@/lib/inquiry-options";
+import { site } from "@/lib/site";
 
 export async function submitInquiry(
   _previous: InquiryState,
@@ -64,8 +65,7 @@ export async function submitInquiry(
     ? timeline
     : "";
 
-  const record = {
-    at: new Date().toISOString(),
+  const payload: SubmitInquiryRequest = {
     name,
     email,
     company,
@@ -75,20 +75,32 @@ export async function submitInquiry(
     message,
   };
 
+  // Stored in MongoDB by the Express API (POST /api/v1/inquiry).
+  const failure: InquiryState = {
+    status: "error",
+    message: `We could not save the brief. Email ${site.email} and we will take it from there.`,
+  };
+
   try {
-    // Resolve to the monorepo root data/ directory (repo-root/data)
-    const directory = path.join(process.cwd(), "..", "..", "data");
-    await mkdir(directory, { recursive: true });
-    await appendFile(
-      path.join(directory, "inquiries.jsonl"),
-      `${JSON.stringify(record)}\n`,
-      "utf8",
-    );
-  } catch {
-    return {
-      status: "error",
-      message: `We could not save the brief. Email ${site.email} and we will take it from there.`,
-    };
+    const response = await fetch(apiUrl("/inquiry"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      cache: "no-store",
+      signal: AbortSignal.timeout(10_000),
+    });
+    const result = (await response.json().catch(() => null)) as SubmitInquiryResponse | null;
+
+    if (response.status === 422 && result?.errors) {
+      return { status: "error", message: result.message, errors: result.errors };
+    }
+    if (!response.ok || result?.status !== "success") {
+      console.error(`[inquiry] API responded ${response.status}`);
+      return failure;
+    }
+  } catch (error) {
+    console.error("[inquiry] Could not reach the API:", error);
+    return failure;
   }
 
   return {

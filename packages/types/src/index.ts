@@ -33,3 +33,21 @@ export type SubmitInquiryResponse = {
   message: string;
   errors?: Partial<Record<InquiryField, string>>;
 };
+
+// Admin: stored inquiries as returned by GET /api/v1/inquiries
+export type InquiryRecord = {
+  id: string;
+  /** ISO timestamp of when the inquiry was stored. */
+  at: string;
+  name: string;
+  email: string;
+  company: string;
+  practice: string;
+  stage: string;
+  timeline: string;
+  message: string;
+};
+
+export type ListInquiriesResponse = {
+  inquiries: InquiryRecord[];
+};

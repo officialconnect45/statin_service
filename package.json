@@ -14,7 +14,8 @@
     "build:web": "npm run build --workspace=apps/web",
     "build:api": "npm run build --workspace=apps/api",
     "lint": "npm run lint --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "admin:password": "npm run admin:password --workspace=apps/web --"
   },
   "engines": {
     "node": ">=20"

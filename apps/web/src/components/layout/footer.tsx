@@ -36,6 +36,9 @@ export function Footer() {
             >
               {site.email}
             </a>
+            <address className="mt-2 text-sm not-italic text-fog">
+              {site.address.street}, {site.address.city}, {site.address.country}
+            </address>
             <p className="mt-2 text-sm text-fog">Remote engagements</p>
           </div>
 

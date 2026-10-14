@@ -27,6 +27,8 @@ export const stack = [
   "React",
   "Next.js",
   "TypeScript",
+  "Flutter",
+  "React Native",
   "Node.js",
   "Express",
   "Python",
@@ -525,7 +527,7 @@ export const faqs = [
   },
   {
     q: "Which technologies do you use?",
-    a: "React and Next.js, Node.js and Express, Python and FastAPI, MongoDB and PostgreSQL, WordPress, Shopify, and WooCommerce, plus AI APIs for automation. The stack follows the problem, not the other way round.",
+    a: "React and Next.js, Flutter and React Native, Node.js and Express, Python and FastAPI, MongoDB and PostgreSQL, WordPress, Shopify, and WooCommerce, plus AI APIs for automation. The stack follows the problem, not the other way round.",
   },
   {
     q: "Where do you work?",

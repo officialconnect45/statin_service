@@ -60,8 +60,49 @@ export const services: Service[] = [
     specimen: "saas",
   },
   {
-    slug: "ecommerce",
+    slug: "mobile",
     index: "02",
+    title: "Mobile apps",
+    short: "Mobile apps",
+    summary:
+      "iOS and Android apps built with Flutter or React Native, connected to the accounts, data, and services behind them.",
+    lede: "A mobile app customers can install, sign into, and rely on, built from one codebase for iOS and Android and supported after it reaches the stores.",
+    audience:
+      "Startups, SaaS businesses, and companies that need a mobile app for their customers, field teams, or an existing web product.",
+    includes: [
+      "Cross-platform iOS and Android apps in Flutter or React Native",
+      "Authentication, push notifications, and offline-ready flows",
+      "Integration with your existing APIs, backend, and data",
+      "App Store and Google Play submission and release setup",
+      "Maintenance and updates after launch",
+    ],
+    scoping:
+      "Estimated after discovery, with deliverables, milestones, acceptance criteria, and exclusions written down before build.",
+    outcome:
+      "An app live in both stores, connected to the systems behind it, and a release process the team can repeat.",
+    phases: [
+      {
+        name: "Scope",
+        detail:
+          "We decide which flows the first release needs on a phone, and which can wait for the next version.",
+      },
+      {
+        name: "Build",
+        detail:
+          "Screens, navigation, and data are built in one codebase and tested on real iOS and Android devices.",
+      },
+      {
+        name: "Release",
+        detail:
+          "Store listings, review, and release are handled, with a written process for every update after.",
+      },
+    ],
+    stack: ["Flutter", "React Native", "TypeScript", "Node.js", "Firebase"],
+    specimen: "saas",
+  },
+  {
+    slug: "ecommerce",
+    index: "03",
     title: "Commerce systems",
     short: "Commerce",
     summary:
@@ -102,7 +143,7 @@ export const services: Service[] = [
   },
   {
     slug: "integrations",
-    index: "03",
+    index: "04",
     title: "Backend, data & AI integrations",
     short: "Integrations",
     summary:
@@ -143,7 +184,7 @@ export const services: Service[] = [
   },
   {
     slug: "websites",
-    index: "04",
+    index: "05",
     title: "Business websites",
     short: "Websites",
     summary:
@@ -184,7 +225,7 @@ export const services: Service[] = [
   },
   {
     slug: "agency",
-    index: "05",
+    index: "06",
     title: "White-label agency delivery",
     short: "Agency delivery",
     summary:

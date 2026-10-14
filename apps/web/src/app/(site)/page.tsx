@@ -38,7 +38,7 @@ export default function Home() {
             <SectionHeading
               id="capabilities-title"
               eyebrow="What we build"
-              title="Five ways we put systems to work."
+              title="Six ways we put systems to work."
               className="lg:col-span-7"
             />
             <p data-reveal className="t-lede text-ink-soft lg:col-span-5">

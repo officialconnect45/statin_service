@@ -21,7 +21,7 @@ export default function ServicesPage() {
       <PageHero
         eyebrow="Solutions"
         title="What we build, and how it holds up."
-        lede="Five practices, one engineering standard. Each is a system the team can run after launch week, with security, performance, and measurement designed in."
+        lede="Six practices, one engineering standard. Each is a system the team can run after launch week, with security, performance, and measurement designed in."
       />
       {services.map((service, index) => (
         <section

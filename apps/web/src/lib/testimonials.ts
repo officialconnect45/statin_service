@@ -1,113 +1,66 @@
-// Mirrors the published business testimonials in the statin.io admin
-// (/admin/testimonials). Lower `order` appears first.
+import "server-only";
+import type { ListTestimonialsResponse, TestimonialRecord } from "@statin/types";
+import { cacheLife, cacheTag } from "next/cache";
+import { requireAdmin } from "@/lib/admin/auth";
+import { adminApiHeaders, apiUrl } from "@/lib/api";
 
-export type Testimonial = {
-  name: string;
-  description: string;
-  quote: string;
-  logo?: string;
-  highlight?: boolean;
-  order: number;
-};
+// Testimonials live in MongoDB (statin_build → testimonials), served by the
+// Express API and managed from /admin/testimonials.
+export type Testimonial = TestimonialRecord;
 
-const entries: Testimonial[] = [
-  {
-    name: "Northline SaaS",
-    description: "B2B software · Series B",
-    quote:
-      "Statin gives our growth team one place to run branded links and read campaign performance — clicks, referrers, and conversions without exporting spreadsheets.",
-    highlight: true,
-    order: 0,
-  },
-  {
-    name: "Cegen",
-    description: "B2B Blogs",
-    quote:
-      "Cegen.org based on its operational functions:Content Focus: The official website delivers insights and analysis across technology.",
-    highlight: true,
-    order: 0,
-  },
-  {
-    name: "Youlinks",
-    description: "URL monetization · Publisher network",
-    quote:
-      "We run millions of short links for publishers. Statin gives us one dashboard for clicks, referrers, and conversions, so we know which traffic earns.",
-    logo: "https://i.ibb.co/4wZ0S2n0/you-Links-4.png",
-    highlight: true,
-    order: 0,
-  },
-  {
-    name: "Payflow",
-    description: "Fintech · Global payments",
-    quote:
-      "We track every campaign link on our own domain and finally understand which channels drive signups. Reporting that used to take a day now takes minutes.",
-    order: 1,
-  },
-  {
-    name: "PSXB",
-    description: "Cloud Gaming",
-    quote:
-      "The PSXB framework serves as a shorthand concept for unified cloud streaming setups that allow users to play both PlayStation and Xbox.",
-    order: 1,
-  },
-  {
-    name: "Cartlane",
-    description: "E-commerce marketplace",
-    quote:
-      "The API and bulk import power our marketplace operations. Thousands of tracked links, analytics in our dashboards, and one platform behind it all.",
-    order: 2,
-  },
-  {
-    name: "Macreaw",
-    description: "AI agents",
-    quote:
-      "The API and bulk import power our marketplace operations. Thousands of tracked links, analytics in our dashboards, and one platform behind it all.",
-    order: 2,
-  },
-  {
-    name: "Streamline Media",
-    description: "Digital marketing agency",
-    quote:
-      "Our agency runs dozens of client domains on Statin. Click streams by campaign and country make client reporting something we actually look forward to.",
-    order: 3,
-  },
-  {
-    name: "Carpe Travels",
-    description: "Travel company",
-    quote:
-      "Operates as an award-winning digital guide that helps global tourists plan curated vineyard trips, trips across the world.",
-    order: 3,
-  },
-  {
-    name: "Launchpad HR",
-    description: "Recruiting technology",
-    quote:
-      "Recruiting campaigns live and die by link performance. Statin shows which job posts and channels convert — we reallocate budget in hours, not weeks.",
-    order: 4,
-  },
-  {
-    name: "Volt Analytics",
-    description: "Product analytics · PLG",
-    quote:
-      "Product-led growth needs reliable link analytics. We pipe Statin click data into our stack and finally connect feature launches to signups.",
-    order: 5,
-  },
-  {
-    name: "Earnads",
-    description: "B2B software",
-    quote:
-      "EarnAds is link monetization platform that allows users to earn money by creating links. When people visit those links and complete the required ad viewing.",
-    highlight: true,
-    order: 292399,
-  },
-];
+export const TESTIMONIALS_TAG = "testimonials";
 
-export const testimonials = [...entries].sort((a, b) => a.order - b.order);
+export class TestimonialsUnavailableError extends Error {}
 
-export function initials(name: string) {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((word) => word[0]?.toUpperCase() ?? "")
-    .join("");
+/**
+ * Published testimonials for the home page. Cached; admin saves call
+ * updateTag(TESTIMONIALS_TAG) so changes show on the next request.
+ */
+export async function getPublishedTestimonials(): Promise<Testimonial[]> {
+  "use cache";
+  cacheTag(TESTIMONIALS_TAG);
+
+  try {
+    const response = await fetch(apiUrl("/testimonials"), { signal: AbortSignal.timeout(8_000) });
+    if (!response.ok) throw new Error(`API responded ${response.status}`);
+    const data = (await response.json()) as ListTestimonialsResponse;
+    cacheLife("hours");
+    return data.testimonials;
+  } catch (error) {
+    // Hide the section rather than failing the page; retry soon.
+    console.error("[testimonials] Could not load published testimonials:", error);
+    cacheLife("seconds");
+    return [];
+  }
+}
+
+/** Every testimonial, including drafts. Authorizes the admin first. */
+export async function listTestimonials(): Promise<Testimonial[]> {
+  await requireAdmin();
+
+  let response: Response;
+  try {
+    response = await fetch(apiUrl("/admin/testimonials"), {
+      headers: adminApiHeaders(),
+      cache: "no-store",
+      signal: AbortSignal.timeout(10_000),
+    });
+  } catch (error) {
+    console.error("[testimonials] Could not reach the API:", error);
+    throw new TestimonialsUnavailableError(
+      "The API is not reachable. Check that it is running and API_BASE_URL is set.",
+    );
+  }
+
+  if (!response.ok) {
+    console.error(`[testimonials] API responded ${response.status}`);
+    throw new TestimonialsUnavailableError(
+      response.status === 401 || response.status === 503
+        ? "The API rejected the admin key. Check ADMIN_API_KEY in both apps."
+        : "The API could not load testimonials.",
+    );
+  }
+
+  const data = (await response.json()) as ListTestimonialsResponse;
+  return data.testimonials;
 }

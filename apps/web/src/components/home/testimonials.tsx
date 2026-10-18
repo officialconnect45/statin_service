@@ -1,10 +1,14 @@
-import Image from "next/image";
 import type { CSSProperties } from "react";
+import { TestimonialCard } from "@/components/testimonials/testimonial-card";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/typography";
-import { initials, testimonials } from "@/lib/testimonials";
+import { getPublishedTestimonials } from "@/lib/testimonials";
 
-export function Testimonials() {
+/** Published testimonials from /admin/testimonials. Hidden when there are none. */
+export async function Testimonials() {
+  const testimonials = await getPublishedTestimonials();
+  if (testimonials.length === 0) return null;
+
   return (
     <section id="testimonials" aria-labelledby="testimonials-title" className="bg-paper-deep py-24 md:py-32">
       <Container>
@@ -23,38 +27,8 @@ export function Testimonials() {
 
         <ul className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((item, index) => (
-            <li
-              key={item.name}
-              data-reveal
-              style={{ "--d": (index % 3) * 100 } as CSSProperties}
-            >
-              <figure
-                className={`flex h-full flex-col rounded-3xl border bg-white p-7 md:p-8 ${
-                  item.highlight ? "border-cobalt/40 shadow-[0_0_0_1px_rgb(42_79_246/0.12)]" : "border-line"
-                }`}
-              >
-                <figcaption className="flex items-center gap-4">
-                  {item.logo ? (
-                    <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-2xl border border-line bg-white">
-                      <Image src={item.logo} alt={`${item.name} logo`} fill sizes="48px" className="object-contain p-1" />
-                    </span>
-                  ) : (
-                    <span
-                      aria-hidden="true"
-                      className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-cobalt/10 text-sm font-semibold text-cobalt"
-                    >
-                      {initials(item.name)}
-                    </span>
-                  )}
-                  <span className="min-w-0">
-                    <span className="block font-medium tracking-tight">{item.name}</span>
-                    <span className="block text-sm text-mist">{item.description}</span>
-                  </span>
-                </figcaption>
-                <blockquote className="mt-6 text-[15px] leading-relaxed text-ink-soft">
-                  <p>&ldquo;{item.quote}&rdquo;</p>
-                </blockquote>
-              </figure>
+            <li key={item.id} data-reveal style={{ "--d": (index % 3) * 100 } as CSSProperties}>
+              <TestimonialCard item={item} />
             </li>
           ))}
         </ul>

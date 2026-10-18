@@ -11,7 +11,7 @@ type SessionPayload = { sub: string; exp: number };
 // The password hash is part of the signing key, so setting a new password
 // immediately invalidates every existing session.
 function signingKey(config: AdminConfig) {
-  return `${config.sessionSecret}:${config.passwordHash}`;
+  return `${config.sessionSecret}:${config.passwordFingerprint}`;
 }
 
 function sign(data: string, config: AdminConfig) {

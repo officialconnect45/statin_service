@@ -38,9 +38,9 @@ async function LoginGate() {
       <div className="mt-6 rounded-2xl border border-dashed border-white/20 p-5 text-sm leading-relaxed text-fog">
         <p className="font-medium text-white">Admin access is not set up yet.</p>
         <p className="mt-2">
-          From <code className="font-mono text-signal">apps/web</code>, run{" "}
-          <code className="font-mono text-signal">npm run admin:password</code> to set the
-          superadmin password, then reload this page.
+          Set <code className="font-mono text-signal">ADMIN_USERNAME</code> and{" "}
+          <code className="font-mono text-signal">ADMIN_PASSWORD</code> in the server&apos;s
+          environment variables, then reload this page.
         </p>
       </div>
     );

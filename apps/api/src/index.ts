@@ -31,12 +31,15 @@ app.use(
         cb(new Error(`CORS: origin ${origin} not allowed`));
       }
     },
-    methods: ["GET", "POST", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
 // ── Body parsing ──────────────────────────────────────────────────────────────
+// Testimonial saves can carry an uploaded logo (up to 500 KB, base64-encoded).
+// Parsed here first; the general parser below skips already-parsed bodies.
+app.use("/api/v1/admin/testimonials", express.json({ limit: "1mb" }));
 app.use(express.json({ limit: "64kb" }));
 
 // ── Routes ────────────────────────────────────────────────────────────────────

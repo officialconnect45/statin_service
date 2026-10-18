@@ -51,3 +51,33 @@ export type InquiryRecord = {
 export type ListInquiriesResponse = {
   inquiries: InquiryRecord[];
 };
+
+// Business testimonials shown on the home page, managed from /admin/testimonials
+export type TestimonialInput = {
+  name: string;
+  description: string;
+  quote: string;
+  /** https URL or a data:image/... URL from an upload. Empty shows initials. */
+  logo: string;
+  /** Lower numbers appear first. */
+  sortOrder: number;
+  published: boolean;
+  highlight: boolean;
+};
+
+export type TestimonialRecord = TestimonialInput & {
+  id: string;
+  /** ISO timestamp. */
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type TestimonialField = "name" | "description" | "quote" | "logo" | "sortOrder";
+
+export type ListTestimonialsResponse = {
+  testimonials: TestimonialRecord[];
+};
+
+export type SaveTestimonialResponse =
+  | { status: "success"; testimonial: TestimonialRecord }
+  | { status: "error"; message: string; errors?: Partial<Record<TestimonialField, string>> };

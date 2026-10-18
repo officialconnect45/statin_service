@@ -19,7 +19,7 @@ async function clientKey() {
 export async function login(_previous: LoginState, formData: FormData): Promise<LoginState> {
   const config = getAdminConfig();
   if (!config) {
-    return { error: "Admin access is not set up yet. Run npm run admin:password first." };
+    return { error: "Admin access is not set up yet. Set ADMIN_USERNAME and ADMIN_PASSWORD in the environment." };
   }
 
   const key = await clientKey();
@@ -33,7 +33,12 @@ export async function login(_previous: LoginState, formData: FormData): Promise<
   const password = String(formData.get("password") ?? "");
 
   // Always run the password check so timing does not reveal a wrong username.
-  const passwordOk = password.length > 0 && password.length <= 256 && (await verifyPassword(password, config.passwordHash));
+  const passwordOk =
+    password.length > 0 &&
+    password.length <= 256 &&
+    ("hash" in config.password
+      ? await verifyPassword(password, config.password.hash)
+      : safeEqual(password, config.password.plain));
   const usernameOk = safeEqual(username, config.username);
 
   if (!passwordOk || !usernameOk) {

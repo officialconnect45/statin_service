@@ -1,7 +1,7 @@
 export const site = {
   name: "Statin",
-  url: "https://statin.com",
-  email: "hello@statin.com",
+  url: "https://build.statin.io",
+  email: "hello@statin.io",
   address: {
     street: "Tartu mnt 67/1-13b",
     city: "Tallinn",

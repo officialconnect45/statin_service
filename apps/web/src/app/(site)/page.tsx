@@ -8,6 +8,7 @@ import { ProblemStory } from "@/components/home/problem-story";
 import { Process } from "@/components/home/process";
 import { SocialSection } from "@/components/home/social-section";
 import { StartupStory } from "@/components/home/startup-story";
+import { Testimonials } from "@/components/home/testimonials";
 import { WhyStatin } from "@/components/home/why-statin";
 import { Container } from "@/components/ui/container";
 import { ArrowIcon } from "@/components/ui/icons";
@@ -84,10 +85,13 @@ export default function Home() {
         </Container>
       </section>
 
-      {/* 7. Why Statin */}
+      {/* 7. Testimonials */}
+      <Testimonials />
+
+      {/* 8. Why Statin */}
       <WhyStatin />
 
-      {/* 8. Technology / infrastructure */}
+      {/* 9. Technology / infrastructure */}
       <section aria-labelledby="architecture-title" className="tone-dark relative overflow-hidden bg-night py-24 text-white md:py-32">
         <div aria-hidden="true" className="bg-grid mask-radial absolute inset-0" />
         <Container className="relative">
@@ -110,13 +114,13 @@ export default function Home() {
         </Container>
       </section>
 
-      {/* 9. Startup story */}
+      {/* 10. Startup story */}
       <StartupStory />
 
-      {/* 10. Social */}
+      {/* 11. Social */}
       <SocialSection />
 
-      {/* 11. Closing CTA */}
+      {/* 12. Closing CTA */}
       <ClosingCta />
     </>
   );

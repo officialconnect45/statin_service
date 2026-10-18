@@ -75,7 +75,7 @@ export async function submitInquiry(
     console.error("[inquiry] MongoDB save error:", err);
     return res.status(500).json({
       status: "error",
-      message: "We could not save the brief. Email hello@statin.com and we will take it from there.",
+      message: "We could not save the brief. Email hello@statin.io and we will take it from there.",
     });
   }
 

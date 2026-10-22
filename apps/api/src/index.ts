@@ -40,6 +40,7 @@ app.use(
 // Testimonial saves can carry an uploaded logo (up to 500 KB, base64-encoded).
 // Parsed here first; the general parser below skips already-parsed bodies.
 app.use("/api/v1/admin/testimonials", express.json({ limit: "1mb" }));
+app.use("/api/v1/admin/outreach", express.json({ limit: "256kb" }));
 app.use(express.json({ limit: "64kb" }));
 
 // ── Routes ────────────────────────────────────────────────────────────────────

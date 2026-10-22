@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Architecture } from "@/components/home/architecture";
 import { Capabilities } from "@/components/home/capabilities";
@@ -86,7 +87,9 @@ export default function Home() {
       </section>
 
       {/* 7. Testimonials */}
-      <Testimonials />
+      <Suspense fallback={null}>
+        <Testimonials />
+      </Suspense>
 
       {/* 8. Why Statin */}
       <WhyStatin />

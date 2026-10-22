@@ -83,16 +83,11 @@ export type SaveTestimonialResponse =
   | { status: "error"; message: string; errors?: Partial<Record<TestimonialField, string>> };
 
 // Outreach mail sent from /admin/outreach (one message per recipient)
-export type OutreachRecipient = {
-  email: string;
-  /** Used for {{name}} in the template. Empty falls back to "there". */
-  name: string;
-};
-
 export type SendOutreachRequest = {
-  recipients: OutreachRecipient[];
+  /** Recipient email addresses; every one gets the same subject and body. */
+  recipients: string[];
   subject: string;
-  /** Plain text; {{name}} and {{email}} are replaced per recipient. */
+  /** Plain text, sent as-is. */
   body: string;
   /** Sends one copy to MAIL_TEST_TO instead of the recipients. */
   test?: boolean;

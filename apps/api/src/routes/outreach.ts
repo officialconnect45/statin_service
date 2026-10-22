@@ -1,10 +1,4 @@
-import type {
-  OutreachField,
-  OutreachRecipient,
-  OutreachResult,
-  SendOutreachRequest,
-  SendOutreachResponse,
-} from "@statin/types";
+import type { OutreachField, OutreachResult, SendOutreachRequest, SendOutreachResponse } from "@statin/types";
 import type { Request, Response } from "express";
 import { getMailConfig, getTransporter, textToHtml } from "../mail.js";
 
@@ -15,24 +9,10 @@ const SEND_GAP_MS = 200;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function fill(template: string, recipient: OutreachRecipient) {
-  return template
-    .replace(/\{\{\s*name\s*\}\}/gi, recipient.name || "there")
-    .replace(/\{\{\s*email\s*\}\}/gi, recipient.email);
-}
-
-function parseRecipients(value: unknown): OutreachRecipient[] {
+function parseRecipients(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
-  const seen = new Set<string>();
-  const recipients: OutreachRecipient[] = [];
-  for (const item of value) {
-    const email = String((item as OutreachRecipient)?.email ?? "").trim().toLowerCase();
-    const name = String((item as OutreachRecipient)?.name ?? "").trim().slice(0, 80);
-    if (!email || seen.has(email)) continue;
-    seen.add(email);
-    recipients.push({ email, name });
-  }
-  return recipients;
+  const emails = value.map((item) => String(item ?? "").trim().toLowerCase()).filter(Boolean);
+  return [...new Set(emails)];
 }
 
 // ── Admin (ADMIN_API_KEY): send one message per recipient ────────────────────
@@ -62,11 +42,11 @@ export async function sendOutreach(
     if (!EMAIL.test(config.testTo)) {
       return res.status(503).json({ status: "error", message: "Set MAIL_TEST_TO on the API to send tests." });
     }
-    recipients = [{ email: config.testTo, name: recipients[0]?.name ?? "" }];
+    recipients = [config.testTo];
   } else {
-    const invalid = recipients.filter((r) => !EMAIL.test(r.email) || r.email.length > 254);
+    const invalid = recipients.filter((email) => !EMAIL.test(email) || email.length > 254);
     if (recipients.length === 0) errors.recipients = "Add at least one email address.";
-    else if (invalid.length > 0) errors.recipients = `Fix invalid addresses: ${invalid.map((r) => r.email).join(", ")}`;
+    else if (invalid.length > 0) errors.recipients = `Fix invalid addresses: ${invalid.join(", ")}`;
     else if (recipients.length > MAX_RECIPIENTS) {
       errors.recipients = `Send to at most ${MAX_RECIPIENTS} addresses at a time.`;
     }
@@ -77,25 +57,25 @@ export async function sendOutreach(
   }
 
   const transporter = getTransporter();
+  const html = textToHtml(text);
   const results: OutreachResult[] = [];
 
-  for (const [index, recipient] of recipients.entries()) {
+  for (const [index, email] of recipients.entries()) {
     if (index > 0) await sleep(SEND_GAP_MS);
-    const message = fill(text, recipient);
     try {
       await transporter.sendMail({
         from: config.from,
         replyTo: config.replyTo,
-        to: recipient.name ? { name: recipient.name, address: recipient.email } : recipient.email,
-        subject: (test ? "[Test] " : "") + fill(subject, recipient),
-        text: message,
-        html: textToHtml(message),
+        to: email,
+        subject: (test ? "[Test] " : "") + subject,
+        text,
+        html,
       });
-      results.push({ email: recipient.email, status: "sent" });
+      results.push({ email, status: "sent" });
     } catch (err) {
-      console.error(`[outreach] Send to ${recipient.email} failed:`, err);
+      console.error(`[outreach] Send to ${email} failed:`, err);
       const reason = err instanceof Error ? err.message : "Send failed";
-      results.push({ email: recipient.email, status: "failed", error: reason.slice(0, 300) });
+      results.push({ email, status: "failed", error: reason.slice(0, 300) });
     }
   }
 

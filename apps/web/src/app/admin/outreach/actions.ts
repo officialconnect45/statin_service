@@ -1,6 +1,6 @@
 "use server";
 
-import type { OutreachField, OutreachRecipient, OutreachResult, SendOutreachResponse } from "@statin/types";
+import type { OutreachField, OutreachResult, SendOutreachResponse } from "@statin/types";
 import { requireAdmin } from "@/lib/admin/auth";
 import { adminApiHeaders, apiUrl } from "@/lib/api";
 
@@ -15,13 +15,12 @@ export type OutreachFormState = {
   failed?: number;
 };
 
-function readRecipients(formData: FormData): OutreachRecipient[] {
-  try {
-    const parsed = JSON.parse(String(formData.get("recipients") ?? "[]"));
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+/** The form posts the recipients textarea as-is: one email per line. */
+function readRecipients(formData: FormData): string[] {
+  return String(formData.get("recipients") ?? "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
 }
 
 export async function sendOutreach(previous: OutreachFormState, formData: FormData): Promise<OutreachFormState> {

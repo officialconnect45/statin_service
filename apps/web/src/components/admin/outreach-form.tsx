@@ -1,12 +1,18 @@
 "use client";
 
-import type { OutreachRecipient } from "@statin/types";
-import { useActionState, useMemo, useState, type ReactNode } from "react";
+import {
+  useActionState,
+  useMemo,
+  useRef,
+  useState,
+  type ClipboardEvent,
+  type ReactNode,
+} from "react";
 import { sendOutreach, type OutreachFormState } from "@/app/admin/outreach/actions";
 
 // Must match MAX_RECIPIENTS in apps/api/src/routes/outreach.ts
 const MAX_RECIPIENTS = 30;
-const EMAIL_IN_TEXT = /[^\s@<>,;"']+@[^\s@<>,;"']+\.[^\s@<>,;"']+/g;
+const EMAIL_IN_TEXT = /[^\s@<>,;:"'()[\]]+@[^\s@<>,;:"'()[\]]+\.[^\s@<>,;:"'()[\]]+/g;
 const EMAIL = /^[^\s@<>,;]+@[^\s@<>,;]+\.[^\s@<>,;]+$/;
 
 const initialState: OutreachFormState = {};
@@ -15,47 +21,40 @@ const inputClass =
   "mt-2 w-full rounded-xl border border-line bg-white px-3.5 py-3 text-sm outline-none transition-colors placeholder:text-mist/70 focus:border-cobalt focus:ring-1 focus:ring-cobalt aria-invalid:border-danger";
 
 /**
- * One recipient per line. Accepts `jane@acme.com`, `Jane Doe <jane@acme.com>`,
- * `jane@acme.com, Jane Doe`, or several bare addresses on one line.
+ * Rewrites the list as one email per line: any line holding addresses is
+ * replaced by just those addresses (names, commas, brackets dropped),
+ * duplicates and blank lines are removed, and lines with no address are kept
+ * so they can be fixed.
  */
-function parseRecipients(text: string) {
-  const recipients: OutreachRecipient[] = [];
-  const invalid: string[] = [];
+function normalizeList(text: string) {
   const seen = new Set<string>();
-  let duplicates = 0;
-
+  const lines: string[] = [];
   for (const raw of text.split(/\r?\n/)) {
     const line = raw.trim();
     if (!line) continue;
-    const emails = line.match(EMAIL_IN_TEXT) ?? [];
-    if (emails.length === 0) {
-      invalid.push(line);
-      continue;
-    }
-    const name =
-      emails.length === 1
-        ? line.replace(emails[0], "").replace(/[<>,;"'\t]/g, " ").replace(/\s+/g, " ").trim().slice(0, 80)
-        : "";
-    for (const found of emails) {
-      const email = found.toLowerCase();
-      if (!EMAIL.test(email)) {
-        invalid.push(found);
-      } else if (seen.has(email)) {
-        duplicates += 1;
-      } else {
-        seen.add(email);
-        recipients.push({ email, name });
-      }
+    const found = line.match(EMAIL_IN_TEXT);
+    for (const item of found ? found.map((email) => email.toLowerCase()) : [line]) {
+      if (seen.has(item)) continue;
+      seen.add(item);
+      lines.push(item);
     }
   }
-
-  return { recipients, invalid, duplicates };
+  return lines.join("\n");
 }
 
-function fill(template: string, recipient: OutreachRecipient | undefined) {
-  return template
-    .replace(/\{\{\s*name\s*\}\}/gi, recipient?.name || "there")
-    .replace(/\{\{\s*email\s*\}\}/gi, recipient?.email ?? "jane@example.com");
+type Line = { text: string; status: "ok" | "invalid" | "duplicate" | "blank" };
+
+function checkLines(text: string) {
+  const seen = new Set<string>();
+  const lines: Line[] = text.split(/\r?\n/).map((raw) => {
+    const value = raw.trim().toLowerCase();
+    if (!value) return { text: raw, status: "blank" };
+    if (!EMAIL.test(value)) return { text: raw, status: "invalid" };
+    if (seen.has(value)) return { text: raw, status: "duplicate" };
+    seen.add(value);
+    return { text: raw, status: "ok" };
+  });
+  return { lines, recipients: [...seen] };
 }
 
 export function OutreachForm() {
@@ -68,37 +67,85 @@ export function OutreachForm() {
   const [intent, setIntent] = useState<"test" | "send">("send");
   const confirming = confirmRun === (state.run ?? 0);
   const setConfirming = (open: boolean) => setConfirmRun(open ? (state.run ?? 0) : null);
+  const gutter = useRef<HTMLDivElement>(null);
 
-  const { recipients, invalid, duplicates } = useMemo(() => parseRecipients(list), [list]);
+  const { lines, recipients } = useMemo(() => checkLines(list), [list]);
+  const invalid = lines.filter((line) => line.status === "invalid").length;
+  const duplicates = lines.filter((line) => line.status === "duplicate").length;
   const errors = state.errors ?? {};
   const tooMany = recipients.length > MAX_RECIPIENTS;
-  const canSend = recipients.length > 0 && invalid.length === 0 && !tooMany && subject.trim() !== "" && body.trim().length >= 10;
+  const canSend =
+    recipients.length > 0 && invalid === 0 && duplicates === 0 && !tooMany && subject.trim() !== "" && body.trim().length >= 10;
+
+  function updateList(value: string) {
+    setList(value);
+    setConfirming(false);
+  }
+
+  // Pasted text (a column from a sheet, a comma list, an email signature...)
+  // lands as one address per line.
+  function onPaste(event: ClipboardEvent<HTMLTextAreaElement>) {
+    const pasted = event.clipboardData.getData("text");
+    const emails = pasted.match(EMAIL_IN_TEXT);
+    if (!emails) return;
+    event.preventDefault();
+    const field = event.currentTarget;
+    const before = list.slice(0, field.selectionStart);
+    const after = list.slice(field.selectionEnd);
+    updateList(normalizeList(`${before}\n${emails.join("\n")}\n${after}`));
+  }
 
   return (
     <form action={action} className="space-y-8">
-      <input type="hidden" name="recipients" value={JSON.stringify(recipients)} />
-
       <div className="grid gap-8 lg:grid-cols-12">
         {/* ── Left: recipients ─────────────────────────────────────────── */}
         <div className="lg:col-span-4">
-          <label className="block">
-            <span className="text-sm font-medium">Recipients</span>
-            <textarea
-              value={list}
-              onChange={(event) => {
-                setList(event.target.value);
-                setConfirming(false);
-              }}
-              rows={18}
-              spellCheck={false}
-              placeholder={"jane@acme.com\nRavi Kumar <ravi@startup.in>\nalex@company.com, Alex"}
-              aria-invalid={invalid.length > 0 || errors.recipients ? true : undefined}
-              className={`${inputClass} resize-y font-mono leading-6`}
-            />
+          <label htmlFor="outreach-recipients" className="text-sm font-medium">
+            Recipient emails
           </label>
+          <div
+            className={`mt-2 flex overflow-hidden rounded-xl border bg-white transition-colors focus-within:border-cobalt focus-within:ring-1 focus-within:ring-cobalt ${
+              invalid > 0 || duplicates > 0 || errors.recipients ? "border-danger" : "border-line"
+            }`}
+          >
+            <div
+              ref={gutter}
+              aria-hidden="true"
+              className="h-[434px] shrink-0 overflow-hidden border-r border-line bg-paper py-3 text-right font-mono text-xs leading-6 text-mist select-none"
+            >
+              {lines.map((line, index) => (
+                <div
+                  key={index}
+                  className={`px-2.5 ${line.status === "invalid" || line.status === "duplicate" ? "bg-danger/10 text-danger" : ""}`}
+                >
+                  {index + 1}
+                </div>
+              ))}
+            </div>
+            <textarea
+              id="outreach-recipients"
+              name="recipients"
+              value={list}
+              onChange={(event) => updateList(event.target.value)}
+              onPaste={onPaste}
+              onBlur={() => {
+                const cleaned = normalizeList(list);
+                if (cleaned !== list) updateList(cleaned);
+              }}
+              onScroll={(event) => {
+                if (gutter.current) gutter.current.scrollTop = event.currentTarget.scrollTop;
+              }}
+              wrap="off"
+              spellCheck={false}
+              autoCapitalize="off"
+              autoCorrect="off"
+              placeholder={"jane@acme.com\nravi@startup.in\nalex@company.com"}
+              aria-invalid={invalid > 0 || duplicates > 0 || errors.recipients ? true : undefined}
+              className="h-[434px] min-w-0 flex-1 resize-none overflow-auto bg-transparent px-3 py-3 font-mono text-sm leading-6 whitespace-pre outline-none placeholder:text-mist/70"
+            />
+          </div>
           <p className="mt-2 text-xs text-mist">
-            One per line. Add a name as <code className="font-mono">Name &lt;email&gt;</code> or{" "}
-            <code className="font-mono">email, Name</code> to use {"{{name}}"}.
+            One email per line. Paste a list from anywhere; it is split into lines automatically.
           </p>
 
           <div className="mt-4 rounded-2xl border border-line bg-white p-4 text-sm">
@@ -106,23 +153,19 @@ export function OutreachForm() {
               <span className="font-medium">
                 {recipients.length} recipient{recipients.length === 1 ? "" : "s"}
               </span>
-              <span className={`font-mono text-xs ${tooMany ? "text-danger" : "text-mist"}`}>
-                max {MAX_RECIPIENTS}
-              </span>
+              <span className={`font-mono text-xs ${tooMany ? "text-danger" : "text-mist"}`}>max {MAX_RECIPIENTS}</span>
             </p>
-            {duplicates > 0 ? <p className="mt-1 text-xs text-mist">{duplicates} duplicate(s) skipped.</p> : null}
-            {invalid.length > 0 ? (
-              <div className="mt-2 text-xs text-danger">
-                <p>Fix or remove these lines:</p>
-                <ul className="mt-1 list-inside list-disc font-mono">
-                  {invalid.slice(0, 8).map((line, index) => (
-                    <li key={index} className="truncate">
-                      {line}
-                    </li>
-                  ))}
-                  {invalid.length > 8 ? <li>and {invalid.length - 8} more</li> : null}
-                </ul>
-              </div>
+            {invalid > 0 ? (
+              <p className="mt-2 text-xs text-danger">
+                Fix the red line{invalid === 1 ? "" : "s"} (
+                {lines.flatMap((line, index) => (line.status === "invalid" ? [index + 1] : [])).join(", ")}): not a valid
+                email.
+              </p>
+            ) : null}
+            {duplicates > 0 ? (
+              <p className="mt-2 text-xs text-danger">
+                {duplicates} duplicate{duplicates === 1 ? "" : "s"}. Click outside the list to remove.
+              </p>
             ) : null}
             {tooMany ? (
               <p className="mt-2 text-xs text-danger">Split the list: send at most {MAX_RECIPIENTS} at a time.</p>
@@ -139,7 +182,7 @@ export function OutreachForm() {
               value={subject}
               onChange={(event) => setSubject(event.target.value)}
               maxLength={200}
-              placeholder="Quick idea for {{name}}'s team"
+              placeholder="Quick idea for your team"
               aria-invalid={errors.subject ? true : undefined}
               className={inputClass}
             />
@@ -147,7 +190,7 @@ export function OutreachForm() {
 
           <Field
             label="Message"
-            hint="Plain text. Blank lines become paragraphs, links become clickable. {{name}} and {{email}} are filled per recipient."
+            hint="Plain text, sent exactly as written to every recipient. Blank lines become paragraphs, links become clickable."
             error={errors.body}
           >
             <textarea
@@ -156,21 +199,19 @@ export function OutreachForm() {
               onChange={(event) => setBody(event.target.value)}
               rows={14}
               maxLength={20_000}
-              placeholder={"Hi {{name}},\n\n...\n\nBest,\nTeam Statin\nhttps://statin.io"}
+              placeholder={"Hi,\n\n...\n\nBest,\nTeam Statin\nhttps://statin.io"}
               aria-invalid={errors.body ? true : undefined}
               className={`${inputClass} resize-y leading-6`}
             />
           </Field>
 
           <div className="rounded-3xl border border-line bg-paper-deep p-5">
-            <p className="t-eyebrow text-mist">
-              Preview{recipients[0] ? ` · ${recipients[0].name || recipients[0].email}` : ""}
-            </p>
+            <p className="t-eyebrow text-mist">Preview</p>
             <div className="mt-4 rounded-2xl border border-line bg-white p-5">
               <p className="text-xs text-mist">Subject</p>
-              <p className="font-medium">{fill(subject, recipients[0]) || "—"}</p>
+              <p className="font-medium">{subject || "—"}</p>
               <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-ink-soft">
-                {fill(body, recipients[0]) || "Your message appears here."}
+                {body || "Your message appears here."}
               </p>
             </div>
           </div>
@@ -239,10 +280,13 @@ export function OutreachForm() {
             {state.sent} sent
             {state.failed ? <span className="text-danger"> · {state.failed} failed</span> : null}
           </p>
-          <ul className="mt-3 divide-y divide-line text-sm">
-            {state.results.map((result) => (
+          <ol className="mt-3 divide-y divide-line text-sm">
+            {state.results.map((result, index) => (
               <li key={result.email} className="flex flex-wrap items-baseline justify-between gap-2 py-2">
-                <span className="font-mono">{result.email}</span>
+                <span className="font-mono">
+                  <span className="mr-3 inline-block w-6 text-right text-mist">{index + 1}</span>
+                  {result.email}
+                </span>
                 {result.status === "sent" ? (
                   <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">Sent</span>
                 ) : (
@@ -250,7 +294,7 @@ export function OutreachForm() {
                 )}
               </li>
             ))}
-          </ul>
+          </ol>
         </div>
       ) : null}
     </form>

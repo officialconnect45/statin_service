@@ -5,6 +5,7 @@ import { Logo } from "@/components/ui/logo";
 const sections = [
   { id: "leads", label: "Leads", href: "/admin/leads" },
   { id: "testimonials", label: "Testimonials", href: "/admin/testimonials" },
+  { id: "outreach", label: "Outreach", href: "/admin/outreach" },
 ] as const;
 
 export function AdminBar({

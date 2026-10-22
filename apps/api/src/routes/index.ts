@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { listInquiries, requireAdminKey } from "./admin.js";
 import { submitInquiry } from "./inquiry.js";
+import { sendOutreach } from "./outreach.js";
 import {
   createTestimonial,
   deleteTestimonial,
@@ -28,3 +29,6 @@ router.get("/admin/testimonials", requireAdminKey, listAllTestimonials);
 router.post("/admin/testimonials", requireAdminKey, createTestimonial);
 router.put("/admin/testimonials/:id", requireAdminKey, updateTestimonial);
 router.delete("/admin/testimonials/:id", requireAdminKey, deleteTestimonial);
+
+// Outreach mail (admin only): one SMTP message per recipient
+router.post("/admin/outreach", requireAdminKey, sendOutreach);

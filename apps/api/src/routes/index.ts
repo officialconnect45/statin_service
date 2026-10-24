@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { listInquiries, requireAdminKey } from "./admin.js";
+import { listSentEmails } from "./emails.js";
 import { submitInquiry } from "./inquiry.js";
 import { sendOutreach } from "./outreach.js";
 import {
@@ -32,3 +33,6 @@ router.delete("/admin/testimonials/:id", requireAdminKey, deleteTestimonial);
 
 // Outreach mail (admin only): one SMTP message per recipient
 router.post("/admin/outreach", requireAdminKey, sendOutreach);
+
+// Sent mail history (admin only): every stored email, newest first
+router.get("/admin/emails", requireAdminKey, listSentEmails);

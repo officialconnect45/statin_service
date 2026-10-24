@@ -9,6 +9,7 @@ import {
   type ClipboardEvent,
   type ReactNode,
 } from "react";
+import Link from "next/link";
 import { sendOutreach, type OutreachFormState } from "@/app/admin/outreach/actions";
 
 // Must match MAX_RECIPIENTS in apps/api/src/routes/outreach.ts
@@ -364,10 +365,15 @@ export function OutreachForm() {
 
       {state.results ? (
         <div role="status" className="rounded-3xl border border-line bg-white p-5">
-          <p className="font-medium">
-            {state.test ? "Test: " : ""}
-            {state.sent} sent
-            {state.failed ? <span className="text-danger"> · {state.failed} failed</span> : null}
+          <p className="flex flex-wrap items-baseline justify-between gap-2 font-medium">
+            <span>
+              {state.test ? "Test: " : ""}
+              {state.sent} sent
+              {state.failed ? <span className="text-danger"> · {state.failed} failed</span> : null}
+            </span>
+            <Link href="/admin/emails" className="text-sm font-normal text-cobalt hover:underline">
+              View in Sent mail
+            </Link>
           </p>
           <ol className="mt-3 divide-y divide-line text-sm">
             {state.results.map((result, index) => (

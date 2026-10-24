@@ -106,3 +106,31 @@ export type OutreachField = "recipients" | "subject" | "body";
 export type SendOutreachResponse =
   | { status: "success"; batchId: string; results: OutreachResult[]; sent: number; failed: number }
   | { status: "error"; message: string; errors?: Partial<Record<OutreachField, string>> };
+
+// Sent mail history (/admin/emails): every stored send, newest first.
+// A bulk send is one record with many recipients; a single email is a record with one.
+export type SentEmailKind = "outreach" | "test" | "system";
+
+export type SentEmailRecipient = {
+  email: string;
+  status: "pending" | "sent" | "failed";
+  error?: string;
+  /** ISO time the SMTP relay accepted it. */
+  sentAt?: string;
+};
+
+export type SentEmailRecord = {
+  id: string;
+  at: string;
+  kind: SentEmailKind;
+  subject: string;
+  body: string;
+  from: string;
+  sentBy: string;
+  sent: number;
+  failed: number;
+  pending: number;
+  recipients: SentEmailRecipient[];
+};
+
+export type ListSentEmailsResponse = { emails: SentEmailRecord[] };

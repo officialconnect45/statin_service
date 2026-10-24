@@ -6,6 +6,7 @@ const sections = [
   { id: "leads", label: "Leads", href: "/admin/leads" },
   { id: "testimonials", label: "Testimonials", href: "/admin/testimonials" },
   { id: "outreach", label: "Outreach", href: "/admin/outreach" },
+  { id: "emails", label: "Sent mail", href: "/admin/emails" },
 ] as const;
 
 export function AdminBar({

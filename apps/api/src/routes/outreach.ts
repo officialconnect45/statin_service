@@ -1,4 +1,10 @@
-import type { OutreachField, OutreachResult, SendOutreachRequest, SendOutreachResponse } from "@statin/types";
+import type {
+  OutreachField,
+  OutreachResult,
+  OutreachSenderResponse,
+  SendOutreachRequest,
+  SendOutreachResponse,
+} from "@statin/types";
 import type { Request, Response } from "express";
 import { EmailBatch } from "../db/models/email.model.js";
 import { deliverEmail, getMailConfig, recordEmails } from "../mail.js";
@@ -16,6 +22,18 @@ function parseRecipients(value: unknown): string[] {
   return [...new Set(emails)];
 }
 
+// ── Admin (ADMIN_API_KEY): the outreach sender, shown on the outreach page ──
+export function getOutreachSender(_req: Request, res: Response<OutreachSenderResponse>) {
+  const config = getMailConfig("outreach");
+  res.set("Cache-Control", "no-store");
+  if (!config) return res.json({ configured: false });
+  return res.json({
+    configured: true,
+    from: `${config.from.name} <${config.from.address}>`,
+    replyTo: config.replyTo,
+  });
+}
+
 // ── Admin (ADMIN_API_KEY): send one message per recipient ────────────────────
 // The batch and every message are stored (email_batches / email_messages)
 // before anything is sent; each message is then updated with its outcome.
@@ -23,11 +41,12 @@ export async function sendOutreach(
   req: Request<object, SendOutreachResponse, Partial<SendOutreachRequest>>,
   res: Response<SendOutreachResponse>,
 ) {
-  const config = getMailConfig();
+  // Outreach always goes out from its own sender (hello@statin.eu), never the main address.
+  const config = getMailConfig("outreach");
   if (!config) {
     return res.status(503).json({
       status: "error",
-      message: "Mail is not configured. Set MAIL_ENABLED=true and the SMTP_* variables on the API.",
+      message: "Outreach mail is not configured. Set MAIL_ENABLED=true, the SMTP_* variables and OUTREACH_FROM_EMAIL on the API.",
     });
   }
 

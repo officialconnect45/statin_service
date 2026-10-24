@@ -103,6 +103,11 @@ export type OutreachResult = {
 
 export type OutreachField = "recipients" | "subject" | "body";
 
+/** Who outreach mail goes out as; `configured: false` when the API cannot send outreach. */
+export type OutreachSenderResponse =
+  | { configured: true; from: string; replyTo: string }
+  | { configured: false };
+
 export type SendOutreachResponse =
   | { status: "success"; batchId: string; results: OutreachResult[]; sent: number; failed: number }
   | { status: "error"; message: string; errors?: Partial<Record<OutreachField, string>> };

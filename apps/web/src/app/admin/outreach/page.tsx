@@ -25,7 +25,7 @@ async function Outreach() {
         <p className="t-eyebrow text-cobalt">Mail</p>
         <h1 className="mt-3 text-4xl font-medium tracking-tight md:text-5xl">Outreach</h1>
         <p className="mt-3 max-w-2xl text-sm text-mist">
-          Paste recipients on the left and the message on the right. Each person gets their own email from
+          Paste or upload recipients on the left and write the message on the right. Each person gets their own email from
           hello@statin.io; nobody sees the other addresses. Send a test to yourself first.
         </p>
         <div className="mt-10">

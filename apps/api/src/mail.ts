@@ -1,4 +1,6 @@
 import nodemailer, { type Transporter } from "nodemailer";
+import type { Types } from "mongoose";
+import { EmailMessage, type EmailKind, type IEmailMessage } from "./db/models/email.model.js";
 
 /**
  * SMTP settings come from the environment:
@@ -65,4 +67,72 @@ export function textToHtml(text: string) {
     .map((block) => `<p style="margin:0 0 16px">${block}</p>`)
     .join("");
   return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#111">${paragraphs}</div>`;
+}
+
+// ── Sending (always through here, so every email is stored) ──────────────────
+
+export type EmailInput = {
+  to: string;
+  subject: string;
+  /** Plain text body; the HTML part is generated from it. */
+  text: string;
+  kind: EmailKind;
+  batch?: Types.ObjectId;
+};
+
+export type DeliveryResult = { status: "sent"; messageId: string } | { status: "failed"; error: string };
+
+function formatFrom(config: MailConfig) {
+  return `${config.from.name} <${config.from.address}>`;
+}
+
+/** Stores emails as "pending" before they are sent. */
+export async function recordEmails(config: MailConfig, inputs: EmailInput[]) {
+  return EmailMessage.insertMany(
+    inputs.map((input) => ({
+      ...input,
+      from: formatFrom(config),
+      replyTo: config.replyTo,
+      status: "pending",
+    })),
+  );
+}
+
+/** Sends a stored email over SMTP and saves the outcome on its record. */
+export async function deliverEmail(config: MailConfig, message: IEmailMessage): Promise<DeliveryResult> {
+  let result: DeliveryResult;
+  try {
+    const info = await getTransporter().sendMail({
+      from: config.from,
+      replyTo: config.replyTo,
+      to: message.to,
+      subject: message.subject,
+      text: message.text,
+      html: textToHtml(message.text),
+    });
+    result = { status: "sent", messageId: String(info.messageId ?? "") };
+  } catch (err) {
+    console.error(`[mail] Send to ${message.to} failed:`, err);
+    const reason = err instanceof Error ? err.message : "Send failed";
+    result = { status: "failed", error: reason.slice(0, 300) };
+  }
+
+  try {
+    await EmailMessage.updateOne(
+      { _id: message._id },
+      result.status === "sent"
+        ? { status: "sent", messageId: result.messageId, sentAt: new Date() }
+        : { status: "failed", error: result.error },
+    );
+  } catch (err) {
+    // The email itself went out (or failed) already; only the log update is lost.
+    console.error(`[mail] Could not save the outcome for ${message.to}:`, err);
+  }
+  return result;
+}
+
+/** Stores and sends one email. Nothing is sent if it cannot be stored. */
+export async function sendEmail(config: MailConfig, input: EmailInput) {
+  const [message] = await recordEmails(config, [input]);
+  return deliverEmail(config, message);
 }

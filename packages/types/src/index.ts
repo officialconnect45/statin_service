@@ -91,6 +91,8 @@ export type SendOutreachRequest = {
   body: string;
   /** Sends one copy to MAIL_TEST_TO instead of the recipients. */
   test?: boolean;
+  /** Admin username, stored on the batch record. */
+  sentBy?: string;
 };
 
 export type OutreachResult = {
@@ -102,5 +104,5 @@ export type OutreachResult = {
 export type OutreachField = "recipients" | "subject" | "body";
 
 export type SendOutreachResponse =
-  | { status: "success"; results: OutreachResult[]; sent: number; failed: number }
+  | { status: "success"; batchId: string; results: OutreachResult[]; sent: number; failed: number }
   | { status: "error"; message: string; errors?: Partial<Record<OutreachField, string>> };

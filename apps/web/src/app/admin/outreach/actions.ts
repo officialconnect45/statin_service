@@ -24,7 +24,7 @@ function readRecipients(formData: FormData): string[] {
 }
 
 export async function sendOutreach(previous: OutreachFormState, formData: FormData): Promise<OutreachFormState> {
-  await requireAdmin();
+  const { username } = await requireAdmin();
 
   const test = formData.get("intent") === "test";
   const run = (previous.run ?? 0) + 1;
@@ -39,9 +39,10 @@ export async function sendOutreach(previous: OutreachFormState, formData: FormDa
         subject: String(formData.get("subject") ?? ""),
         body: String(formData.get("body") ?? ""),
         test,
+        sentBy: username,
       }),
       cache: "no-store",
-      signal: AbortSignal.timeout(120_000),
+      signal: AbortSignal.timeout(240_000),
     });
   } catch (error) {
     console.error("[outreach] Could not reach the API:", error);

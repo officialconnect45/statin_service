@@ -1,8 +1,15 @@
-import type { OutreachField, OutreachResult, SendOutreachRequest, SendOutreachResponse } from "@statin/types";
+import type {
+  OutreachField,
+  OutreachResult,
+  OutreachSenderResponse,
+  SendOutreachRequest,
+  SendOutreachResponse,
+} from "@statin/types";
 import type { Request, Response } from "express";
-import { getMailConfig, getTransporter, textToHtml } from "../mail.js";
+import { EmailBatch } from "../db/models/email.model.js";
+import { deliverEmail, getMailConfig, recordEmails } from "../mail.js";
 
-export const MAX_RECIPIENTS = 30;
+export const MAX_RECIPIENTS = 50;
 const EMAIL = /^[^\s@<>,;]+@[^\s@<>,;]+\.[^\s@<>,;]+$/;
 // Pause between messages so the SMTP relay doesn't throttle the batch.
 const SEND_GAP_MS = 200;
@@ -15,16 +22,31 @@ function parseRecipients(value: unknown): string[] {
   return [...new Set(emails)];
 }
 
+// ── Admin (ADMIN_API_KEY): the outreach sender, shown on the outreach page ──
+export function getOutreachSender(_req: Request, res: Response<OutreachSenderResponse>) {
+  const config = getMailConfig("outreach");
+  res.set("Cache-Control", "no-store");
+  if (!config) return res.json({ configured: false });
+  return res.json({
+    configured: true,
+    from: `${config.from.name} <${config.from.address}>`,
+    replyTo: config.replyTo,
+  });
+}
+
 // ── Admin (ADMIN_API_KEY): send one message per recipient ────────────────────
+// The batch and every message are stored (email_batches / email_messages)
+// before anything is sent; each message is then updated with its outcome.
 export async function sendOutreach(
   req: Request<object, SendOutreachResponse, Partial<SendOutreachRequest>>,
   res: Response<SendOutreachResponse>,
 ) {
-  const config = getMailConfig();
+  // Outreach always goes out from its own sender (hello@statin.eu), never the main address.
+  const config = getMailConfig("outreach");
   if (!config) {
     return res.status(503).json({
       status: "error",
-      message: "Mail is not configured. Set MAIL_ENABLED=true and the SMTP_* variables on the API.",
+      message: "Outreach mail is not configured. Set MAIL_ENABLED=true, the SMTP_* variables and OUTREACH_FROM_EMAIL on the API.",
     });
   }
 
@@ -32,6 +54,7 @@ export async function sendOutreach(
   const subject = String(body.subject ?? "").trim();
   const text = String(body.body ?? "").replace(/\r\n/g, "\n").trim();
   const test = body.test === true;
+  const sentBy = String(body.sentBy ?? "").trim().slice(0, 80);
   let recipients = parseRecipients(body.recipients);
 
   const errors: Partial<Record<OutreachField, string>> = {};
@@ -56,30 +79,48 @@ export async function sendOutreach(
     return res.status(422).json({ status: "error", message: "Check the highlighted fields.", errors });
   }
 
-  const transporter = getTransporter();
-  const html = textToHtml(text);
-  const results: OutreachResult[] = [];
+  const kind = test ? "test" : "outreach";
+  const fullSubject = (test ? "[Test] " : "") + subject;
 
-  for (const [index, email] of recipients.entries()) {
+  let stored;
+  try {
+    const batch = await EmailBatch.create({
+      kind,
+      subject: fullSubject,
+      text,
+      from: `${config.from.name} <${config.from.address}>`,
+      replyTo: config.replyTo,
+      sentBy,
+      total: recipients.length,
+    });
+    const messages = await recordEmails(
+      config,
+      recipients.map((to) => ({ to, subject: fullSubject, text, kind, batch: batch._id })),
+    );
+    stored = { batch, messages };
+  } catch (err) {
+    console.error("[outreach] Could not store the batch:", err);
+    return res.status(500).json({ status: "error", message: "Could not save the emails to the database. Nothing was sent." });
+  }
+
+  const { batch, messages } = stored;
+  const results: OutreachResult[] = [];
+  for (const [index, message] of messages.entries()) {
     if (index > 0) await sleep(SEND_GAP_MS);
-    try {
-      await transporter.sendMail({
-        from: config.from,
-        replyTo: config.replyTo,
-        to: email,
-        subject: (test ? "[Test] " : "") + subject,
-        text,
-        html,
-      });
-      results.push({ email, status: "sent" });
-    } catch (err) {
-      console.error(`[outreach] Send to ${email} failed:`, err);
-      const reason = err instanceof Error ? err.message : "Send failed";
-      results.push({ email, status: "failed", error: reason.slice(0, 300) });
-    }
+    const result = await deliverEmail(config, message);
+    results.push(
+      result.status === "sent"
+        ? { email: message.to, status: "sent" }
+        : { email: message.to, status: "failed", error: result.error },
+    );
   }
 
   const sent = results.filter((r) => r.status === "sent").length;
-  console.log(`[outreach] ${test ? "Test" : "Batch"}: ${sent}/${results.length} sent`);
-  return res.json({ status: "success", results, sent, failed: results.length - sent });
+  const failed = results.length - sent;
+  await EmailBatch.updateOne({ _id: batch._id }, { sent, failed, status: "done", finishedAt: new Date() }).catch((err) =>
+    console.error("[outreach] Could not update the batch totals:", err),
+  );
+
+  console.log(`[outreach] ${test ? "Test" : "Batch"} ${batch.id}: ${sent}/${results.length} sent`);
+  return res.json({ status: "success", batchId: batch.id, results, sent, failed });
 }

@@ -5,15 +5,34 @@ import {
   useMemo,
   useRef,
   useState,
+  type ChangeEvent,
   type ClipboardEvent,
   type ReactNode,
 } from "react";
+import Link from "next/link";
 import { sendOutreach, type OutreachFormState } from "@/app/admin/outreach/actions";
 
 // Must match MAX_RECIPIENTS in apps/api/src/routes/outreach.ts
-const MAX_RECIPIENTS = 30;
+const MAX_RECIPIENTS = 50;
 const EMAIL_IN_TEXT = /[^\s@<>,;:"'()[\]]+@[^\s@<>,;:"'()[\]]+\.[^\s@<>,;:"'()[\]]+/g;
 const EMAIL = /^[^\s@<>,;]+@[^\s@<>,;]+\.[^\s@<>,;]+$/;
+
+const UPLOAD_ACCEPT = ".xlsx,.csv,.txt";
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+
+/** Every cell of every sheet (xlsx) or the whole text (csv/txt), as one string to search for emails. */
+async function readUpload(file: File) {
+  const name = file.name.toLowerCase();
+  if (name.endsWith(".xlsx")) {
+    const { default: readXlsxFile } = await import("read-excel-file/browser");
+    const sheets = await readXlsxFile(file);
+    return sheets
+      .flatMap((sheet) => sheet.data.flatMap((row) => row.map((cell) => (cell == null ? "" : String(cell)))))
+      .join("\n");
+  }
+  if (name.endsWith(".csv") || name.endsWith(".txt")) return file.text();
+  throw new Error(name.endsWith(".xls") ? "Old .xls files are not supported. Save it as .xlsx or .csv." : "Upload an .xlsx, .csv or .txt file.");
+}
 
 const initialState: OutreachFormState = {};
 
@@ -68,6 +87,9 @@ export function OutreachForm() {
   const confirming = confirmRun === (state.run ?? 0);
   const setConfirming = (open: boolean) => setConfirmRun(open ? (state.run ?? 0) : null);
   const gutter = useRef<HTMLDivElement>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [upload, setUpload] = useState<{ tone: "ok" | "error"; text: string } | null>(null);
+  const [reading, setReading] = useState(false);
 
   const { lines, recipients } = useMemo(() => checkLines(list), [list]);
   const invalid = lines.filter((line) => line.status === "invalid").length;
@@ -95,14 +117,76 @@ export function OutreachForm() {
     updateList(normalizeList(`${before}\n${emails.join("\n")}\n${after}`));
   }
 
+  // Pulls every email address out of an uploaded sheet and adds it to the list.
+  async function onUpload(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = ""; // choosing the same file again should re-read it
+    if (!file) return;
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setUpload({ tone: "error", text: "That file is over 5 MB." });
+      return;
+    }
+
+    setReading(true);
+    try {
+      const found = [...new Set((await readUpload(file)).match(EMAIL_IN_TEXT)?.map((email) => email.toLowerCase()) ?? [])];
+      if (found.length === 0) {
+        setUpload({ tone: "error", text: `No email addresses found in ${file.name}.` });
+        return;
+      }
+      const before = checkLines(list).recipients.length;
+      const merged = normalizeList(`${list}\n${found.join("\n")}`);
+      const added = checkLines(merged).recipients.length - before;
+      updateList(merged);
+      const skipped = found.length - added;
+      setUpload({
+        tone: "ok",
+        text: `Added ${added} email${added === 1 ? "" : "s"} from ${file.name}${skipped > 0 ? ` (${skipped} already in the list)` : ""}.`,
+      });
+    } catch (error) {
+      console.error("[outreach] Could not read upload:", error);
+      setUpload({
+        tone: "error",
+        text: error instanceof Error && /supported|Upload an/.test(error.message) ? error.message : `Could not read ${file.name}.`,
+      });
+    } finally {
+      setReading(false);
+    }
+  }
+
   return (
     <form action={action} className="space-y-8">
       <div className="grid gap-8 lg:grid-cols-12">
         {/* ── Left: recipients ─────────────────────────────────────────── */}
         <div className="lg:col-span-4">
-          <label htmlFor="outreach-recipients" className="text-sm font-medium">
-            Recipient emails
-          </label>
+          <div className="flex items-center justify-between gap-3">
+            <label htmlFor="outreach-recipients" className="text-sm font-medium">
+              Recipient emails
+            </label>
+            <div className="flex items-center gap-2">
+              {list.trim() ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    updateList("");
+                    setUpload(null);
+                  }}
+                  className="text-xs text-mist hover:text-ink"
+                >
+                  Clear
+                </button>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => fileInput.current?.click()}
+                disabled={reading || pending}
+                className="inline-flex h-8 items-center rounded-full border border-ink/15 px-3.5 text-xs font-medium transition-colors hover:border-ink disabled:cursor-wait disabled:opacity-60"
+              >
+                {reading ? "Reading…" : "Upload Excel / CSV"}
+              </button>
+              <input ref={fileInput} type="file" accept={UPLOAD_ACCEPT} onChange={onUpload} className="hidden" />
+            </div>
+          </div>
           <div
             className={`mt-2 flex overflow-hidden rounded-xl border bg-white transition-colors focus-within:border-cobalt focus-within:ring-1 focus-within:ring-cobalt ${
               invalid > 0 || duplicates > 0 || errors.recipients ? "border-danger" : "border-line"
@@ -145,8 +229,14 @@ export function OutreachForm() {
             />
           </div>
           <p className="mt-2 text-xs text-mist">
-            One email per line. Paste a list from anywhere; it is split into lines automatically.
+            One email per line. Paste a list from anywhere, or upload an .xlsx / .csv file: every email address in
+            it is picked up, from any column or sheet.
           </p>
+          {upload ? (
+            <p role="status" className={`mt-2 text-xs ${upload.tone === "error" ? "text-danger" : "text-emerald-700"}`}>
+              {upload.text}
+            </p>
+          ) : null}
 
           <div className="mt-4 rounded-2xl border border-line bg-white p-4 text-sm">
             <p className="flex items-baseline justify-between">
@@ -275,10 +365,15 @@ export function OutreachForm() {
 
       {state.results ? (
         <div role="status" className="rounded-3xl border border-line bg-white p-5">
-          <p className="font-medium">
-            {state.test ? "Test: " : ""}
-            {state.sent} sent
-            {state.failed ? <span className="text-danger"> · {state.failed} failed</span> : null}
+          <p className="flex flex-wrap items-baseline justify-between gap-2 font-medium">
+            <span>
+              {state.test ? "Test: " : ""}
+              {state.sent} sent
+              {state.failed ? <span className="text-danger"> · {state.failed} failed</span> : null}
+            </span>
+            <Link href="/admin/emails" className="text-sm font-normal text-cobalt hover:underline">
+              View in Sent mail
+            </Link>
           </p>
           <ol className="mt-3 divide-y divide-line text-sm">
             {state.results.map((result, index) => (

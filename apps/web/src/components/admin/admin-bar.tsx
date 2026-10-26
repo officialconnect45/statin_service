@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { logout } from "@/app/admin/actions";
+import { ProfileMenu } from "@/components/admin/profile-menu";
 import { Logo } from "@/components/ui/logo";
 
 const sections = [
@@ -39,19 +39,7 @@ export function AdminBar({
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="hidden text-sm text-fog md:inline">
-            Signed in as <span className="text-white">{username}</span>
-          </span>
-          <form action={logout}>
-            <button
-              type="submit"
-              className="inline-flex h-9 items-center rounded-full border border-white/20 px-4 text-sm transition-colors hover:border-white hover:bg-white hover:text-ink"
-            >
-              Sign out
-            </button>
-          </form>
-        </div>
+        <ProfileMenu username={username} />
       </div>
     </header>
   );

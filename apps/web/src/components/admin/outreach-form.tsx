@@ -91,6 +91,23 @@ export function OutreachForm() {
   const [upload, setUpload] = useState<{ tone: "ok" | "error"; text: string } | null>(null);
   const [reading, setReading] = useState(false);
 
+  // After a real send, empty the form for the next batch. If some addresses
+  // failed, only those stay in the list (with the same subject and message) so
+  // they can be retried. Test sends leave the form as it is.
+  const [handledRun, setHandledRun] = useState(state.run);
+  if (state.run !== handledRun) {
+    setHandledRun(state.run);
+    if (state.results && !state.test) {
+      const failed = state.results.filter((result) => result.status === "failed").map((result) => result.email);
+      setList(failed.join("\n"));
+      setUpload(null);
+      if (failed.length === 0) {
+        setSubject("");
+        setBody("");
+      }
+    }
+  }
+
   const { lines, recipients } = useMemo(() => checkLines(list), [list]);
   const invalid = lines.filter((line) => line.status === "invalid").length;
   const duplicates = lines.filter((line) => line.status === "duplicate").length;
@@ -375,6 +392,13 @@ export function OutreachForm() {
               View in Sent mail
             </Link>
           </p>
+          {!state.test ? (
+            <p className="mt-1 text-xs text-mist">
+              {state.failed
+                ? "The failed addresses are back in the list with the same message, ready to retry."
+                : "The form is cleared for the next batch."}
+            </p>
+          ) : null}
           <ol className="mt-3 divide-y divide-line text-sm">
             {state.results.map((result, index) => (
               <li key={result.email} className="flex flex-wrap items-baseline justify-between gap-2 py-2">

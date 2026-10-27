@@ -40,6 +40,23 @@ export function Footer() {
               {site.address.street}, {site.address.city}, {site.address.country}
             </address>
             <p className="mt-2 text-sm text-fog">Remote engagements</p>
+            <a
+              href="https://www.hostinger.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cursor="Open"
+              aria-label="Statin is an official Hostinger Partner (opens in a new tab)"
+              className="mt-8 inline-block opacity-90 transition-opacity hover:opacity-100"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/brand/hostinger-partner-badge.svg"
+                alt="Official Hostinger Partner"
+                width={160}
+                height={60}
+                className="h-[60px] w-[160px]"
+              />
+            </a>
           </div>
 
           <FooterColumn title="Solutions" className="md:col-span-3">

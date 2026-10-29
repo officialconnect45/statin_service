@@ -12,6 +12,7 @@ import {
 import type { MailTemplateRecord } from "@statin/types";
 import Link from "next/link";
 import { sendOutreach, type OutreachFormState } from "@/app/admin/outreach/actions";
+import { OutreachTemplatePicker } from "@/components/admin/outreach-template-picker";
 
 // Must match MAX_RECIPIENTS in apps/api/src/routes/outreach.ts
 const MAX_RECIPIENTS = 50;
@@ -77,7 +78,9 @@ function checkLines(text: string) {
   return { lines, recipients: [...seen] };
 }
 
-export function OutreachForm({ templates = [] }: { templates?: MailTemplateRecord[] }) {
+export function OutreachForm({ templates: savedTemplates = [] }: { templates?: MailTemplateRecord[] }) {
+  // Kept here so templates saved or deleted on this page update the selector at once.
+  const [templates, setTemplates] = useState(savedTemplates);
   const [state, action, pending] = useActionState(sendOutreach, initialState);
   const [list, setList] = useState("");
   const [subject, setSubject] = useState("");
@@ -303,36 +306,23 @@ export function OutreachForm({ templates = [] }: { templates?: MailTemplateRecor
 
         {/* ── Right: template ──────────────────────────────────────────── */}
         <div className="space-y-6 lg:col-span-8">
-          <Field
-            label="Template"
-            hint={
-              templates.length > 0
-                ? "Fills the subject and message below. You can still edit both before sending."
-                : undefined
-            }
-          >
-            {templates.length > 0 ? (
-              <select
-                value={templateId}
-                onChange={(event) => applyTemplate(event.target.value)}
-                className={inputClass}
-              >
-                <option value="">Write manually</option>
-                {templates.map((template) => (
-                  <option key={template.id} value={template.id}>
-                    {template.name}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <span className="mt-2 block text-sm text-mist">
-                No saved templates.{" "}
-                <Link href="/admin/mail-templates/new" className="text-cobalt hover:underline">
-                  Add one
-                </Link>
-              </span>
-            )}
-          </Field>
+          <OutreachTemplatePicker
+            templates={templates}
+            selectedId={templateId}
+            subject={subject}
+            body={body}
+            onSelect={applyTemplate}
+            onSaved={(template) => {
+              setTemplates((current) =>
+                [...current, template].sort((a, b) => a.name.localeCompare(b.name)),
+              );
+              setTemplateId(template.id);
+            }}
+            onDeleted={(id) => {
+              setTemplates((current) => current.filter((template) => template.id !== id));
+              setTemplateId("");
+            }}
+          />
 
           <Field label="Subject" error={errors.subject}>
             <input

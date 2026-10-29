@@ -6,6 +6,7 @@ const sections = [
   { id: "leads", label: "Leads", href: "/admin/leads" },
   { id: "testimonials", label: "Testimonials", href: "/admin/testimonials" },
   { id: "outreach", label: "Outreach", href: "/admin/outreach" },
+  { id: "templates", label: "Templates", href: "/admin/mail-templates" },
   { id: "emails", label: "Sent mail", href: "/admin/emails" },
 ] as const;
 

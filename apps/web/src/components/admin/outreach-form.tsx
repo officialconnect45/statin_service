@@ -9,6 +9,7 @@ import {
   type ClipboardEvent,
   type ReactNode,
 } from "react";
+import type { MailTemplateRecord } from "@statin/types";
 import Link from "next/link";
 import { sendOutreach, type OutreachFormState } from "@/app/admin/outreach/actions";
 
@@ -76,11 +77,12 @@ function checkLines(text: string) {
   return { lines, recipients: [...seen] };
 }
 
-export function OutreachForm() {
+export function OutreachForm({ templates = [] }: { templates?: MailTemplateRecord[] }) {
   const [state, action, pending] = useActionState(sendOutreach, initialState);
   const [list, setList] = useState("");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
+  const [templateId, setTemplateId] = useState("");
   // Confirm step belongs to one run; it closes by itself once that send finishes.
   const [confirmRun, setConfirmRun] = useState<number | null>(null);
   const [intent, setIntent] = useState<"test" | "send">("send");
@@ -104,6 +106,7 @@ export function OutreachForm() {
       if (failed.length === 0) {
         setSubject("");
         setBody("");
+        setTemplateId("");
       }
     }
   }
@@ -115,6 +118,23 @@ export function OutreachForm() {
   const tooMany = recipients.length > MAX_RECIPIENTS;
   const canSend =
     recipients.length > 0 && invalid === 0 && duplicates === 0 && !tooMany && subject.trim() !== "" && body.trim().length >= 10;
+
+  // Picking a template fills subject and message; both stay editable. Asks
+  // first if that would replace text the admin already wrote.
+  function applyTemplate(id: string) {
+    const template = templates.find((item) => item.id === id);
+    if (!template) {
+      setTemplateId("");
+      return;
+    }
+    const hasOwnText =
+      (subject.trim() !== "" || body.trim() !== "") && (subject !== template.subject || body !== template.body);
+    if (hasOwnText && !window.confirm("Replace the current subject and message with this template?")) return;
+    setTemplateId(id);
+    setSubject(template.subject);
+    setBody(template.body);
+    setConfirming(false);
+  }
 
   function updateList(value: string) {
     setList(value);
@@ -283,6 +303,37 @@ export function OutreachForm() {
 
         {/* ── Right: template ──────────────────────────────────────────── */}
         <div className="space-y-6 lg:col-span-8">
+          <Field
+            label="Template"
+            hint={
+              templates.length > 0
+                ? "Fills the subject and message below. You can still edit both before sending."
+                : undefined
+            }
+          >
+            {templates.length > 0 ? (
+              <select
+                value={templateId}
+                onChange={(event) => applyTemplate(event.target.value)}
+                className={inputClass}
+              >
+                <option value="">Write manually</option>
+                {templates.map((template) => (
+                  <option key={template.id} value={template.id}>
+                    {template.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span className="mt-2 block text-sm text-mist">
+                No saved templates.{" "}
+                <Link href="/admin/mail-templates/new" className="text-cobalt hover:underline">
+                  Add one
+                </Link>
+              </span>
+            )}
+          </Field>
+
           <Field label="Subject" error={errors.subject}>
             <input
               name="subject"

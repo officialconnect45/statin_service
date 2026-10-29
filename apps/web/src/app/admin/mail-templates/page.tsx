@@ -67,12 +67,12 @@ async function MailTemplatesDashboard() {
               <li key={item.id}>
                 <Link
                   href={`/admin/mail-templates/${item.id}`}
-                  className="flex items-start gap-4 px-5 py-5 transition-colors hover:bg-paper sm:px-6"
+                  className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-paper sm:px-6"
                 >
+                  {/* Name and subject only; the full message is on the edit page. */}
                   <span className="min-w-0 flex-1">
-                    <span className="block font-medium">{item.name}</span>
-                    <span className="mt-1 block truncate text-sm text-ink-soft">{item.subject}</span>
-                    <span className="mt-1 line-clamp-2 block text-sm text-mist">{item.body}</span>
+                    <span className="block truncate font-medium">{item.name}</span>
+                    <span className="mt-0.5 block truncate text-sm text-mist">{item.subject}</span>
                   </span>
                   <span
                     className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
@@ -80,6 +80,12 @@ async function MailTemplatesDashboard() {
                     }`}
                   >
                     {item.active ? "Active" : "Inactive"}
+                  </span>
+                  <span
+                    aria-hidden
+                    className="shrink-0 text-mist transition-transform group-hover:translate-x-0.5 group-hover:text-ink"
+                  >
+                    →
                   </span>
                 </Link>
               </li>

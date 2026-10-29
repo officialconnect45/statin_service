@@ -12,6 +12,7 @@ import {
 import type { MailTemplateRecord } from "@statin/types";
 import Link from "next/link";
 import { sendOutreach, type OutreachFormState } from "@/app/admin/outreach/actions";
+import { OutreachMailPreview } from "@/components/admin/outreach-mail-preview";
 import { OutreachTemplatePicker } from "@/components/admin/outreach-template-picker";
 
 // Must match MAX_RECIPIENTS in apps/api/src/routes/outreach.ts
@@ -78,7 +79,17 @@ function checkLines(text: string) {
   return { lines, recipients: [...seen] };
 }
 
-export function OutreachForm({ templates: savedTemplates = [] }: { templates?: MailTemplateRecord[] }) {
+export function OutreachForm({
+  templates: savedTemplates = [],
+  senderFrom,
+}: {
+  templates?: MailTemplateRecord[];
+  /** "Name <address>" outreach goes out as, shown in the preview. */
+  senderFrom?: string;
+}) {
+  const [view, setView] = useState<"write" | "preview">("write");
+  const messageSection = useRef<HTMLDivElement>(null);
+  const messageInput = useRef<HTMLTextAreaElement>(null);
   // Kept here so templates saved or deleted on this page update the selector at once.
   const [templates, setTemplates] = useState(savedTemplates);
   const [state, action, pending] = useActionState(sendOutreach, initialState);
@@ -110,6 +121,7 @@ export function OutreachForm({ templates: savedTemplates = [] }: { templates?: M
         setSubject("");
         setBody("");
         setTemplateId("");
+        setView("write");
       }
     }
   }
@@ -137,6 +149,17 @@ export function OutreachForm({ templates: savedTemplates = [] }: { templates?: M
     setSubject(template.subject);
     setBody(template.body);
     setConfirming(false);
+  }
+
+  function showPreview(scroll = false) {
+    setView("preview");
+    if (scroll) messageSection.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function showEditor() {
+    setView("write");
+    // The textarea is hidden, not unmounted, so it can take focus right away.
+    requestAnimationFrame(() => messageInput.current?.focus());
   }
 
   function updateList(value: string) {
@@ -324,7 +347,7 @@ export function OutreachForm({ templates: savedTemplates = [] }: { templates?: M
             }}
           />
 
-          <Field label="Subject" error={errors.subject}>
+          <Field label="Subject" error={errors.subject} aside={<Counter value={subject.length} max={200} />}>
             <input
               name="subject"
               value={subject}
@@ -336,38 +359,99 @@ export function OutreachForm({ templates: savedTemplates = [] }: { templates?: M
             />
           </Field>
 
-          <Field
-            label="Message"
-            hint="Plain text, sent exactly as written to every recipient. Blank lines become paragraphs, links become clickable."
-            error={errors.body}
-          >
+          <div ref={messageSection} className="scroll-mt-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <label htmlFor="outreach-body" className="text-sm font-medium">
+                Message
+              </label>
+              <div
+                role="tablist"
+                aria-label="Message view"
+                className="inline-flex rounded-full border border-line bg-white p-0.5"
+              >
+                {(
+                  [
+                    ["write", "Write"],
+                    ["preview", "Preview"],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    role="tab"
+                    aria-selected={view === id}
+                    onClick={() => (id === "write" ? showEditor() : showPreview())}
+                    className={`h-8 rounded-full px-4 text-xs font-medium transition-colors ${
+                      view === id ? "bg-cobalt text-white" : "text-mist hover:text-ink"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Hidden rather than removed in preview, so the message is still sent with the form. */}
             <textarea
+              id="outreach-body"
+              ref={messageInput}
               name="body"
               value={body}
               onChange={(event) => setBody(event.target.value)}
+              onKeyDown={(event) => {
+                // Ctrl/Cmd + Enter jumps to the preview.
+                if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+                  event.preventDefault();
+                  showPreview();
+                }
+              }}
               rows={14}
               maxLength={20_000}
               placeholder={"Hi,\n\n...\n\nBest,\nTeam Statin\nhttps://statin.io"}
               aria-invalid={errors.body ? true : undefined}
-              className={`${inputClass} resize-y leading-6`}
+              className={`${inputClass} resize-y leading-6 ${view === "preview" ? "hidden" : ""}`}
             />
-          </Field>
 
-          <div className="rounded-3xl border border-line bg-paper-deep p-5">
-            <p className="t-eyebrow text-mist">Preview</p>
-            <div className="mt-4 rounded-2xl border border-line bg-white p-5">
-              <p className="text-xs text-mist">Subject</p>
-              <p className="font-medium">{subject || "—"}</p>
-              <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-ink-soft">
-                {body || "Your message appears here."}
-              </p>
-            </div>
+            {view === "preview" ? (
+              <div className="mt-2">
+                <OutreachMailPreview
+                  from={senderFrom}
+                  recipients={recipients}
+                  subject={subject}
+                  body={body}
+                  onEdit={showEditor}
+                />
+              </div>
+            ) : null}
+
+            {errors.body ? (
+              <p className="mt-2 text-xs text-danger">{errors.body}</p>
+            ) : (
+              <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-xs text-mist">
+                <span>
+                  {view === "write"
+                    ? "Plain text. Blank lines become paragraphs, links become clickable. Ctrl + Enter to preview."
+                    : "This is how each recipient sees the email."}
+                </span>
+                <span className="font-mono">
+                  {wordCount(body)} words · <Counter value={body.length} max={20_000} min={10} />
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* ── Actions & results ──────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-3 border-t border-line pt-6">
+        <button
+          type="button"
+          onClick={() => (view === "preview" ? showEditor() : showPreview(true))}
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-ink/15 px-6 text-sm font-medium transition-colors hover:border-ink"
+        >
+          {view === "preview" ? "Back to editing" : "Preview email"}
+        </button>
+
         <button
           type="submit"
           name="intent"
@@ -461,10 +545,39 @@ export function OutreachForm({ templates: savedTemplates = [] }: { templates?: M
   );
 }
 
-function Field({ label, hint, error, children }: { label: string; hint?: string; error?: string; children: ReactNode }) {
+function wordCount(text: string) {
+  return text.trim() ? text.trim().split(/\s+/).length : 0;
+}
+
+/** "120 / 200", turning amber near the limit and red when under the minimum. */
+function Counter({ value, max, min = 0 }: { value: number; max: number; min?: number }) {
+  const tone = value > 0 && value < min ? "text-danger" : value >= max * 0.9 ? "text-amber-600" : "text-mist";
+  return (
+    <span className={`font-mono text-xs ${tone}`}>
+      {value.toLocaleString()} / {max.toLocaleString()}
+    </span>
+  );
+}
+
+function Field({
+  label,
+  hint,
+  error,
+  aside,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  error?: string;
+  aside?: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <label className="block">
-      <span className="text-sm font-medium">{label}</span>
+      <span className="flex items-baseline justify-between gap-3">
+        <span className="text-sm font-medium">{label}</span>
+        {aside}
+      </span>
       {children}
       {error ? (
         <span className="mt-2 block text-xs text-danger">{error}</span>

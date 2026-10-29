@@ -73,7 +73,7 @@ async function Outreach() {
           </p>
         )}
         <div className="mt-10">
-          <OutreachForm templates={templates} />
+          <OutreachForm templates={templates} senderFrom={sender?.configured ? sender.from : undefined} />
         </div>
       </div>
     </>

@@ -80,7 +80,7 @@ function checkLines(text: string) {
 }
 
 export function OutreachForm({
-  templates: savedTemplates = [],
+  templates = [],
   senderFrom,
 }: {
   templates?: MailTemplateRecord[];
@@ -90,8 +90,6 @@ export function OutreachForm({
   const [view, setView] = useState<"write" | "preview">("write");
   const messageSection = useRef<HTMLDivElement>(null);
   const messageInput = useRef<HTMLTextAreaElement>(null);
-  // Kept here so templates saved or deleted on this page update the selector at once.
-  const [templates, setTemplates] = useState(savedTemplates);
   const [state, action, pending] = useActionState(sendOutreach, initialState);
   const [list, setList] = useState("");
   const [subject, setSubject] = useState("");
@@ -136,18 +134,22 @@ export function OutreachForm({
 
   // Picking a template fills subject and message; both stay editable. Asks
   // first if that would replace text the admin already wrote.
+  // "Write manually" (empty id) clears both fields. Asks first only when that
+  // would throw away text the admin typed or edited themselves.
   function applyTemplate(id: string) {
-    const template = templates.find((item) => item.id === id);
-    if (!template) {
-      setTemplateId("");
-      return;
+    const current = templates.find((item) => item.id === templateId);
+    const next = templates.find((item) => item.id === id);
+    const hasText = subject.trim() !== "" || body.trim() !== "";
+    const edited = hasText && (!current || subject !== current.subject || body !== current.body);
+    if (edited) {
+      const question = next
+        ? "Replace your subject and message with this template?"
+        : "Clear your edited subject and message?";
+      if (!window.confirm(question)) return;
     }
-    const hasOwnText =
-      (subject.trim() !== "" || body.trim() !== "") && (subject !== template.subject || body !== template.body);
-    if (hasOwnText && !window.confirm("Replace the current subject and message with this template?")) return;
-    setTemplateId(id);
-    setSubject(template.subject);
-    setBody(template.body);
+    setTemplateId(next ? id : "");
+    setSubject(next?.subject ?? "");
+    setBody(next?.body ?? "");
     setConfirming(false);
   }
 
@@ -329,23 +331,7 @@ export function OutreachForm({
 
         {/* ── Right: template ──────────────────────────────────────────── */}
         <div className="space-y-6 lg:col-span-8">
-          <OutreachTemplatePicker
-            templates={templates}
-            selectedId={templateId}
-            subject={subject}
-            body={body}
-            onSelect={applyTemplate}
-            onSaved={(template) => {
-              setTemplates((current) =>
-                [...current, template].sort((a, b) => a.name.localeCompare(b.name)),
-              );
-              setTemplateId(template.id);
-            }}
-            onDeleted={(id) => {
-              setTemplates((current) => current.filter((template) => template.id !== id));
-              setTemplateId("");
-            }}
-          />
+          <OutreachTemplatePicker templates={templates} selectedId={templateId} onSelect={applyTemplate} />
 
           <Field label="Subject" error={errors.subject} aside={<Counter value={subject.length} max={200} />}>
             <input

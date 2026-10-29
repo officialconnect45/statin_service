@@ -82,6 +82,34 @@ export type SaveTestimonialResponse =
   | { status: "success"; testimonial: TestimonialRecord }
   | { status: "error"; message: string; errors?: Partial<Record<TestimonialField, string>> };
 
+// Saved outreach subjects and messages, managed from /admin/mail-templates
+export type MailTemplateInput = {
+  /** Label shown in the outreach template selector. */
+  name: string;
+  subject: string;
+  /** Plain text, same rules as the outreach message. */
+  body: string;
+  /** Inactive templates are hidden from the outreach selector. */
+  active: boolean;
+};
+
+export type MailTemplateRecord = MailTemplateInput & {
+  id: string;
+  /** ISO timestamp. */
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type MailTemplateField = "name" | "subject" | "body";
+
+export type ListMailTemplatesResponse = {
+  templates: MailTemplateRecord[];
+};
+
+export type SaveMailTemplateResponse =
+  | { status: "success"; template: MailTemplateRecord }
+  | { status: "error"; message: string; errors?: Partial<Record<MailTemplateField, string>> };
+
 // Outreach mail sent from /admin/outreach (one message per recipient)
 export type SendOutreachRequest = {
   /** Recipient email addresses; every one gets the same subject and body. */

@@ -1,4 +1,4 @@
-import type { OutreachSenderResponse } from "@statin/types";
+import type { MailTemplateRecord, OutreachSenderResponse } from "@statin/types";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AdminBar } from "@/components/admin/admin-bar";
@@ -6,6 +6,7 @@ import { AdminPageSkeleton } from "@/components/admin/admin-page-states";
 import { OutreachForm } from "@/components/admin/outreach-form";
 import { requireAdmin } from "@/lib/admin/auth";
 import { adminApiHeaders, apiUrl } from "@/lib/api";
+import { listMailTemplates } from "@/lib/mail-templates";
 
 export const metadata: Metadata = { title: "Outreach" };
 
@@ -32,9 +33,19 @@ async function getSender(): Promise<OutreachSenderResponse | null> {
   }
 }
 
+/** Active templates for the selector; an empty list when they can't load, so outreach still works. */
+async function getTemplates(): Promise<MailTemplateRecord[]> {
+  try {
+    return await listMailTemplates({ activeOnly: true });
+  } catch (error) {
+    console.error("[outreach] Could not load templates:", error);
+    return [];
+  }
+}
+
 async function Outreach() {
   const { username } = await requireAdmin();
-  const sender = await getSender();
+  const [sender, templates] = await Promise.all([getSender(), getTemplates()]);
 
   return (
     <>
@@ -62,7 +73,7 @@ async function Outreach() {
           </p>
         )}
         <div className="mt-10">
-          <OutreachForm />
+          <OutreachForm templates={templates} senderFrom={sender?.configured ? sender.from : undefined} />
         </div>
       </div>
     </>

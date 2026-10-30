@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Edit template" };
 
 export default function EditMailTemplatePage({ params }: PageProps<"/admin/mail-templates/[id]">) {
   return (
-    <Suspense fallback={<AdminPageSkeleton label="Loading template" />}>
+    <Suspense fallback={<AdminPageSkeleton label="Loading template" active="templates" />}>
       <EditMailTemplate params={params} />
     </Suspense>
   );

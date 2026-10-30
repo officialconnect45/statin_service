@@ -9,7 +9,16 @@ import { initials } from "@/lib/initials";
  * account actions. Add future items (profile, password, preferences...) to the
  * list between the header and Sign out.
  */
-export function ProfileMenu({ username, role = "Super admin" }: { username: string; role?: string }) {
+export function ProfileMenu({
+  username,
+  role = "Super admin",
+  placement = "down",
+}: {
+  username: string;
+  role?: string;
+  /** "up" opens the menu above a full-width button (the sidebar footer). */
+  placement?: "down" | "up";
+}) {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
@@ -45,7 +54,9 @@ export function ProfileMenu({ username, role = "Super admin" }: { username: stri
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={menuId}
-        className="flex items-center gap-2.5 rounded-full border border-white/15 py-1 pr-3 pl-1 text-sm transition-colors hover:border-white/40 aria-expanded:border-white/40 aria-expanded:bg-white/5"
+        className={`flex items-center gap-2.5 rounded-full border border-white/15 py-1 pr-3 pl-1 text-sm ${
+          placement === "up" ? "w-full" : ""
+        } transition-colors hover:border-white/40 aria-expanded:border-white/40 aria-expanded:bg-white/5`}
       >
         <span
           aria-hidden="true"
@@ -53,11 +64,19 @@ export function ProfileMenu({ username, role = "Super admin" }: { username: stri
         >
           {badge}
         </span>
-        <span className="hidden max-w-[140px] truncate text-white md:inline">{username}</span>
+        <span
+          className={
+            placement === "up"
+              ? "min-w-0 flex-1 truncate text-left text-white"
+              : "hidden max-w-[140px] truncate text-white md:inline"
+          }
+        >
+          {username}
+        </span>
         <svg
           aria-hidden="true"
           viewBox="0 0 12 12"
-          className={`h-2.5 w-2.5 text-fog transition-transform ${open ? "rotate-180" : ""}`}
+          className={`h-2.5 w-2.5 text-fog transition-transform ${open !== (placement === "up") ? "rotate-180" : ""}`}
         >
           <path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
         </svg>
@@ -69,7 +88,9 @@ export function ProfileMenu({ username, role = "Super admin" }: { username: stri
           id={menuId}
           role="menu"
           aria-label="Account"
-          className="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-2xl border border-line bg-white text-ink shadow-xl"
+          className={`absolute z-50 w-64 overflow-hidden ${
+            placement === "up" ? "bottom-full left-0 mb-2" : "right-0 mt-2"
+          } rounded-2xl border border-line bg-white text-ink shadow-xl`}
         >
           <div className="flex items-center gap-3 border-b border-line px-4 py-4">
             <span

@@ -433,7 +433,8 @@ export function OutreachForm({
         <button
           type="button"
           onClick={() => (view === "preview" ? showEditor() : showPreview(true))}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-ink/15 px-6 text-sm font-medium transition-colors hover:border-ink"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-ink/15 px-6 text-sm
+           font-medium transition-colors hover:border-ink hover:bg-ink hover:text-white"
         >
           {view === "preview" ? "Back to editing" : "Preview email"}
         </button>
@@ -457,7 +458,7 @@ export function OutreachForm({
               value="send"
               onClick={() => setIntent("send")}
               disabled={pending || !canSend}
-              className="inline-flex h-11 items-center justify-center rounded-full bg-danger px-6 text-sm font-medium text-white disabled:cursor-wait disabled:opacity-70"
+              className="inline-flex h-11 items-center justify-center rounded-full bg-emerald-600 px-6 text-sm font-medium text-white disabled:cursor-wait disabled:opacity-70"
             >
               {pending && intent === "send" ? `Sending to ${recipients.length}…` : `Yes, send to ${recipients.length}`}
             </button>
@@ -465,7 +466,7 @@ export function OutreachForm({
               <button
                 type="button"
                 onClick={() => setConfirming(false)}
-                className="inline-flex h-11 items-center rounded-full px-4 text-sm text-mist hover:text-ink"
+                className="inline-flex h-11 items-center rounded-full px-4 text-sm text-mist transition-colors hover:bg-danger hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Cancel
               </button>

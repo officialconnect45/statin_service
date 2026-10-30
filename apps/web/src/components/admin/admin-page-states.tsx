@@ -1,3 +1,5 @@
+import { AdminBar, type AdminSection } from "@/components/admin/admin-bar";
+
 export function AdminUnavailable({ title, message }: { title: string; message: string }) {
   return (
     <div className="mx-auto w-full max-w-[1320px] px-5 py-14 sm:px-8 lg:px-10">
@@ -13,15 +15,19 @@ export function AdminUnavailable({ title, message }: { title: string; message: s
   );
 }
 
-export function AdminPageSkeleton({ label }: { label: string }) {
+/** Loading state; renders the admin nav (without the account) so the layout doesn't jump. */
+export function AdminPageSkeleton({ label, active }: { label: string; active?: AdminSection }) {
   return (
-    <div aria-busy="true" aria-label={label} className="mx-auto w-full max-w-[1320px] px-5 py-24 sm:px-8 lg:px-10">
-      <div className="h-10 w-48 animate-pulse rounded-lg bg-line" />
-      <div className="mt-10 space-y-3">
-        {[0, 1, 2].map((item) => (
-          <div key={item} className="h-20 animate-pulse rounded-2xl bg-line" />
-        ))}
+    <>
+      <AdminBar active={active} />
+      <div aria-busy="true" aria-label={label} className="mx-auto w-full max-w-[1320px] px-5 py-24 sm:px-8 lg:px-10">
+        <div className="h-10 w-48 animate-pulse rounded-lg bg-line" />
+        <div className="mt-10 space-y-3">
+          {[0, 1, 2].map((item) => (
+            <div key={item} className="h-20 animate-pulse rounded-2xl bg-line" />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

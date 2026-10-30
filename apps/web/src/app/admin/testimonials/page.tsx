@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Testimonials" };
 
 export default function TestimonialsPage() {
   return (
-    <Suspense fallback={<AdminPageSkeleton label="Loading testimonials" />}>
+    <Suspense fallback={<AdminPageSkeleton label="Loading testimonials" active="testimonials" />}>
       <TestimonialsDashboard />
     </Suspense>
   );

@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Outreach" };
 
 export default function OutreachPage() {
   return (
-    <Suspense fallback={<AdminPageSkeleton label="Loading outreach" />}>
+    <Suspense fallback={<AdminPageSkeleton label="Loading outreach" active="outreach" />}>
       <Outreach />
     </Suspense>
   );

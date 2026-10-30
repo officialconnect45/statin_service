@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Add testimonial" };
 
 export default function NewTestimonialPage() {
   return (
-    <Suspense fallback={<AdminPageSkeleton label="Loading" />}>
+    <Suspense fallback={<AdminPageSkeleton label="Loading" active="testimonials" />}>
       <NewTestimonial />
     </Suspense>
   );

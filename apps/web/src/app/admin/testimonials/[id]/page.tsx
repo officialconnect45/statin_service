@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Edit testimonial" };
 
 export default function EditTestimonialPage({ params }: PageProps<"/admin/testimonials/[id]">) {
   return (
-    <Suspense fallback={<AdminPageSkeleton label="Loading testimonial" />}>
+    <Suspense fallback={<AdminPageSkeleton label="Loading testimonial" active="testimonials" />}>
       <EditTestimonial params={params} />
     </Suspense>
   );

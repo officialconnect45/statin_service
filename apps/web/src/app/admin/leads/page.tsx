@@ -26,7 +26,7 @@ async function LeadsDashboard() {
     if (!(error instanceof LeadsUnavailableError)) throw error;
     return (
       <>
-        <AdminBar username={username} />
+        <AdminBar username={username} active="leads" />
         <div className="mx-auto w-full max-w-[1320px] px-5 py-14 sm:px-8 lg:px-10">
           <div role="alert" className="rounded-3xl border border-danger/30 bg-white p-8">
             <p className="t-eyebrow text-danger">Leads unavailable</p>
@@ -52,7 +52,7 @@ async function LeadsDashboard() {
 
   return (
     <>
-      <AdminBar username={username} />
+      <AdminBar username={username} active="leads" />
       <div className="mx-auto w-full max-w-[1320px] px-5 py-10 sm:px-8 md:py-14 lg:px-10">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
@@ -108,13 +108,16 @@ function Stat({ label, value, small = false }: { label: string; value: string; s
 
 function DashboardSkeleton() {
   return (
-    <div aria-busy="true" aria-label="Loading leads" className="mx-auto w-full max-w-[1320px] px-5 py-24 sm:px-8 lg:px-10">
-      <div className="h-10 w-40 animate-pulse rounded-lg bg-line" />
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {[0, 1, 2, 3].map((item) => (
-          <div key={item} className="h-28 animate-pulse rounded-2xl bg-line" />
-        ))}
+    <>
+      <AdminBar active="leads" />
+      <div aria-busy="true" aria-label="Loading leads" className="mx-auto w-full max-w-[1320px] px-5 py-24 sm:px-8 lg:px-10">
+        <div className="h-10 w-40 animate-pulse rounded-lg bg-line" />
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((item) => (
+            <div key={item} className="h-28 animate-pulse rounded-2xl bg-line" />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

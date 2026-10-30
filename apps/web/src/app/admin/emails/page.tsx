@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Sent mail" };
 
 export default function SentEmailsPage() {
   return (
-    <Suspense fallback={<AdminPageSkeleton label="Loading sent mail" />}>
+    <Suspense fallback={<AdminPageSkeleton label="Loading sent mail" active="emails" />}>
       <SentEmails />
     </Suspense>
   );

@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Mail templates" };
 
 export default function MailTemplatesPage() {
   return (
-    <Suspense fallback={<AdminPageSkeleton label="Loading templates" />}>
+    <Suspense fallback={<AdminPageSkeleton label="Loading templates" active="templates" />}>
       <MailTemplatesDashboard />
     </Suspense>
   );

@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Add template" };
 
 export default function NewMailTemplatePage() {
   return (
-    <Suspense fallback={<AdminPageSkeleton label="Loading" />}>
+    <Suspense fallback={<AdminPageSkeleton label="Loading" active="templates" />}>
       <NewMailTemplate />
     </Suspense>
   );

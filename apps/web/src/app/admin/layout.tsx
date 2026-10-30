@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   return (
-    <main id="main" className="flex min-h-svh flex-1 flex-col bg-paper">
+    <main id="main" className="flex min-h-svh flex-1 flex-col bg-paper lg:has-[[data-admin-sidebar]]:pl-60">
       {children}
     </main>
   );

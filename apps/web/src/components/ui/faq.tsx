@@ -7,13 +7,20 @@ export function Faq({ items }: { items: readonly { q: string; a: string }[] }) {
   const baseId = useId();
 
   return (
-    <div className="border-t border-line">
+    <div className="space-y-3">
       {items.map((item, index) => {
         const isOpen = open === index;
         const panelId = `${baseId}-panel-${index}`;
         const buttonId = `${baseId}-button-${index}`;
         return (
-          <div key={item.q} className="border-b border-line">
+          <div
+            key={item.q}
+            className={`overflow-hidden rounded-2xl border bg-white px-6 transition-[border-color,box-shadow] duration-500 ${
+              isOpen
+                ? "border-cobalt/30 shadow-[0_24px_50px_-28px_rgb(79_70_229/0.45)]"
+                : "border-line hover:border-cobalt/20"
+            }`}
+          >
             <h3>
               <button
                 id={buttonId}
@@ -26,8 +33,8 @@ export function Faq({ items }: { items: readonly { q: string; a: string }[] }) {
                 <span>{item.q}</span>
                 <span
                   aria-hidden="true"
-                  className={`relative h-8 w-8 shrink-0 rounded-full border border-line transition-colors group-hover:border-cobalt ${
-                    isOpen ? "bg-ink" : ""
+                  className={`relative h-9 w-9 shrink-0 rounded-full border transition-[background-color,border-color,rotate] duration-500 ${
+                    isOpen ? "bg-brand rotate-180 border-transparent" : "border-line group-hover:border-cobalt"
                   }`}
                 >
                   <span
@@ -36,9 +43,9 @@ export function Faq({ items }: { items: readonly { q: string; a: string }[] }) {
                     }`}
                   />
                   <span
-                    className={`absolute top-1/2 left-1/2 h-3 w-px -translate-x-1/2 -translate-y-1/2 bg-ink transition-transform duration-300 ${
-                      isOpen ? "scale-y-0" : ""
-                    }`}
+                    className={`absolute top-1/2 left-1/2 h-3 w-px -translate-x-1/2 -translate-y-1/2 transition-transform duration-300 ${
+                      isOpen ? "bg-white" : "bg-ink"
+                    } ${isOpen ? "scale-y-0" : ""}`}
                   />
                 </span>
               </button>

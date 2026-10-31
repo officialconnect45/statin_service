@@ -1,13 +1,11 @@
 import { Suspense, type CSSProperties } from "react";
 import Link from "next/link";
-import { Architecture } from "@/components/home/architecture";
 import { Capabilities } from "@/components/home/capabilities";
 import { ClosingCta } from "@/components/home/closing-cta";
 import { Credibility } from "@/components/home/credibility";
 import { Hero } from "@/components/home/hero";
 import { ProblemStory } from "@/components/home/problem-story";
 import { Process } from "@/components/home/process";
-import { SocialSection } from "@/components/home/social-section";
 import { StartupStory } from "@/components/home/startup-story";
 import { Testimonials } from "@/components/home/testimonials";
 import { WhyStatin } from "@/components/home/why-statin";
@@ -23,16 +21,13 @@ export const metadata = pageMetadata({ description: site.description, path: "/" 
 export default function Home() {
   return (
     <>
-      {/* 1. Who Statin is and what it builds */}
+      {/* 1. Hero: who we are and what we build */}
       <Hero />
 
-      {/* 2. Who it is for, and with what */}
-      <Credibility />
-
-      {/* 3. The problem, then the approach */}
+      {/* 2. The problem we solve, in four steps */}
       <ProblemStory />
 
-      {/* 4. Capabilities */}
+      {/* 3. Services */}
       <section id="capabilities" aria-labelledby="capabilities-title" className="bg-paper py-24 md:py-32">
         <Container>
           <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
@@ -53,9 +48,10 @@ export default function Home() {
         </Container>
       </section>
 
-      <Process />
+      {/* 4. Who we work with, and the technology we use */}
+      <Credibility />
 
-      
+      {/* 5. Work: short previews; the full detail lives on /work */}
       <section aria-labelledby="work-title" className="bg-white py-22 md:py-30">
         <Container>
           <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
@@ -112,6 +108,9 @@ export default function Home() {
         </Container>
       </section>
 
+      {/* 6. How we work: strategy first */}
+      <Process />
+
       {/* 7. Testimonials */}
       <Suspense fallback={null}>
         <Testimonials />
@@ -120,39 +119,10 @@ export default function Home() {
       {/* 8. Why Statin */}
       <WhyStatin />
 
-      {/* 9. Technology / infrastructure */}
-      <section
-        aria-labelledby="architecture-title"
-        className="tone-dark relative overflow-hidden bg-night py-24 text-white md:py-32"
-      >
-        <div aria-hidden="true" className="bg-grid mask-radial absolute inset-0" />
-        <Container className="relative">
-          <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-            <SectionHeading
-              id="architecture-title"
-              tone="dark"
-              eyebrow="Architecture"
-              title="How a Statin system is layered."
-              className="lg:col-span-7"
-            />
-            <p data-reveal className="t-lede text-fog lg:col-span-5">
-              Every build, from a business website to a custom platform, is reasoned about in the same layers. Select a
-              layer to see what lives there.
-            </p>
-          </div>
-          <div className="mt-16">
-            {/* <Architecture /> */}
-          </div>
-        </Container>
-      </section>
-
-      {/* 10. Startup story */}
+      {/* 9. About: a short intro; the full story is on /about */}
       <StartupStory />
 
-      {/* 11. Social */}
-      <SocialSection />
-
-      {/* 12. Closing CTA */}
+      {/* 10. Contact */}
       <ClosingCta />
     </>
   );

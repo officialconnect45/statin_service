@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { Eyebrow } from "@/components/ui/typography";
 import { problemSteps } from "@/lib/content";
 
 /* ------------------------------------------------------------------ */
@@ -81,15 +82,14 @@ export function ProblemStory() {
     return () => io.disconnect();
   }, []);
 
-  const current = problemSteps[step];
+  const goTo = (index: number) => {
+    stepRefs.current[index]?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
 
   return (
     <section aria-labelledby="story-title" className="tone-dark relative bg-night text-white">
       <div className="mx-auto w-full max-w-[1320px] px-5 pt-24 sm:px-8 md:pt-32 lg:px-10">
-        <p className="t-eyebrow flex items-center gap-3 text-signal">
-          <span aria-hidden="true" className="h-px w-6 bg-current opacity-60" />
-          The problem we solve
-        </p>
+        <Eyebrow className="text-signal">The problem we solve</Eyebrow>
         <h2 id="story-title" data-reveal className="t-h2 mt-6 max-w-[17ch] text-balance">
           From scattered systems to one that works.
         </h2>
@@ -97,25 +97,45 @@ export function ProblemStory() {
 
       <div className="mx-auto grid w-full max-w-[1320px] px-5 pb-16 sm:px-8 lg:grid-cols-12 lg:gap-10 lg:px-10 lg:pb-32">
         {/* Visual */}
-        <div className="sticky top-16 z-10 -mx-5 bg-night px-5 pt-4 pb-3 sm:-mx-8 sm:px-8 lg:order-2 lg:col-span-7 lg:mx-0 lg:h-[calc(100svh-6rem)] lg:px-0 lg:pt-10 lg:pb-10 lg:top-20 lg:flex lg:items-center">
-          <div className="relative w-full overflow-hidden rounded-3xl border border-night-line bg-night-2">
+        <div className="sticky top-20 z-10 -mx-5 bg-night px-5 pt-4 pb-3 sm:-mx-8 sm:px-8 lg:top-24 lg:order-2 lg:col-span-7 lg:mx-0 lg:flex lg:h-[calc(100svh-7rem)] lg:items-center lg:justify-center lg:bg-transparent lg:px-0 lg:py-6">
+          <div className="relative w-full overflow-hidden rounded-3xl border border-night-line bg-night-2 shadow-[0_50px_100px_-50px_rgb(91_70_240/0.6)] lg:max-w-[600px]">
             <div
               aria-hidden="true"
               className="bg-grid absolute inset-0 opacity-70"
               style={{ "--grid-size": "40px" } as CSSProperties}
             />
-            <div className="relative flex items-center justify-between border-b border-night-line px-4 py-3 sm:px-5">
-              <p className="t-eyebrow text-signal">
-                {String(step + 1).padStart(2, "0")} · {current.phase}
-              </p>
-              <div aria-hidden="true" className="flex gap-1">
+            <div className="relative border-b border-night-line px-3 py-3 sm:px-4">
+              <div role="tablist" aria-label="Story steps" className="grid grid-cols-4 gap-1.5">
                 {problemSteps.map((item, index) => (
-                  <span
+                  <button
                     key={item.phase}
-                    className={`h-1 rounded-full transition-[width,background-color] duration-500 ${
-                      index === step ? "w-6 bg-signal" : index < step ? "w-2 bg-signal/50" : "w-2 bg-white/15"
+                    type="button"
+                    role="tab"
+                    aria-selected={index === step}
+                    onClick={() => goTo(index)}
+                    className={`group relative overflow-hidden rounded-xl px-2 py-2 text-left transition-colors duration-300 ${
+                      index === step ? "bg-white/10" : "hover:bg-white/5"
                     }`}
-                  />
+                  >
+                    <span
+                      className={`block font-mono text-[10px] tracking-[0.14em] ${index === step ? "text-signal" : "text-fog"}`}
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span
+                      className={`mt-0.5 block truncate text-[11px] font-medium sm:text-xs ${
+                        index === step ? "text-white" : "text-white/55 group-hover:text-white/80"
+                      }`}
+                    >
+                      {item.phase}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className={`bg-brand absolute inset-x-2 bottom-0 h-0.5 origin-left rounded-full transition-transform duration-500 ${
+                        index <= step ? "scale-x-100" : "scale-x-0"
+                      }`}
+                    />
+                  </button>
                 ))}
               </div>
             </div>
@@ -132,7 +152,7 @@ export function ProblemStory() {
                 stepRefs.current[index] = el;
               }}
               data-step={index}
-              className={`flex min-h-[55svh] flex-col justify-center py-10 transition-opacity duration-500 lg:min-h-[78svh] ${
+              className={`flex min-h-[50svh] flex-col justify-center py-10 transition-opacity duration-500 lg:min-h-[65svh] ${
                 index === step ? "opacity-100" : "opacity-45"
               }`}
             >
@@ -162,7 +182,7 @@ function Scene({ step: copyStep }: { step: number }) {
       viewBox="0 0 640 520"
       role="img"
       aria-label={`Diagram: ${problemSteps[copyStep].title}`}
-      className="relative block h-auto max-h-[34svh] w-full lg:max-h-none"
+      className="relative mx-auto block h-auto max-h-[30svh] w-full lg:max-h-[min(52svh,460px)]"
       fill="none"
     >
       <defs>
@@ -313,7 +333,7 @@ function Scene({ step: copyStep }: { step: number }) {
               transition: `transform 1.1s var(--ease-out) ${index * 40}ms`,
             }}
           >
-            <g className={step === 1 ? "story-jitter" : undefined} style={{ "--j": index } as CSSProperties}>
+            <g className={`story-node ${step === 1 ? "story-jitter" : ""}`} style={{ "--j": index } as CSSProperties}>
               <rect
                 x="-48"
                 y="-16"

@@ -56,7 +56,7 @@ export function SignalPath() {
       onPointerLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
-      className="relative overflow-hidden rounded-3xl border border-night-line bg-night-2/80 shadow-[0_60px_120px_-60px_rgb(42_79_246/0.45)] backdrop-blur-sm"
+      className="relative overflow-hidden rounded-3xl border border-night-line bg-night-2"
       style={{
         transform:
           "perspective(1600px) rotateX(calc(var(--my, 0) * -1.2deg)) rotateY(calc(var(--mx, 0) * 1.2deg))",

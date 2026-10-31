@@ -83,7 +83,7 @@ export function Architecture() {
                     <svg aria-hidden="true" viewBox="0 0 20 28" className="mx-auto block h-6 w-5 sm:h-7" fill="none">
                       <line
                         x1="10" y1="0" x2="10" y2="28"
-                        stroke={lit || focus === layers[index - 1].id ? "#6aa6ff" : "rgb(255 255 255 / 0.18)"}
+                        stroke={lit || focus === layers[index - 1].id ? "#a5a2ff" : "rgb(255 255 255 / 0.18)"}
                         className="dash-flow"
                         style={{ transition: "stroke 0.4s" }}
                       />
@@ -139,8 +139,8 @@ export function Architecture() {
         <div className="grid grid-cols-[36px_1fr_36px] gap-2 sm:grid-cols-[52px_1fr_52px] sm:gap-3">
           <div className="col-start-2">
             <svg aria-hidden="true" viewBox="0 0 20 34" className="mx-auto block h-8 w-5" fill="none">
-              <line x1="10" y1="0" x2="10" y2="26" stroke="#6aa6ff" className="dash-flow" />
-              <path d="M5 24 10 32 15 24" stroke="#6aa6ff" strokeLinecap="round" strokeLinejoin="round" />
+              <line x1="10" y1="0" x2="10" y2="26" stroke="#a5a2ff" className="dash-flow" />
+              <path d="M5 24 10 32 15 24" stroke="#a5a2ff" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <p className="flex items-center justify-between gap-4 rounded-2xl bg-signal px-5 py-4 text-night sm:px-6">
               <span className="text-lg font-medium tracking-tight sm:text-xl">Business insight</span>

@@ -15,7 +15,7 @@ export function TestimonialCard({ item }: { item: TestimonialCardData }) {
   return (
     <figure
       className={`flex h-full flex-col rounded-3xl border bg-white p-7 md:p-8 ${
-        item.highlight ? "border-cobalt/40 shadow-[0_0_0_1px_rgb(42_79_246/0.12)]" : "border-line"
+        item.highlight ? "border-cobalt/40 shadow-[0_0_0_1px_rgb(91_70_240/0.12)]" : "border-line"
       }`}
     >
       <figcaption className="flex items-center gap-4">

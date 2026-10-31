@@ -26,22 +26,24 @@ export function Credibility() {
           </p>
         </div>
 
-        <ul className="mt-16 grid border-t border-line sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {audiences.map((item, index) => (
             <li
               key={item.title}
               data-reveal
               style={{ "--d": index * 90 } as CSSProperties}
-              className={`group relative border-b border-line py-8 sm:px-6 lg:border-b-0 ${
-                index % 2 === 1 ? "sm:border-l" : ""
-              } ${index % 2 === 0 ? "sm:pl-0" : ""} ${index > 0 ? "lg:border-l lg:pl-6" : "lg:pl-0"}`}
+              className="card-premium group relative overflow-hidden rounded-3xl p-7"
             >
               <span
                 aria-hidden="true"
-                className="absolute top-[-1px] left-0 h-px w-0 bg-cobalt transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full"
+                className="bg-brand absolute inset-x-0 top-0 h-1 origin-left scale-x-0 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100"
               />
-              <p className="font-mono text-[11px] text-cobalt">0{index + 1}</p>
-              <h3 className="mt-6 text-xl font-medium tracking-tight">{item.title}</h3>
+              <span className="bg-brand flex h-11 w-11 items-center justify-center rounded-2xl font-[family-name:var(--font-display)] text-sm font-semibold text-white shadow-[0_10px_24px_-10px_rgb(91_70_240/0.8)]">
+                0{index + 1}
+              </span>
+              <h3 className="mt-7 font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight">
+                {item.title}
+              </h3>
               <p className="mt-3 text-sm leading-relaxed text-mist">{item.detail}</p>
             </li>
           ))}
@@ -49,7 +51,7 @@ export function Credibility() {
       </Container>
 
       {/* Stack marquee */}
-      <div className="mt-20 border-y border-line bg-white py-6 md:mt-24">
+      <div className="mt-20 border-y border-line bg-white/70 py-6 backdrop-blur md:mt-24">
         <Container className="flex flex-col gap-5 md:flex-row md:items-center md:gap-10">
           <p className="t-eyebrow shrink-0 text-mist">Engineering with</p>
           <div className="marquee-host mask-fade-x relative min-w-0 flex-1 overflow-hidden">
@@ -61,7 +63,7 @@ export function Credibility() {
                   className="flex items-center gap-10 pr-10 text-lg font-medium tracking-tight whitespace-nowrap text-ink/80"
                 >
                   {item}
-                  <span aria-hidden="true" className="h-1 w-1 rounded-full bg-cobalt/50" />
+                  <span aria-hidden="true" className="bg-brand h-1.5 w-1.5 rounded-full" />
                 </li>
               ))}
             </ul>

@@ -7,26 +7,30 @@
 @theme inline {
   --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-display: var(--font-sora), var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 
-  /* Light surfaces */
-  --color-ink: #0a0d18;
-  --color-ink-soft: #363e52;
-  --color-mist: #5b6377;
-  --color-paper: #f6f7fb;
-  --color-paper-deep: #eceef5;
-  --color-line: #dde1ea;
+  /* Light surfaces: white into a soft lavender */
+  --color-ink: #0e0b2b;
+  --color-ink-soft: #3d3b63;
+  --color-mist: #6b6990;
+  --color-paper: #f6f6ff;
+  --color-paper-deep: #ecebfb;
+  --color-line: #e3e2f4;
 
-  /* Dark surfaces */
-  --color-night: #060914;
-  --color-night-2: #0b1020;
-  --color-night-3: #121a33;
-  --color-night-line: rgb(255 255 255 / 0.09);
-  --color-fog: #9ba4b9;
+  /* Dark surfaces: deep midnight indigo */
+  --color-night: #0b0920;
+  --color-night-2: #120f33;
+  --color-night-3: #1b1747;
+  --color-night-line: rgb(255 255 255 / 0.08);
+  --color-fog: #b7b5dc;
 
-  /* Brand */
-  --color-cobalt: #2a4ff6;
-  --color-cobalt-hover: #1d3fe0;
-  --color-signal: #6aa6ff;
+  /* Brand: indigo into violet. "cobalt" is kept as the token name. */
+  --color-cobalt: #5b46f0;
+  --color-cobalt-hover: #4a35e0;
+  --color-signal: #a5a2ff;
+  --color-violet: #8b5cf6;
+  --color-fuchsia: #d946ef;
+  --color-sky: #38bdf8;
 
   --color-danger: #dc2626;
 }
@@ -48,7 +52,7 @@ html {
 }
 
 body {
-  background: var(--color-paper);
+  background: linear-gradient(180deg, #ffffff 0%, var(--color-paper) 40%);
   color: var(--color-ink);
   font-family: var(--font-sans);
   text-rendering: optimizeLegibility;
@@ -75,27 +79,31 @@ body {
 /* ================================================================== */
 
 .t-display {
+  font-family: var(--font-display);
   font-size: clamp(2.75rem, 7.6vw, 7.25rem);
-  line-height: 0.93;
-  letter-spacing: -0.05em;
-  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  font-weight: 600;
 }
 
 .t-h1 {
+  font-family: var(--font-display);
   font-size: clamp(2.6rem, 6vw, 5.5rem);
-  line-height: 0.95;
-  letter-spacing: -0.045em;
-  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  font-weight: 600;
 }
 
 .t-h2 {
+  font-family: var(--font-display);
   font-size: clamp(2.1rem, 4.6vw, 4.1rem);
-  line-height: 1;
-  letter-spacing: -0.04em;
-  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+  font-weight: 600;
 }
 
 .t-h3 {
+  font-family: var(--font-display);
   font-size: clamp(1.45rem, 2.3vw, 2rem);
   line-height: 1.1;
   letter-spacing: -0.03em;
@@ -103,10 +111,11 @@ body {
 }
 
 .t-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11px;
+  font-family: var(--font-display);
+  font-size: 11.5px;
+  font-weight: 600;
   line-height: 1.4;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
@@ -291,6 +300,182 @@ body {
 }
 
 /* ================================================================== */
+/* Premium surfaces                                                    */
+/* ================================================================== */
+
+/* Brand gradient fill, with a slow sheen across it */
+.bg-brand {
+  background-image: linear-gradient(115deg, #4f46e5 0%, #6d4bf3 45%, #9b5cf6 75%, #c06bf0 100%);
+}
+
+/* Gradient text that slowly shimmers */
+.text-gradient {
+  background-image: linear-gradient(100deg, #4f46e5 0%, #7c4dff 30%, #c04df0 55%, #6366f1 80%, #4f46e5 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-pan 9s ease-in-out infinite;
+}
+
+.tone-dark .text-gradient {
+  background-image: linear-gradient(100deg, #a5a2ff 0%, #c4b5fd 30%, #f0abfc 55%, #93c5fd 80%, #a5a2ff 100%);
+}
+
+@keyframes gradient-pan {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Frosted glass */
+.glass {
+  background: rgb(255 255 255 / 0.72);
+  border: 1px solid rgb(255 255 255 / 0.85);
+  box-shadow:
+    0 18px 50px -18px rgb(79 70 229 / 0.22),
+    inset 0 1px 0 rgb(255 255 255 / 0.9);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+
+/* Soft white card that lifts and glows on hover */
+.card-premium {
+  background: #ffffff;
+  border: 1px solid var(--color-line);
+  box-shadow: 0 1px 2px rgb(14 11 43 / 0.04), 0 12px 32px -18px rgb(79 70 229 / 0.18);
+  transition:
+    transform 0.5s var(--ease-out),
+    box-shadow 0.5s var(--ease-out),
+    border-color 0.5s var(--ease-out);
+}
+
+.card-premium:hover {
+  transform: translate3d(0, -4px, 0);
+  border-color: rgb(91 70 240 / 0.28);
+  box-shadow: 0 2px 4px rgb(14 11 43 / 0.04), 0 30px 60px -24px rgb(79 70 229 / 0.35);
+}
+
+/* Aurora backdrop: blurred colour orbs drifting behind a section */
+.aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: var(--o, 0.55);
+  animation: orb-drift var(--dur, 18s) var(--ease-in-out) infinite alternate;
+  animation-delay: var(--delay, 0s);
+  will-change: transform;
+}
+
+@keyframes orb-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(var(--dx, 40px), var(--dy, -30px), 0) scale(1.12);
+  }
+}
+
+/* Gentle float for badges and cards */
+.float-y {
+  animation: float-y var(--dur, 6s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+/* Light sweep across a button on hover */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.35) 50%, transparent 70%);
+  transform: translate3d(-120%, 0, 0);
+  transition: transform 0.9s var(--ease-out);
+}
+
+.btn-shine:hover::after {
+  transform: translate3d(120%, 0, 0);
+}
+
+/* Conic glow ring that rotates behind a framed visual */
+@property --spin {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.glow-ring {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from var(--spin), transparent 0deg, #818cf8 60deg, #c084fc 120deg, transparent 180deg, transparent 360deg);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: glow-spin 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes glow-spin {
+  to {
+    --spin: 360deg;
+  }
+}
+
+/* Reading progress bar driven by page scroll, where supported */
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 70;
+  height: 2px;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  pointer-events: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: scroll-progress linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+@keyframes scroll-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ================================================================== */
 /* Reduced motion                                                      */
 /* ================================================================== */
 
@@ -309,6 +494,13 @@ body {
 
   .motion-only {
     display: none !important;
+  }
+
+  .orb,
+  .float-y,
+  .glow-ring,
+  .text-gradient {
+    animation: none !important;
   }
 
   *,

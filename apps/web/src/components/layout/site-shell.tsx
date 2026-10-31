@@ -8,6 +8,7 @@ import { RevealObserver } from "@/components/ui/reveal-observer";
 export function SiteShell({ children }: { children: ReactNode }) {
   return (
     <>
+      <div aria-hidden="true" className="scroll-progress bg-brand" />
       <Suspense fallback={null}>
         <Header />
       </Suspense>

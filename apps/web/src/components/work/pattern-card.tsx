@@ -43,7 +43,7 @@ export function PatternCard({
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgb(42_79_246/0.35),transparent_55%)] opacity-60 transition-opacity duration-700 group-hover:opacity-100"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgb(91_70_240/0.35),transparent_55%)] opacity-60 transition-opacity duration-700 group-hover:opacity-100"
         />
         <p
           aria-hidden="true"

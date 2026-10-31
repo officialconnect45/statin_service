@@ -14,7 +14,7 @@ export function Specimen({
   return (
     <div
       aria-hidden="true"
-      className={`overflow-hidden rounded-2xl border border-white/10 bg-night-2 text-white shadow-[0_40px_80px_-40px_rgb(6_9_20/0.6)] ${className}`}
+      className={`overflow-hidden rounded-2xl border border-white/10 bg-night-2 text-white shadow-[0_40px_80px_-40px_rgb(11_9_32/0.6)] ${className}`}
     >
       <Chrome variant={variant} />
       {variant === "saas" ? <SaasFrame /> : null}
@@ -129,7 +129,7 @@ function IntegrationFrame() {
             <g key={index}>
               <path
                 d={`M78 ${y} C 130 ${y}, 130 85, 160 85`}
-                stroke="rgb(106 166 255 / 0.5)"
+                stroke="rgb(165 162 255 / 0.5)"
                 className="dash-flow"
               />
               <path d={`M210 85 C 240 85, 240 ${y}, 252 ${y}`} stroke="rgb(255 255 255 / 0.18)" />
@@ -142,11 +142,11 @@ function IntegrationFrame() {
             <text x="43" y={34 + index * 55} textAnchor="middle" fill="white" fontSize="11">{label}</text>
           </g>
         ))}
-        <rect x="160" y="62" width="50" height="46" rx="10" fill="#2a4ff6" />
+        <rect x="160" y="62" width="50" height="46" rx="10" fill="#5b46f0" />
         <text x="185" y="89" textAnchor="middle" fill="white" fontSize="11" fontWeight="600">API</text>
         {["Orders", "Stock", "AI"].map((label, index) => (
           <g key={label}>
-            <rect x="252" y={16 + index * 55} width="60" height="28" rx="6" fill="rgb(106 166 255 / 0.08)" stroke="rgb(106 166 255 / 0.35)" />
+            <rect x="252" y={16 + index * 55} width="60" height="28" rx="6" fill="rgb(165 162 255 / 0.08)" stroke="rgb(165 162 255 / 0.35)" />
             <text x="282" y={34 + index * 55} textAnchor="middle" fill="white" fontSize="11">{label}</text>
           </g>
         ))}

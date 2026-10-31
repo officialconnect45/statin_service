@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { Container } from "@/components/ui/container";
 import { ArrowIcon, ArrowUpRightIcon, SocialIcon } from "@/components/ui/icons";
 import { Logo } from "@/components/ui/logo";
@@ -9,9 +9,19 @@ import { footerNav, site, social } from "@/lib/site";
 export function Footer() {
   return (
     <footer className="tone-dark relative overflow-hidden bg-night text-white">
+      <div aria-hidden="true" className="aurora">
+        <span
+          className="orb -top-48 left-[10%] h-96 w-[520px] bg-indigo-600"
+          style={{ "--o": 0.35, "--dx": "80px", "--dy": "30px", "--dur": "20s" } as CSSProperties}
+        />
+        <span
+          className="orb -top-40 right-[5%] h-80 w-[420px] bg-fuchsia-600"
+          style={{ "--o": 0.22, "--dx": "-60px", "--dy": "40px", "--dur": "17s", "--delay": "-6s" } as CSSProperties}
+        />
+      </div>
       <Container className="relative">
         <div className="flex flex-col gap-6 border-b border-night-line py-14 md:flex-row md:items-end md:justify-between">
-          <p className="max-w-xl text-[clamp(1.6rem,3vw,2.4rem)] leading-[1.1] font-medium tracking-[-0.03em] text-balance">
+          <p className="max-w-xl font-[family-name:var(--font-display)] text-[clamp(1.6rem,3vw,2.4rem)] leading-[1.15] font-semibold tracking-[-0.03em] text-balance">
             Have a problem worth solving?{" "}
             <span className="text-fog">Tell us what has to be true on launch day.</span>
           </p>

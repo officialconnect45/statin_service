@@ -109,7 +109,7 @@ export function Process() {
                   aria-hidden="true"
                   className="absolute top-1.5 left-[3px] h-[9px] w-[9px] rounded-full border-2 border-cobalt bg-paper-deep lg:hidden"
                 />
-                <article className="relative h-full overflow-hidden lg:rounded-3xl lg:border lg:border-line lg:bg-white lg:p-8 lg:transition-[border-color,box-shadow] lg:duration-500 lg:hover:border-cobalt/40 lg:hover:shadow-[0_30px_60px_-30px_rgb(42_79_246/0.35)]">
+                <article className="relative h-full overflow-hidden lg:rounded-3xl lg:border lg:border-line lg:bg-white lg:p-8 lg:transition-[border-color,box-shadow] lg:duration-500 lg:hover:border-cobalt/40 lg:hover:shadow-[0_30px_60px_-30px_rgb(91_70_240/0.35)]">
                   <div className="flex items-baseline justify-between gap-4">
                     <p className="font-mono text-xs text-cobalt">{step.index}</p>
                     <p

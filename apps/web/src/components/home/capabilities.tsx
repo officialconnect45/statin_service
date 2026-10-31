@@ -36,7 +36,7 @@ export function Capabilities() {
                     {service.index}
                   </span>
                   <span
-                    className={`flex-1 text-[clamp(1.6rem,3.4vw,2.9rem)] leading-[1.02] font-medium tracking-[-0.04em] transition-[color,translate] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                    className={`flex-1 font-[family-name:var(--font-display)] text-[clamp(1.5rem,3.1vw,2.6rem)] leading-[1.06] font-semibold tracking-[-0.035em] transition-[color,translate] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                       open ? "translate-x-1 text-ink" : "text-ink/50 group-hover:text-ink/75"
                     }`}
                   >
@@ -104,7 +104,7 @@ export function Capabilities() {
       {/* Sticky visual for large screens */}
       <div className="hidden lg:col-span-5 lg:block">
         <div className="sticky top-24">
-          <div className="relative overflow-hidden rounded-3xl bg-night p-6 text-white">
+          <div className="relative overflow-hidden rounded-3xl bg-night p-6 text-white shadow-[0_50px_100px_-45px_rgb(79_70_229/0.7)]">
             <div
               aria-hidden="true"
               className="bg-grid absolute inset-0 transition-[background-position] duration-1000 ease-out"

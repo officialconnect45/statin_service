@@ -141,15 +141,15 @@ function Scene({ step }: { step: number }) {
     >
       <defs>
         <marker id="story-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
-          <path d="M0 0 8 4 0 8Z" fill="#6aa6ff" />
+          <path d="M0 0 8 4 0 8Z" fill="#a5a2ff" />
         </marker>
       </defs>
 
       {/* Security perimeter */}
       <g style={visible(step >= 5)}>
-        <rect x="26" y="66" width="498" height="356" rx="28" stroke="#6aa6ff" strokeOpacity="0.55" strokeDasharray="6 6" />
-        <rect x="44" y="54" width="214" height="24" rx="12" fill="#060914" stroke="#6aa6ff" strokeOpacity="0.55" />
-        <text x="151" y="70" textAnchor="middle" fill="#6aa6ff" fontSize="11" className="font-mono" letterSpacing="1.2">
+        <rect x="26" y="66" width="498" height="356" rx="28" stroke="#a5a2ff" strokeOpacity="0.55" strokeDasharray="6 6" />
+        <rect x="44" y="54" width="214" height="24" rx="12" fill="#0b0920" stroke="#a5a2ff" strokeOpacity="0.55" />
+        <text x="151" y="70" textAnchor="middle" fill="#a5a2ff" fontSize="11" className="font-mono" letterSpacing="1.2">
           AUTH · ROLES · VALIDATION
         </text>
       </g>
@@ -191,7 +191,7 @@ function Scene({ step }: { step: number }) {
           <path
             key={`o-${index}`}
             d={`M${x1 + 48} ${y1} C ${mid} ${y1}, ${mid} ${y2}, ${x2 - 48} ${y2}`}
-            stroke="#6aa6ff"
+            stroke="#a5a2ff"
             strokeOpacity={step >= 6 ? 0.9 : 0.55}
             className="dash-flow"
             style={visible(ordered)}
@@ -207,7 +207,7 @@ function Scene({ step }: { step: number }) {
             <path
               key={`ai-${index}`}
               d={`M${x} ${y + 16} C ${x} ${AI[1] - 40}, ${AI[0] + 40} ${AI[1]}, ${AI[0] + 56} ${AI[1]}`}
-              stroke="#2a4ff6"
+              stroke="#5b46f0"
               strokeOpacity="0.8"
               className="dash-flow"
             />
@@ -219,13 +219,13 @@ function Scene({ step }: { step: number }) {
             <path
               key={`ai-s-${index}`}
               d={`M${x} ${y + 16} L ${x} ${AI[1] - 18}`}
-              stroke="#2a4ff6"
+              stroke="#5b46f0"
               strokeOpacity="0.6"
               className="dash-flow"
             />
           );
         })}
-        <rect x={AI[0] - 56} y={AI[1] - 18} width="112" height="36" rx="18" fill="#2a4ff6" />
+        <rect x={AI[0] - 56} y={AI[1] - 18} width="112" height="36" rx="18" fill="#5b46f0" />
         <text x={AI[0]} y={AI[1] + 4} textAnchor="middle" fill="white" fontSize="12" fontWeight="600">
           AI · Automation
         </text>
@@ -233,10 +233,10 @@ function Scene({ step }: { step: number }) {
 
       {/* Outcome */}
       <g style={visible(step >= 6)}>
-        <path d={`M524 ${INSIGHT[1]} L ${INSIGHT[0] - 50} ${INSIGHT[1]}`} stroke="#6aa6ff" strokeWidth="1.5" markerEnd="url(#story-arrow)" />
-        <rect x={INSIGHT[0] - 48} y={INSIGHT[1] - 34} width="96" height="68" rx="14" fill="#6aa6ff" />
-        <text x={INSIGHT[0]} y={INSIGHT[1] - 4} textAnchor="middle" fill="#060914" fontSize="12" fontWeight="600">Insight</text>
-        <text x={INSIGHT[0]} y={INSIGHT[1] + 14} textAnchor="middle" fill="#060914" fontSize="10" className="font-mono">measured</text>
+        <path d={`M524 ${INSIGHT[1]} L ${INSIGHT[0] - 50} ${INSIGHT[1]}`} stroke="#a5a2ff" strokeWidth="1.5" markerEnd="url(#story-arrow)" />
+        <rect x={INSIGHT[0] - 48} y={INSIGHT[1] - 34} width="96" height="68" rx="14" fill="#a5a2ff" />
+        <text x={INSIGHT[0]} y={INSIGHT[1] - 4} textAnchor="middle" fill="#0b0920" fontSize="12" fontWeight="600">Insight</text>
+        <text x={INSIGHT[0]} y={INSIGHT[1] + 14} textAnchor="middle" fill="#0b0920" fontSize="10" className="font-mono">measured</text>
       </g>
 
       {/* Systems */}
@@ -253,8 +253,8 @@ function Scene({ step }: { step: number }) {
             <g className={step === 1 ? "story-jitter" : undefined} style={{ "--j": index } as CSSProperties}>
               <rect
                 x="-48" y="-16" width="96" height="32" rx="9"
-                fill={step >= 6 ? "#121a33" : "#0b1020"}
-                stroke={ordered ? "#6aa6ff" : "rgb(255 255 255 / 0.28)"}
+                fill={step >= 6 ? "#1b1747" : "#120f33"}
+                stroke={ordered ? "#a5a2ff" : "rgb(255 255 255 / 0.28)"}
                 strokeOpacity={ordered ? 0.7 : 1}
                 strokeDasharray={step <= 1 && index % 4 === 0 ? "4 4" : undefined}
                 style={{ transition: "stroke 0.6s, fill 0.6s" }}

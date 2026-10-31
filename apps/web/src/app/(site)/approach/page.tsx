@@ -11,7 +11,7 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata({
   title: "Our approach",
   description:
-    "How a Statin engagement runs: discovery, a written scope with milestones and acceptance criteria, weekly working software, and a handover your team can operate.",
+    "How a Statin engagement runs: discovery, an agreed strategy and plan, weekly working software, and a handover your team can run.",
   path: "/approach",
 });
 

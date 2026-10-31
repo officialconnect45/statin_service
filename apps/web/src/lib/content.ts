@@ -40,78 +40,7 @@ export const stack = [
   "WordPress",
 ] as const;
 
-export const markets = [
-  "Sweden",
-  "Denmark",
-  "Norway",
-  "Estonia",
-  "Latvia",
-  "Lithuania",
-] as const;
-
-/* ------------------------------------------------------------------ */
-/* Hero signal path                                                    */
-/* ------------------------------------------------------------------ */
-
-export const signalPath = [
-  {
-    id: "request",
-    label: "Request",
-    tag: "URL · API call",
-    detail:
-      "A visitor opens a page, a customer checks out, or a partner system calls an API. Every system starts with a request.",
-  },
-  {
-    id: "edge",
-    label: "Edge",
-    tag: "Cache · TLS · Headers",
-    detail:
-      "Hosting, caching, and security headers configured so pages load quickly and traffic arrives over a secure connection.",
-  },
-  {
-    id: "interface",
-    label: "Interface",
-    tag: "Next.js · Shopify · WordPress",
-    detail:
-      "Storefronts, dashboards, portals, and sites built on the platform that fits the business, not the one we prefer.",
-  },
-  {
-    id: "services",
-    label: "Services",
-    tag: "Node.js · FastAPI",
-    detail:
-      "Business logic, APIs, and webhooks: where checkout rules, permissions, and integrations live.",
-  },
-  {
-    id: "data",
-    label: "Data",
-    tag: "MongoDB · PostgreSQL · ERP",
-    detail:
-      "Catalog, inventory, customers, and orders connected in one model instead of scattered across tools.",
-  },
-  {
-    id: "intelligence",
-    label: "Intelligence",
-    tag: "AI · Automation",
-    detail:
-      "AI features and automation applied where they remove manual work, not as decoration.",
-  },
-  {
-    id: "insight",
-    label: "Insight",
-    tag: "Analytics",
-    detail:
-      "Analytics on the pages and flows that matter, so the next decision is based on what actually happened.",
-  },
-] as const;
-
-export const sampleRequests = [
-  "GET  /checkout",
-  "POST /api/orders",
-  "GET  /products/linen-shirt",
-  "POST /webhooks/inventory",
-  "GET  /dashboard/accounts",
-] as const;
+export const markets = ["Sweden", "Denmark", "Norway", "Estonia", "Latvia", "Lithuania"] as const;
 
 /* ------------------------------------------------------------------ */
 /* Problem → approach story                                            */
@@ -120,45 +49,26 @@ export const sampleRequests = [
 export const problemSteps = [
   {
     phase: "The problem",
-    title: "Businesses outgrow their software quietly.",
+    title: "Your business grew. Your software didn't.",
     detail:
-      "A site that loads slowly. A store theme that cannot carry the catalog. Orders, stock, and customers split between a storefront, an ERP, and a spreadsheet.",
+      "A slow website, a store that can't keep up, and orders, stock, and customers spread across tools and spreadsheets. Every quick fix adds another tool.",
   },
   {
-    phase: "Complexity builds",
-    title: "Every workaround adds another system.",
+    phase: "Our approach",
+    title: "We connect everything into one system.",
     detail:
-      "Plugins on plugins, manual exports, and integrations nobody owns. Each fix makes the next change slower and riskier.",
+      "We learn how your business really works, then connect products, stock, customers, and orders, so everyone works from the same numbers.",
   },
   {
-    phase: "The Statin approach",
-    title: "We start with the problem, not the tool list.",
+    phase: "Automated and secure",
+    title: "Repetitive work runs itself, safely.",
     detail:
-      "Discovery maps what the business actually does. Then we choose the architecture and the stack that fit, and write down what will be delivered.",
+      "We automate the daily copy-paste and checks, add AI where it really saves time, and build in secure logins and payments from day one.",
   },
   {
-    phase: "Structured data",
-    title: "Data gets one shape and one path.",
-    detail:
-      "Catalog, inventory, customers, and orders connected through APIs and a data model the team can reason about.",
-  },
-  {
-    phase: "Intelligence",
-    title: "Manual work becomes automation.",
-    detail:
-      "Automation and AI features where they remove real effort: the exports, the copy-paste, the checks someone does every morning.",
-  },
-  {
-    phase: "Security",
-    title: "Access is designed, not bolted on.",
-    detail:
-      "Authentication, roles and permissions, validated inputs, and payments handled through the right providers from the first release.",
-  },
-  {
-    phase: "Outcome",
-    title: "One system the team can run and measure.",
-    detail:
-      "Analytics on the flows that matter, documentation, and a handover your team can operate without us in the room.",
+    phase: "The result",
+    title: "One system that works, and numbers you can trust.",
+    detail: "A fast, reliable system your team can run on its own, with clear reports on what is working.",
   },
 ] as const;
 
@@ -170,44 +80,38 @@ export const processSteps = [
   {
     index: "01",
     name: "Discover",
-    detail:
-      "A working session on the business problem, the users, and the constraints. We review your current site, store, or system before suggesting anything.",
-    output: "A shared understanding of the problem",
+    detail: "We learn your business, your customers, and your goals, and review what you have today.",
+    output: "A clear picture of the problem",
   },
   {
     index: "02",
-    name: "Define",
-    detail:
-      "A written scope: deliverables, milestones, acceptance criteria, and exclusions. You see the plan and the lead before anyone designs a screen.",
-    output: "Scope, milestones, acceptance criteria",
+    name: "Strategy",
+    detail: "We agree the strategy and a written plan with you: what we will build, the milestones, and the timeline.",
+    output: "Strategy, plan, and timeline",
   },
   {
     index: "03",
     name: "Design",
-    detail:
-      "Information architecture, the key flows, and an interface direction you can react to with specifics, not adjectives.",
-    output: "Flows, structure, interface",
+    detail: "We design the key screens and customer journeys, so you can see and approve them before we build.",
+    output: "Designs you have approved",
   },
   {
     index: "04",
     name: "Build",
-    detail:
-      "One lead and working software demoed every week. Scope changes are written down before they enter the work.",
-    output: "Weekly working software",
+    detail: "One dedicated lead and a demo of working software every week, so you always know where things stand.",
+    output: "Progress you can see weekly",
   },
   {
     index: "05",
     name: "Launch",
-    detail:
-      "Access, analytics, documentation, and handover, so launch is not the last conversation and your team can operate what shipped.",
-    output: "Live system and handover",
+    detail: "We go live, set up analytics, and hand over everything your team needs to run it.",
+    output: "Live, measured, handed over",
   },
   {
     index: "06",
     name: "Support",
-    detail:
-      "Maintenance and ongoing development support as the product, the store, or the business grows.",
-    output: "A team without a new hire",
+    detail: "We stay with you for updates, fixes, and new features as your business grows.",
+    output: "A team on call as you grow",
   },
 ] as const;
 
@@ -346,6 +250,7 @@ export const patterns: Pattern[] = [
 /* Why Statin                                                          */
 /* ------------------------------------------------------------------ */
 
+/** All working rules; the site shows `keyDifferentiators`. */
 export const differentiators = [
   {
     title: "Problem first, stack second",
@@ -359,13 +264,11 @@ export const differentiators = [
   },
   {
     title: "One lead, start to finish",
-    detail:
-      "The person who scopes the work is still in it when it ships. You always know who is accountable.",
+    detail: "The person who scopes the work is still in it when it ships. You always know who is accountable.",
   },
   {
     title: "Working software every week",
-    detail:
-      "A weekly demo of real software, not a slide about software. You see the work while it can still change.",
+    detail: "A weekly demo of real software, not a slide about software. You see the work while it can still change.",
   },
   {
     title: "Full stack, including AI",
@@ -378,86 +281,6 @@ export const differentiators = [
       "We do not claim to have audited a site or found a problem unless we actually have. Recommendations come with the reasoning behind them.",
   },
 ] as const;
-
-/* ------------------------------------------------------------------ */
-/* Architecture                                                        */
-/* ------------------------------------------------------------------ */
-
-export type Layer = {
-  id: string;
-  code: string;
-  name: string;
-  role: string;
-  detail: string;
-  stack: string[];
-};
-
-export const layers: Layer[] = [
-  {
-    id: "edge",
-    code: "L1",
-    name: "Edge",
-    role: "Delivery & caching",
-    detail:
-      "Hosting, caching, TLS, security headers, and image and asset optimization. Where most performance fixes start.",
-    stack: ["CDN", "Caching", "TLS", "Headers"],
-  },
-  {
-    id: "interface",
-    code: "L2",
-    name: "Interface",
-    role: "Sites, stores & apps",
-    detail:
-      "The surface customers and teams use: business websites, storefronts, dashboards, and portals.",
-    stack: ["React", "Next.js", "WordPress", "Shopify"],
-  },
-  {
-    id: "services",
-    code: "L3",
-    name: "Services",
-    role: "Logic & APIs",
-    detail:
-      "Business rules, APIs, webhooks, and background jobs that keep the rest of the system honest.",
-    stack: ["Node.js", "Express", "Python", "FastAPI"],
-  },
-  {
-    id: "data",
-    code: "L4",
-    name: "Data",
-    role: "One source of truth",
-    detail:
-      "Catalog, inventory, customers, and orders, in a data model connected to the ERP and tools the business already runs.",
-    stack: ["MongoDB", "PostgreSQL", "ERP sync"],
-  },
-  {
-    id: "intelligence",
-    code: "L5",
-    name: "Intelligence",
-    role: "AI & automation",
-    detail:
-      "AI features and automated workflows that take repetitive work off the team.",
-    stack: ["AI APIs", "Automation", "Workflows"],
-  },
-];
-
-export const rails = {
-  security: {
-    id: "security",
-    name: "Security",
-    role: "Across every layer",
-    detail:
-      "Authentication, roles and permissions, validated inputs, and payments handled through established providers. Designed in, not bolted on.",
-    stack: ["Auth", "Roles", "Validation", "Payment providers"],
-  },
-  measurement: {
-    id: "measurement",
-    name: "Measurement",
-    role: "Across every layer",
-    detail:
-      "Analytics wired on launch for the pages and flows that matter, so performance and conversion are visible, not guessed.",
-    stack: ["Analytics", "Events", "Metadata"],
-  },
-} as const;
 
 /* ------------------------------------------------------------------ */
 /* About / story                                                       */
@@ -473,20 +296,17 @@ export const principles = [
   {
     index: "02",
     title: "Decisions in writing",
-    detail:
-      "Scope, changes, and open questions live in a record you can read. Memory is not the project plan.",
+    detail: "Scope, changes, and open questions live in a record you can read. Memory is not the project plan.",
   },
   {
     index: "03",
     title: "Software a team can operate",
-    detail:
-      "If the team cannot edit the site, support a customer, or see an order, the launch is incomplete.",
+    detail: "If the team cannot edit the site, support a customer, or see an order, the launch is incomplete.",
   },
   {
     index: "04",
     title: "Restraint",
-    detail:
-      "We ship the smaller thing that can meet a customer. Range is added once the first release has been used.",
+    detail: "We ship the smaller thing that can meet a customer. Range is added once the first release has been used.",
   },
 ] as const;
 
@@ -538,3 +358,15 @@ export const faqs = [
     a: "You receive access, analytics, and documentation for what shipped. Maintenance and ongoing development support are available if you want the same team to keep going.",
   },
 ] as const;
+
+/** The four working rules shown on the site, in buyer order. */
+export const keyDifferentiators = [
+  "One lead, start to finish",
+  "Working software every week",
+  "Problem first, stack second",
+  "Full stack, including AI",
+].map((title) => {
+  const item = differentiators.find((entry) => entry.title === title);
+  if (!item) throw new Error(`Unknown differentiator: ${title}`);
+  return item;
+});

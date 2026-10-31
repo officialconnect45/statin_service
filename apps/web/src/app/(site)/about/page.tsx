@@ -1,12 +1,14 @@
 import type { CSSProperties } from "react";
 import { ClosingCta } from "@/components/home/closing-cta";
-import { SocialSection } from "@/components/home/social-section";
+
 import { WhyStatin } from "@/components/home/why-statin";
 import { Container } from "@/components/ui/container";
 import { PageHero } from "@/components/ui/page-hero";
+import { Photo, PhotoChip } from "@/components/ui/photo";
 import { Eyebrow, SectionHeading } from "@/components/ui/typography";
 import { principles, story } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
+import { photos } from "@/lib/photos";
 
 export const metadata = pageMetadata({
   title: "About",
@@ -38,6 +40,35 @@ export default function AboutPage() {
         title="We're early. We're focused."
         lede="Statin works with teams whose website, store, or software has to carry real weight: a buyer, a customer, an order. We stay small so the person who scopes the work is still in it when it ships."
       />
+
+      <section aria-label="Inside Statin" className="relative -mt-6 pb-8 md:-mt-10">
+        <Container>
+          <div data-reveal className="grid gap-4 md:grid-cols-12 md:grid-rows-2">
+            <Photo
+              {...photos.collaboration}
+              preload
+              sizes="(min-width: 768px) 58vw, 100vw"
+              className="h-72 shadow-[0_40px_90px_-45px_rgb(46_35_140/0.6)] md:col-span-7 md:row-span-2 md:h-[540px]"
+            >
+              <PhotoChip className="bottom-6 left-6">One team from scope to launch</PhotoChip>
+            </Photo>
+            <Photo
+              {...photos.strategyMeeting}
+              eager
+              sizes="(min-width: 768px) 40vw, 100vw"
+              className="h-56 md:col-span-5 md:h-auto"
+            />
+            <Photo
+              {...photos.workspace}
+              eager
+              sizes="(min-width: 768px) 40vw, 100vw"
+              className="h-56 md:col-span-5 md:h-auto"
+            >
+              <PhotoChip className="right-5 bottom-5">Remote-first engineering</PhotoChip>
+            </Photo>
+          </div>
+        </Container>
+      </section>
 
       <section aria-labelledby="story-heading" className="bg-white py-24 md:py-32">
         <Container className="grid gap-14 lg:grid-cols-12">
@@ -91,8 +122,8 @@ export default function AboutPage() {
               Every engagement has names, not a pool.
             </h2>
             <p className="mt-6 max-w-md text-base leading-relaxed text-fog">
-              Statin is founder-led. You know who is designing, who is engineering, and who answers
-              when the week goes sideways.
+              Statin is founder-led. You know who is designing, who is engineering, and who answers when the week goes
+              sideways.
             </p>
           </div>
           <ul className="lg:col-span-6 lg:col-start-7">
@@ -107,7 +138,7 @@ export default function AboutPage() {
       </section>
 
       <WhyStatin />
-      <SocialSection />
+      {/* <SocialSection /> */}
       <ClosingCta />
     </>
   );

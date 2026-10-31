@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Sora } from "next/font/google";
+import { Geist, Geist_Mono, Orbitron, Sora } from "next/font/google";
 import { services } from "@/lib/services";
 import { site, social } from "@/lib/site";
 import "./globals.css";
@@ -13,6 +13,14 @@ const geist = Geist({
 const sora = Sora({
   subsets: ["latin"],
   variable: "--font-sora",
+  display: "swap",
+});
+
+/** Numerals only: the hero stats. */
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  variable: "--font-orbitron",
   display: "swap",
 });
 
@@ -130,7 +138,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geist.variable} ${geistMono.variable} ${sora.variable} h-full antialiased`}
+      className={`${geist.variable} ${geistMono.variable} ${sora.variable} ${orbitron.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <noscript>

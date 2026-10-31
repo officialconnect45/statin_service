@@ -451,6 +451,45 @@ body {
   }
 }
 
+/* Testimonial carousel: fills the active dot over one interval */
+@keyframes testimonial-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Footer: giant outlined wordmark with a slow light sweep */
+.footer-wordmark {
+  color: transparent;
+  background-image:
+    linear-gradient(100deg, transparent 35%, rgb(255 255 255 / 0.22) 50%, transparent 65%),
+    linear-gradient(180deg, rgb(165 162 255 / 0.22) 0%, rgb(165 162 255 / 0.04) 75%);
+  background-size:
+    250% 100%,
+    100% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-stroke: 1px rgb(255 255 255 / 0.1);
+  animation: wordmark-sweep 9s ease-in-out infinite;
+}
+
+@keyframes wordmark-sweep {
+  0% {
+    background-position:
+      150% 0,
+      0 0;
+  }
+  100% {
+    background-position:
+      -50% 0,
+      0 0;
+  }
+}
+
 /* Reading progress bar driven by page scroll, where supported */
 .scroll-progress {
   position: fixed;
@@ -497,6 +536,7 @@ body {
   }
 
   .orb,
+  .footer-wordmark,
   .float-y,
   .glow-ring,
   .text-gradient {

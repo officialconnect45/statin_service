@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { buttonClass } from "@/components/ui/button-link";
+import { scrollToSectionOnPage } from "@/components/ui/hash-scroll";
 import { ArrowIcon, ChevronIcon } from "@/components/ui/icons";
 import { Logo } from "@/components/ui/logo";
 import { services } from "@/lib/services";
@@ -88,6 +89,9 @@ export function Header() {
         <Logo tone={mobileOpen ? "dark" : "light"} onNavigate={closeAll} />
 
         <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
+          <NavLink href="/" active={pathname === "/"} onPointerEnter={() => openMenu(null)}>
+            Home
+          </NavLink>
           <MenuTrigger
             id="solutions"
             label="Solutions"
@@ -103,6 +107,14 @@ export function Header() {
           />
           <NavLink href="/work" active={isActive("/work")} onPointerEnter={() => openMenu(null)}>
             Work
+          </NavLink>
+          <NavLink
+            href="/#testimonials"
+            active={false}
+            onPointerEnter={() => openMenu(null)}
+            onClick={(event) => scrollToSectionOnPage(event, pathname)}
+          >
+            Testimonials
           </NavLink>
           <MenuTrigger
             id="company"
@@ -161,16 +173,19 @@ function NavLink({
   active,
   children,
   onPointerEnter,
+  onClick,
 }: {
   href: string;
   active: boolean;
   children: string;
   onPointerEnter?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }) {
   return (
     <Link
       href={href}
       onPointerEnter={onPointerEnter}
+      onClick={onClick}
       aria-current={active ? "page" : undefined}
       className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
         active ? "bg-cobalt/10 text-cobalt" : "text-ink-soft hover:bg-paper-deep hover:text-ink"
@@ -295,10 +310,10 @@ function SolutionsPanel({ open, onNavigate, onPointerEnter }: PanelProps) {
             <span className="relative t-eyebrow text-white/80">How we work</span>
             <span className="relative mt-16 block">
               <span className="block font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight">
-                Discover. Define. Build. Launch.
+                Discover. Strategy. Build. Launch.
               </span>
               <span className="mt-3 block text-sm leading-relaxed text-white/80">
-                A written scope with milestones and acceptance criteria before any build begins.
+                We agree the strategy and the plan with you before any build begins.
               </span>
               <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium">
                 <span className="link-line">See our approach</span>
@@ -315,7 +330,7 @@ function SolutionsPanel({ open, onNavigate, onPointerEnter }: PanelProps) {
 function CompanyPanel({ open, onNavigate, onPointerEnter }: PanelProps) {
   return (
     <Panel id="nav-panel-company" open={open} onPointerEnter={onPointerEnter}>
-      <ul className="grid grid-cols-3 gap-4">
+      <ul className="grid grid-cols-2 gap-4">
         {companyNav.map((item) => (
           <li key={item.href}>
             <Link href={item.href} onClick={onNavigate} className="card-premium group block h-full rounded-2xl p-6">

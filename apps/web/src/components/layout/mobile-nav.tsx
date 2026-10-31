@@ -1,16 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, type CSSProperties } from "react";
 import { buttonClass } from "@/components/ui/button-link";
+import { scrollToSectionOnPage } from "@/components/ui/hash-scroll";
 import { ArrowIcon } from "@/components/ui/icons";
 import { SocialLinks } from "@/components/ui/social-links";
 import { services } from "@/lib/services";
 import { site } from "@/lib/site";
 
 const primary = [
+  { href: "/", label: "Home" },
   { href: "/services", label: "Solutions" },
   { href: "/work", label: "Work" },
+  { href: "/#testimonials", label: "Testimonials" },
   { href: "/approach", label: "Approach" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
@@ -18,6 +22,7 @@ const primary = [
 
 export function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
   const firstLink = useRef<HTMLAnchorElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!open) return;
@@ -56,10 +61,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
         />
         <div className="bg-grid mask-radial absolute inset-0" />
       </div>
-      <nav
-        aria-label="Mobile"
-        className="relative flex min-h-full flex-col px-5 pt-24 pb-10 sm:px-8"
-      >
+      <nav aria-label="Mobile" className="relative flex min-h-full flex-col px-5 pt-24 pb-10 sm:px-8">
         <ul>
           {primary.map((item, index) => (
             <li
@@ -72,7 +74,10 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
               <Link
                 ref={index === 0 ? firstLink : undefined}
                 href={item.href}
-                onClick={onClose}
+                onClick={(event) => {
+                  scrollToSectionOnPage(event, pathname);
+                  onClose();
+                }}
                 className="flex items-center justify-between py-4 font-[family-name:var(--font-display)] text-[2.2rem] leading-none font-semibold tracking-[-0.04em] text-white"
               >
                 {item.label}
@@ -82,11 +87,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
           ))}
         </ul>
 
-        <div
-          className={`mt-10 transition-opacity delay-300 duration-700 ${
-            open ? "opacity-100" : "opacity-0"
-          }`}
-        >
+        <div className={`mt-10 transition-opacity delay-300 duration-700 ${open ? "opacity-100" : "opacity-0"}`}>
           <p className="t-eyebrow text-fog">Solutions</p>
           <ul className="mt-4 grid gap-x-6 sm:grid-cols-2">
             {services.map((service) => (

@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { Container } from "@/components/ui/container";
+import { TechIcon } from "@/components/ui/tech-icon";
 import { Eyebrow, SplitText } from "@/components/ui/typography";
 import { audiences, markets, stack } from "@/lib/content";
 
@@ -16,13 +17,9 @@ export function Credibility() {
               className="t-h2 mt-6 max-w-[16ch] text-balance"
             />
           </div>
-          <p
-            data-reveal
-            style={{ "--d": 120 } as CSSProperties}
-            className="t-lede text-ink-soft lg:col-span-5"
-          >
-            Statin is a product engineering company. We work with the teams whose revenue runs
-            through a website, a store, or a product, and who need it built to hold up.
+          <p data-reveal style={{ "--d": 120 } as CSSProperties} className="t-lede text-ink-soft lg:col-span-5">
+            Statin is a product engineering company. We work with the teams whose revenue runs through a website, a
+            store, or a product, and who need it built to hold up.
           </p>
         </div>
 
@@ -50,25 +47,36 @@ export function Credibility() {
         </ul>
       </Container>
 
-      {/* Stack marquee */}
-      <div className="mt-20 border-y border-line bg-white/70 py-6 backdrop-blur md:mt-24">
-        <Container className="flex flex-col gap-5 md:flex-row md:items-center md:gap-10">
-          <p className="t-eyebrow shrink-0 text-mist">Engineering with</p>
-          <div className="marquee-host mask-fade-x relative min-w-0 flex-1 overflow-hidden">
-            <ul className="marquee" aria-label="Technologies we work with">
-              {[...stack, ...stack].map((item, index) => (
-                <li
-                  key={`${item}-${index}`}
-                  aria-hidden={index >= stack.length ? true : undefined}
-                  className="flex items-center gap-10 pr-10 text-lg font-medium tracking-tight whitespace-nowrap text-ink/80"
-                >
-                  {item}
-                  <span aria-hidden="true" className="bg-brand h-1.5 w-1.5 rounded-full" />
-                </li>
-              ))}
-            </ul>
-          </div>
+      {/* Stack marquee: two rows drifting in opposite directions */}
+      <div className="relative mt-20 overflow-hidden border-y border-line bg-white/70 py-10 backdrop-blur md:mt-24">
+        <Container>
+          <p className="t-eyebrow text-center text-mist">Engineering with</p>
         </Container>
+        <div className="marquee-host mask-fade-x mt-7 space-y-4">
+          {[stack, [...stack].reverse()].map((row, rowIndex) => (
+            <div key={rowIndex} className="overflow-hidden">
+              <ul
+                className={`marquee ${rowIndex === 1 ? "[animation-direction:reverse]" : ""}`}
+                style={{ animationDuration: "60s" }}
+                aria-label={rowIndex === 0 ? "Technologies we work with" : undefined}
+                aria-hidden={rowIndex === 1 ? true : undefined}
+              >
+                {[...row, ...row].map((item, index) => (
+                  <li
+                    key={`${item}-${index}`}
+                    aria-hidden={index >= row.length ? true : undefined}
+                    className="group mr-4 flex shrink-0 items-center gap-3 rounded-2xl border border-line bg-white py-3 pr-5 pl-3 shadow-[0_8px_24px_-16px_rgb(79_70_229/0.35)] transition-[border-color,box-shadow,translate] duration-300 hover:-translate-y-0.5 hover:border-cobalt/30 hover:shadow-[0_16px_34px_-16px_rgb(79_70_229/0.5)]"
+                  >
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-paper transition-transform duration-300 group-hover:scale-110">
+                      <TechIcon name={item} className="h-5 w-5" />
+                    </span>
+                    <span className="text-[15px] font-semibold tracking-tight whitespace-nowrap text-ink">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
 
       <Container className="flex flex-col gap-3 py-8 text-sm text-mist md:flex-row md:items-center md:justify-between">

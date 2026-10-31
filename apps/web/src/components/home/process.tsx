@@ -77,17 +77,17 @@ export function Process() {
       <div className="py-24 md:py-32 lg:sticky lg:top-0 lg:flex lg:h-svh lg:flex-col lg:justify-center lg:overflow-hidden lg:py-0 motion-reduce:lg:static motion-reduce:lg:h-auto motion-reduce:lg:py-32">
         <div className="mx-auto w-full max-w-[1320px] px-5 sm:px-8 lg:px-10">
           <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
-            <div className="lg:col-span-7">
+            <div className="lg:col-span-7 pt-20">
               <Eyebrow>How we work</Eyebrow>
               <SplitText
                 id="process-title"
-                text="A written plan before any code."
+                text="Strategy first. Then we build."
                 className="t-h2 mt-6 max-w-[14ch] text-balance"
               />
             </div>
             <p data-reveal className="t-lede text-ink-soft lg:col-span-5">
-              Six stages, one lead, and a scope you can read. You see the plan before anyone
-              designs a screen, and working software every week after that.
+              Before any design or code, we agree the strategy and the plan with you. After that,
+              you see real progress every week, from the first idea to launch and beyond.
             </p>
           </div>
         </div>

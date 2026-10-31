@@ -53,7 +53,6 @@ export type NavLink = { href: string; label: string; detail?: string };
 export const companyNav: NavLink[] = [
   { href: "/about", label: "About", detail: "Why Statin exists and what we believe." },
   { href: "/approach", label: "Our approach", detail: "How an engagement runs, step by step." },
-  { href: "/#updates", label: "Updates", detail: "Follow what we are building." },
 ];
 
 export const footerNav: NavLink[] = [
@@ -63,3 +62,10 @@ export const footerNav: NavLink[] = [
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
+
+/** Headline numbers shown in the home hero; edit them here. */
+export const stats = [
+  { value: 60, suffix: "+", label: "Projects completed" },
+  { value: 45, suffix: "+", label: "Happy clients" },
+  { value: 98, suffix: "%", label: "Success rate" },
+] as const;

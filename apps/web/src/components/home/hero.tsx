@@ -1,18 +1,12 @@
 import type { CSSProperties, ReactNode } from "react";
-import { SignalPath } from "@/components/home/signal-path";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Container } from "@/components/ui/container";
 import { Magnetic } from "@/components/ui/magnetic";
 import { PointerField } from "@/components/ui/pointer-field";
 import { Eyebrow, SplitText } from "@/components/ui/typography";
-import { patterns, processSteps } from "@/lib/content";
-import { services } from "@/lib/services";
-
-const facts = [
-  { value: String(services.length), label: "Core capabilities" },
-  { value: String(patterns.length), label: "Build patterns" },
-  { value: String(processSteps.length), label: "Delivery phases" },
-];
+import { Specimen } from "@/components/work/specimens";
+import { CountUp } from "@/components/ui/count-up";
+import { stats } from "@/lib/site";
 
 /** Floating capability cards around the hero visual. */
 const chips: {
@@ -91,7 +85,7 @@ export function Hero() {
 
         <Container className="relative pt-44 pb-20 text-center sm:pt-35 lg:pt-40 lg:pb-28">
           <Eyebrow className="fade-load mx-auto bg-white/70 text-cobalt shadow-[0_8px_24px_-12px_rgb(91_70_240/0.45)] backdrop-blur">
-            Product engineering · Web · Commerce · AI
+            Product engineering · Web · Commerce · Mobile Apps · AI
           </Eyebrow>
 
           <SplitText
@@ -123,17 +117,24 @@ export function Hero() {
           </div>
 
           <dl
-            className="fade-load mx-auto mt-12 grid max-w-2xl grid-cols-3 divide-x divide-line rounded-3xl border border-white/80 bg-white/60 py-5 shadow-[0_20px_50px_-30px_rgb(79_70_229/0.4)] backdrop-blur"
+            className="fade-load relative mx-auto mt-14 grid max-w-3xl grid-cols-3 overflow-hidden rounded-[2rem] border border-white/80 bg-white/60 py-7 shadow-[0_24px_60px_-30px_rgb(79_70_229/0.45)] backdrop-blur"
             style={{ "--d": 760 } as CSSProperties}
           >
-            {facts.map((fact) => (
-              <div key={fact.label} className="px-3">
-                <dt className="sr-only">{fact.label}</dt>
-                <dd className="font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight md:text-4xl">
-                  <span className="text-gradient">{fact.value}</span>
+            <span
+              aria-hidden="true"
+              className="bg-grid bg-grid-light mask-radial absolute inset-0 [--grid-size:28px]"
+            />
+            {stats.map((stat, index) => (
+              <div key={stat.label} className={`relative px-3 ${index > 0 ? "border-l border-line" : ""}`}>
+                <dt className="sr-only">{stat.label}</dt>
+                <dd className="font-[family-name:var(--font-orbitron)] text-[clamp(1.9rem,5vw,3.25rem)] leading-none font-extrabold tracking-tight">
+                  <span className="text-gradient">
+                    <CountUp value={stat.value} />
+                    {stat.suffix}
+                  </span>
                 </dd>
-                <dd aria-hidden="true" className="mt-1 text-xs text-mist md:text-sm">
-                  {fact.label}
+                <dd aria-hidden="true" className="mt-3 text-xs font-medium text-mist sm:text-sm">
+                  {stat.label}
                 </dd>
               </div>
             ))}
@@ -150,7 +151,18 @@ export function Hero() {
             />
             <div className="relative rounded-[2.25rem] border border-white/80 bg-white/50 p-0 shadow-[0_50px_120px_-50px_rgb(46_35_140/0.6)] backdrop-blur-xl sm:p-3">
               <span aria-hidden="true" className="glow-ring" />
-              <SignalPath />
+              {/* Product showcase: what we build, as the screens a customer would see */}
+              <div className="grid gap-2 sm:gap-3 lg:grid-cols-12">
+                <Showcase label="Web apps & SaaS" className="lg:col-span-7 lg:row-span-2">
+                  <Specimen variant="saas" className={FRAMELESS} />
+                </Showcase>
+                <Showcase label="Commerce" className="hidden sm:block lg:col-span-5">
+                  <Specimen variant="commerce" className={FRAMELESS} />
+                </Showcase>
+                <Showcase label="Integrations & AI" className="hidden sm:block lg:col-span-5">
+                  <Specimen variant="integration" className={FRAMELESS} />
+                </Showcase>
+              </div>
             </div>
 
             {chips.map((chip) => (
@@ -183,5 +195,19 @@ export function Hero() {
         </Container>
       </PointerField>
     </section>
+  );
+}
+
+/** A specimen fills its showcase tile; the tile supplies the corners. */
+const FRAMELESS = "h-full rounded-none border-0 shadow-none";
+
+function Showcase({ label, className = "", children }: { label: string; className?: string; children: ReactNode }) {
+  return (
+    <div className={`relative overflow-hidden rounded-[1.5rem] bg-night ${className}`}>
+      {children}
+      <span className="absolute top-3 right-3 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
+        {label}
+      </span>
+    </div>
   );
 }

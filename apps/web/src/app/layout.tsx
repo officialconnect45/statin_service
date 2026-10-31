@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Orbitron, Sora } from "next/font/google";
 import { services } from "@/lib/services";
 import { site, social } from "@/lib/site";
 import "./globals.css";
@@ -7,6 +7,20 @@ import "./globals.css";
 const geist = Geist({
   subsets: ["latin"],
   variable: "--font-geist",
+  display: "swap",
+});
+
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-sora",
+  display: "swap",
+});
+
+/** Numerals only: the hero stats. */
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  variable: "--font-orbitron",
   display: "swap",
 });
 
@@ -64,7 +78,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#060914",
+  themeColor: "#f6f6ff",
   colorScheme: "light",
 };
 
@@ -124,7 +138,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geist.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geist.variable} ${geistMono.variable} ${sora.variable} ${orbitron.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <noscript>

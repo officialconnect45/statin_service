@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
     agentUpgrade: "security",
   },
   cacheComponents: true,
+  images: {
+    // Stock photography (Unsplash, free licence). Photo paths only, no query strings.
+    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com", pathname: "/photo-**", search: "" }],
+  },
   partialPrefetching: true,
   turbopack: {
     rules: {

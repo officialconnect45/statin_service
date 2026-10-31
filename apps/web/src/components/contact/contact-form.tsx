@@ -46,7 +46,7 @@ function InquiryForm({ onAnother }: { onAnother: () => void }) {
   }
 
   return (
-    <form action={action} className="relative rounded-3xl border border-line bg-white p-6 text-ink shadow-[0_40px_80px_-40px_rgb(6_9_20/0.5)] md:p-10" noValidate>
+    <form action={action} className="relative rounded-3xl border border-line bg-white p-6 text-ink shadow-[0_40px_80px_-40px_rgb(11_9_32/0.5)] md:p-10" noValidate>
       <div className="grid gap-5 sm:grid-cols-2">
         <Field
           label="Name"

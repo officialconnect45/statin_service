@@ -45,25 +45,42 @@ export default async function ServicePage({
 
   return (
     <>
-      <header className="tone-dark relative overflow-hidden bg-night text-white">
-        <div aria-hidden="true" className="bg-grid mask-radial absolute inset-0" />
-        <Container className="relative grid gap-12 pt-36 pb-20 md:pt-44 md:pb-24 lg:grid-cols-12">
+      <header className="relative overflow-hidden">
+        <div aria-hidden="true" className="aurora">
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,#ffffff_0%,#f3f1ff_70%,#f6f6ff_100%)]" />
+          <span
+            className="orb -top-40 -left-24 h-[440px] w-[440px] bg-indigo-400"
+            style={{ "--o": 0.3, "--dx": "70px", "--dy": "50px", "--dur": "18s" } as CSSProperties}
+          />
+          <span
+            className="orb top-[20%] right-[-6%] h-[420px] w-[420px] bg-violet-400"
+            style={{ "--o": 0.3, "--dx": "-60px", "--dy": "40px", "--dur": "15s", "--delay": "-5s" } as CSSProperties}
+          />
+          <div className="bg-grid bg-grid-light mask-radial absolute inset-0" />
+        </div>
+        <Container className="relative grid gap-12 pt-40 pb-20 md:pt-48 md:pb-24 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <nav aria-label="Breadcrumb" className="fade-load">
-              <ol className="flex items-center gap-2 font-mono text-[11px] tracking-[0.16em] text-fog uppercase">
+              <ol className="t-eyebrow inline-flex items-center gap-2 rounded-full border border-cobalt/15 bg-white/70 px-3.5 py-1.5 text-mist shadow-[0_8px_24px_-12px_rgb(91_70_240/0.45)] backdrop-blur">
                 <li>
-                  <Link href="/services" className="hover:text-white">
+                  <Link href="/services" className="hover:text-ink">
                     Solutions
                   </Link>
                 </li>
                 <li aria-hidden="true">/</li>
-                <li aria-current="page" className="text-signal">
+                <li aria-current="page" className="text-cobalt">
                   {service.index} {service.short}
                 </li>
               </ol>
             </nav>
-            <SplitText as="h1" load text={service.title} className="t-h1 mt-7 max-w-[14ch] text-balance" />
-            <p className="fade-load t-lede mt-8 max-w-2xl text-fog" style={{ "--d": 350 } as CSSProperties}>
+            <SplitText
+              as="h1"
+              load
+              text={service.title}
+              accentFrom={Math.max(0, service.title.split(" ").length - 1)}
+              className="t-h1 mt-7 max-w-[14ch] text-balance text-ink"
+            />
+            <p className="fade-load t-lede mt-8 max-w-2xl text-ink-soft" style={{ "--d": 350 } as CSSProperties}>
               {service.lede}
             </p>
             <div className="fade-load mt-10" style={{ "--d": 500 } as CSSProperties}>
@@ -71,7 +88,9 @@ export default async function ServicePage({
             </div>
           </div>
           <div className="fade-load self-end lg:col-span-5" style={{ "--d": 400 } as CSSProperties}>
-            <Specimen variant={service.specimen} />
+            <div className="float-y drop-shadow-[0_40px_60px_rgb(79_70_229/0.35)]" style={{ "--dur": "7s" } as CSSProperties}>
+              <Specimen variant={service.specimen} />
+            </div>
           </div>
         </Container>
       </header>

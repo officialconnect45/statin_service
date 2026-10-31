@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { buttonClass } from "@/components/ui/button-link";
+import { scrollToSectionOnPage } from "@/components/ui/hash-scroll";
 import { ArrowIcon, ChevronIcon } from "@/components/ui/icons";
 import { Logo } from "@/components/ui/logo";
 import { services } from "@/lib/services";
@@ -70,24 +71,27 @@ export function Header() {
     setMobileOpen(false);
   }, []);
 
-  // backdrop-filter would make the fullscreen mobile overlay position against the header.
-  const solid = (scrolled || menu !== null) && !mobileOpen;
+  const raised = scrolled || menu !== null;
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <header
-      ref={headerRef}
-      className={`tone-dark fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500 ${
-        solid
-          ? "border-b border-night-line bg-night/85 backdrop-blur-xl"
-          : "border-b border-transparent bg-transparent"
-      }`}
-      onPointerLeave={scheduleClose}
-    >
-      <div className="relative z-[60] mx-auto flex h-16 w-full max-w-[1320px] items-center justify-between px-5 sm:px-8 lg:px-10">
-        <Logo onNavigate={closeAll} />
+    <header ref={headerRef} className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5" onPointerLeave={scheduleClose}>
+      {/* The pill carries the blur. The fullscreen mobile nav is its sibling, so the blur can't trap it. */}
+      <div
+        className={`relative z-[60] mx-auto flex h-16 w-full max-w-[1240px] items-center justify-between rounded-full border pr-2 pl-5 transition-[background-color,border-color,box-shadow] duration-500 sm:pl-6 ${
+          mobileOpen
+            ? "border-transparent bg-transparent shadow-none"
+            : raised
+              ? "glass"
+              : "border-white/70 bg-white/55 shadow-[0_10px_40px_-24px_rgb(79_70_229/0.35)] backdrop-blur-md"
+        }`}
+      >
+        <Logo tone={mobileOpen ? "dark" : "light"} onNavigate={closeAll} />
 
         <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
+          <NavLink href="/" active={pathname === "/"} onPointerEnter={() => openMenu(null)}>
+            Home
+          </NavLink>
           <MenuTrigger
             id="solutions"
             label="Solutions"
@@ -103,6 +107,14 @@ export function Header() {
           />
           <NavLink href="/work" active={isActive("/work")} onPointerEnter={() => openMenu(null)}>
             Work
+          </NavLink>
+          <NavLink
+            href="/#testimonials"
+            active={false}
+            onPointerEnter={() => openMenu(null)}
+            onClick={(event) => scrollToSectionOnPage(event, pathname)}
+          >
+            Testimonials
           </NavLink>
           <MenuTrigger
             id="company"
@@ -120,7 +132,7 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Link href="/contact" className={buttonClass("light", "h-10 px-5")}>
+          <Link href="/contact" className={buttonClass("solid", "h-11 px-5")}>
             Let&apos;s talk
             <ArrowIcon className="h-3.5 w-3.5 transition-transform duration-300 group-hover/btn:translate-x-0.5" />
           </Link>
@@ -128,7 +140,9 @@ export function Header() {
 
         <button
           type="button"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white lg:hidden"
+          className={`inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors lg:hidden ${
+            mobileOpen ? "border-white/20 text-white" : "border-ink/10 bg-white text-ink shadow-sm"
+          }`}
           aria-expanded={mobileOpen}
           aria-controls="mobile-nav"
           onClick={() => setMobileOpen((value) => !value)}
@@ -159,19 +173,22 @@ function NavLink({
   active,
   children,
   onPointerEnter,
+  onClick,
 }: {
   href: string;
   active: boolean;
   children: string;
   onPointerEnter?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }) {
   return (
     <Link
       href={href}
       onPointerEnter={onPointerEnter}
+      onClick={onClick}
       aria-current={active ? "page" : undefined}
-      className={`rounded-full px-4 py-2 text-sm transition-colors ${
-        active ? "text-white" : "text-fog hover:text-white"
+      className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+        active ? "bg-cobalt/10 text-cobalt" : "text-ink-soft hover:bg-paper-deep hover:text-ink"
       }`}
     >
       {children}
@@ -204,14 +221,12 @@ function MenuTrigger({
         if (event.pointerType === "mouse") onOpen(id);
       }}
       onClick={onToggle}
-      className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm transition-colors ${
-        open || active ? "text-white" : "text-fog hover:text-white"
+      className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+        open || active ? "bg-cobalt/10 text-cobalt" : "text-ink-soft hover:bg-paper-deep hover:text-ink"
       }`}
     >
       {label}
-      <ChevronIcon
-        className={`h-3 w-3 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
-      />
+      <ChevronIcon className={`h-3 w-3 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
     </button>
   );
 }
@@ -224,8 +239,7 @@ type PanelProps = {
 
 /**
  * Rendered directly after its trigger so keyboard focus moves into the menu.
- * `fixed` resolves against the fixed, full-width header either way, so the
- * panel spans the viewport just below the bar.
+ * Positioned against the pill, so the panel matches its width just below it.
  */
 function Panel({
   id,
@@ -243,11 +257,11 @@ function Panel({
       id={id}
       inert={!open}
       onPointerEnter={onPointerEnter}
-      className={`fixed inset-x-0 top-16 border-b border-night-line bg-night shadow-[0_40px_80px_-20px_rgb(0_0_0/0.6)] transition-[opacity,translate] duration-300 ${
+      className={`absolute inset-x-0 top-[calc(100%+10px)] overflow-hidden rounded-[2rem] border border-line bg-white shadow-[0_40px_90px_-30px_rgb(46_35_140/0.35)] transition-[opacity,translate] duration-300 ${
         open ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-2 opacity-0"
       }`}
     >
-      <div className="mx-auto w-full max-w-[1320px] px-10 py-10">{children}</div>
+      <div className="w-full p-8">{children}</div>
     </div>
   );
 }
@@ -257,24 +271,24 @@ function SolutionsPanel({ open, onNavigate, onPointerEnter }: PanelProps) {
     <Panel id="nav-panel-solutions" open={open} onPointerEnter={onPointerEnter}>
       <div className="grid grid-cols-12 gap-10">
         <div className="col-span-8">
-          <p className="t-eyebrow text-fog">What we build</p>
-          <ul className="mt-6 grid grid-cols-2 gap-x-8">
+          <p className="t-eyebrow text-mist">What we build</p>
+          <ul className="mt-5 grid grid-cols-2 gap-2">
             {services.map((service) => (
-              <li key={service.slug} className="border-t border-night-line">
+              <li key={service.slug}>
                 <Link
                   href={`/services/${service.slug}`}
                   onClick={onNavigate}
-                  className="group flex gap-4 py-5"
+                  className="group flex gap-4 rounded-2xl p-4 transition-colors hover:bg-paper"
                 >
-                  <span className="t-eyebrow pt-1 text-signal">{service.index}</span>
+                  <span className="bg-brand flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-semibold text-white shadow-[0_8px_20px_-8px_rgb(91_70_240/0.7)]">
+                    {service.index}
+                  </span>
                   <span>
-                    <span className="flex items-center gap-2 text-base font-medium text-white">
+                    <span className="flex items-center gap-2 text-[15px] font-semibold text-ink">
                       {service.title}
                       <ArrowIcon className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-[opacity,translate] duration-300 group-hover:translate-x-0 group-hover:opacity-100" />
                     </span>
-                    <span className="mt-1.5 block text-sm leading-relaxed text-fog">
-                      {service.summary}
-                    </span>
+                    <span className="mt-1 line-clamp-2 block text-sm leading-relaxed text-mist">{service.summary}</span>
                   </span>
                 </Link>
               </li>
@@ -285,18 +299,23 @@ function SolutionsPanel({ open, onNavigate, onPointerEnter }: PanelProps) {
           <Link
             href="/approach"
             onClick={onNavigate}
-            className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-night-line bg-night-2 p-7"
+            className="bg-brand group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl p-7 text-white"
           >
-            <span aria-hidden="true" className="bg-grid absolute inset-0 opacity-60" />
-            <span className="relative t-eyebrow text-signal">How we work</span>
+            <span aria-hidden="true" className="bg-grid absolute inset-0 opacity-50" />
+            <span
+              aria-hidden="true"
+              className="orb -top-10 -right-10 h-40 w-40 bg-fuchsia-300"
+              style={{ "--o": 0.5 } as CSSProperties}
+            />
+            <span className="relative t-eyebrow text-white/80">How we work</span>
             <span className="relative mt-16 block">
-              <span className="block text-2xl font-medium tracking-tight text-white">
-                Discover. Define. Build. Launch.
+              <span className="block font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight">
+                Discover. Strategy. Build. Launch.
               </span>
-              <span className="mt-3 block text-sm leading-relaxed text-fog">
-                A written scope with milestones and acceptance criteria before any build begins.
+              <span className="mt-3 block text-sm leading-relaxed text-white/80">
+                We agree the strategy and the plan with you before any build begins.
               </span>
-              <span className="mt-6 inline-flex items-center gap-2 text-sm text-white">
+              <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium">
                 <span className="link-line">See our approach</span>
                 <ArrowIcon className="h-3.5 w-3.5" />
               </span>
@@ -311,15 +330,15 @@ function SolutionsPanel({ open, onNavigate, onPointerEnter }: PanelProps) {
 function CompanyPanel({ open, onNavigate, onPointerEnter }: PanelProps) {
   return (
     <Panel id="nav-panel-company" open={open} onPointerEnter={onPointerEnter}>
-      <ul className="grid grid-cols-3 gap-8">
+      <ul className="grid grid-cols-2 gap-4">
         {companyNav.map((item) => (
-          <li key={item.href} className="border-t border-night-line">
-            <Link href={item.href} onClick={onNavigate} className="group block py-5">
-              <span className="flex items-center gap-2 text-xl font-medium tracking-tight text-white">
+          <li key={item.href}>
+            <Link href={item.href} onClick={onNavigate} className="card-premium group block h-full rounded-2xl p-6">
+              <span className="flex items-center gap-2 font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight text-ink">
                 {item.label}
                 <ArrowIcon className="h-4 w-4 -translate-x-1 opacity-0 transition-[opacity,translate] duration-300 group-hover:translate-x-0 group-hover:opacity-100" />
               </span>
-              <span className="mt-2 block text-sm text-fog">{item.detail}</span>
+              <span className="mt-2 block text-sm text-mist">{item.detail}</span>
             </Link>
           </li>
         ))}

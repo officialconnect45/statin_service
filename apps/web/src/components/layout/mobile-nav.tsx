@@ -1,16 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, type CSSProperties } from "react";
 import { buttonClass } from "@/components/ui/button-link";
+import { scrollToSectionOnPage } from "@/components/ui/hash-scroll";
 import { ArrowIcon } from "@/components/ui/icons";
 import { SocialLinks } from "@/components/ui/social-links";
 import { services } from "@/lib/services";
 import { site } from "@/lib/site";
 
 const primary = [
+  { href: "/", label: "Home" },
   { href: "/services", label: "Solutions" },
   { href: "/work", label: "Work" },
+  { href: "/#testimonials", label: "Testimonials" },
   { href: "/approach", label: "Approach" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
@@ -18,6 +22,7 @@ const primary = [
 
 export function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
   const firstLink = useRef<HTMLAnchorElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!open) return;
@@ -45,11 +50,18 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
         open ? "visible opacity-100" : "invisible opacity-0"
       }`}
     >
-      <div aria-hidden="true" className="bg-grid mask-radial pointer-events-none absolute inset-0" />
-      <nav
-        aria-label="Mobile"
-        className="relative flex min-h-full flex-col px-5 pt-24 pb-10 sm:px-8"
-      >
+      <div aria-hidden="true" className="aurora">
+        <span
+          className="orb -top-24 -left-24 h-80 w-80 bg-indigo-500"
+          style={{ "--o": 0.45, "--dx": "60px", "--dy": "40px" } as CSSProperties}
+        />
+        <span
+          className="orb -right-24 bottom-0 h-96 w-96 bg-fuchsia-500"
+          style={{ "--o": 0.3, "--dx": "-50px", "--dy": "-60px", "--delay": "-5s" } as CSSProperties}
+        />
+        <div className="bg-grid mask-radial absolute inset-0" />
+      </div>
+      <nav aria-label="Mobile" className="relative flex min-h-full flex-col px-5 pt-24 pb-10 sm:px-8">
         <ul>
           {primary.map((item, index) => (
             <li
@@ -62,8 +74,11 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
               <Link
                 ref={index === 0 ? firstLink : undefined}
                 href={item.href}
-                onClick={onClose}
-                className="flex items-center justify-between py-4 text-[2.4rem] leading-none font-medium tracking-[-0.04em] text-white"
+                onClick={(event) => {
+                  scrollToSectionOnPage(event, pathname);
+                  onClose();
+                }}
+                className="flex items-center justify-between py-4 font-[family-name:var(--font-display)] text-[2.2rem] leading-none font-semibold tracking-[-0.04em] text-white"
               >
                 {item.label}
                 <ArrowIcon className="h-5 w-5 text-signal" />
@@ -72,11 +87,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
           ))}
         </ul>
 
-        <div
-          className={`mt-10 transition-opacity delay-300 duration-700 ${
-            open ? "opacity-100" : "opacity-0"
-          }`}
-        >
+        <div className={`mt-10 transition-opacity delay-300 duration-700 ${open ? "opacity-100" : "opacity-0"}`}>
           <p className="t-eyebrow text-fog">Solutions</p>
           <ul className="mt-4 grid gap-x-6 sm:grid-cols-2">
             {services.map((service) => (

@@ -15,7 +15,7 @@ export function SplitText({
   delay = 0,
   id,
   accentFrom,
-  accentClass = "text-signal",
+  accentClass = "text-gradient",
 }: {
   text: string;
   as?: HeadingTag;
@@ -62,9 +62,14 @@ export function Eyebrow({
   index?: string;
 }) {
   return (
-    <p className={`t-eyebrow flex items-center gap-3 ${className}`}>
+    <p
+      className={`t-eyebrow inline-flex w-fit items-center gap-2.5 rounded-full border border-current/20 bg-current/[0.06] px-3.5 py-1.5 ${className}`}
+    >
+      <span aria-hidden="true" className="relative flex h-1.5 w-1.5">
+        <span className="ping-soft absolute inset-0 rounded-full bg-current" />
+        <span className="relative h-1.5 w-1.5 rounded-full bg-current" />
+      </span>
       {index ? <span className="opacity-60">{index}</span> : null}
-      <span aria-hidden="true" className="h-px w-6 bg-current opacity-60" />
       <span>{children}</span>
     </p>
   );

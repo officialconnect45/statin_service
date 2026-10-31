@@ -7,17 +7,22 @@ import type { SpecimenVariant } from "@/lib/services";
 export function Specimen({
   variant,
   className = "",
+  fill = false,
 }: {
   variant: SpecimenVariant;
   className?: string;
+  /** Stretch to the parent's height (the SaaS frame grows its chart and adds activity). */
+  fill?: boolean;
 }) {
   return (
     <div
       aria-hidden="true"
-      className={`overflow-hidden rounded-2xl border border-white/10 bg-night-2 text-white shadow-[0_40px_80px_-40px_rgb(11_9_32/0.6)] ${className}`}
+      className={`overflow-hidden rounded-2xl border border-white/10 bg-night-2 text-white shadow-[0_40px_80px_-40px_rgb(11_9_32/0.6)] ${
+        fill ? "flex flex-col" : ""
+      } ${className}`}
     >
       <Chrome variant={variant} />
-      {variant === "saas" ? <SaasFrame /> : null}
+      {variant === "saas" ? <SaasFrame fill={fill} /> : null}
       {variant === "commerce" ? <CommerceFrame /> : null}
       {variant === "integration" ? <IntegrationFrame /> : null}
       {variant === "site" ? <SiteFrame /> : null}
@@ -51,21 +56,27 @@ function Chrome({ variant }: { variant: SpecimenVariant }) {
   );
 }
 
-function SaasFrame() {
+const activity = [
+  { label: "Invoice #2041 paid", meta: "Billing", tone: "bg-emerald-400" },
+  { label: "New tenant: Nordlys AB", meta: "Accounts", tone: "bg-signal" },
+  { label: "Role updated: Finance admin", meta: "Roles", tone: "bg-amber-300" },
+];
+
+function SaasFrame({ fill = false }: { fill?: boolean }) {
   return (
-    <div className="grid grid-cols-[72px_1fr] sm:grid-cols-[112px_1fr]">
+    <div className={`grid grid-cols-[72px_1fr] sm:grid-cols-[112px_1fr] ${fill ? "min-h-0 flex-1" : ""}`}>
       <div className="space-y-3 border-r border-white/10 px-3 py-4 text-[11px] text-white/50">
         <p className="font-medium text-white">Today</p>
         <p>Accounts</p>
         <p>Billing</p>
         <p>Roles</p>
       </div>
-      <div className="min-w-0 p-4">
+      <div className={`min-w-0 p-4 ${fill ? "flex flex-col" : ""}`}>
         <div className="flex items-end justify-between gap-3">
           <p className="text-xl font-medium tracking-tight">Operations</p>
           <p className="shrink-0 font-mono text-[10px] text-white/50">4 teams</p>
         </div>
-        <div className="mt-4 flex h-16 items-end gap-1.5">
+        <div className={`mt-4 flex items-end gap-1.5 ${fill ? "min-h-20 flex-1" : "h-16"}`}>
           {[38, 52, 44, 66, 58, 72, 64, 86, 78, 92].map((height, index) => (
             <span
               key={index}
@@ -81,6 +92,23 @@ function SaasFrame() {
             </div>
           ))}
         </div>
+        {fill ? (
+          <div className="mt-4 border-t border-white/10 pt-4">
+            <p className="font-mono text-[10px] tracking-[0.14em] text-white/50 uppercase">Recent activity</p>
+            <ul className="mt-3 space-y-2">
+              {activity.map((item) => (
+                <li
+                  key={item.label}
+                  className="flex items-center gap-3 rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-2"
+                >
+                  <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${item.tone}`} />
+                  <span className="min-w-0 flex-1 truncate text-xs">{item.label}</span>
+                  <span className="shrink-0 font-mono text-[10px] text-white/45">{item.meta}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
       </div>
     </div>
   );

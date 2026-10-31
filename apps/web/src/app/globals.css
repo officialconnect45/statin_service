@@ -536,6 +536,8 @@ body {
   }
 
   .orb,
+  .logo-letter,
+  .logo-shine,
   .timeline-progress,
   .footer-wordmark,
   .float-y,
@@ -629,6 +631,57 @@ body {
   to {
     transform: scaleY(1);
   }
+}
+
+/* Hero showcase: hovering a capability card lights up its screen */
+.showcase [data-tile] {
+  transition:
+    filter 0.4s var(--ease-out),
+    box-shadow 0.4s var(--ease-out),
+    translate 0.4s var(--ease-out);
+}
+
+.showcase:has([data-chip]:hover) [data-tile] {
+  filter: brightness(0.6) saturate(0.7);
+}
+
+.showcase:has([data-chip="saas"]:hover) [data-tile="saas"],
+.showcase:has([data-chip="commerce"]:hover) [data-tile="commerce"],
+.showcase:has([data-chip="ai"]:hover) [data-tile="ai"] {
+  filter: none;
+  translate: 0 -4px;
+  box-shadow:
+    0 0 0 2px #a5a2ff,
+    0 24px 60px -20px rgb(124 77 255 / 0.8);
+}
+
+.showcase:has([data-chip="security"]:hover) [data-tile] {
+  filter: none;
+  box-shadow:
+    0 0 0 2px #34d399,
+    0 20px 50px -24px rgb(16 185 129 / 0.7);
+}
+
+/* Logo: letters ripple up in sequence and the mark gets a light sweep */
+.logo-letter {
+  transition:
+    translate 0.35s var(--ease-out),
+    color 0.35s;
+  transition-delay: calc(var(--i) * 35ms);
+}
+
+.logo-link:hover .logo-letter {
+  translate: 0 -2px;
+}
+
+.logo-shine {
+  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.55) 50%, transparent 70%);
+  translate: -120% 0;
+  transition: translate 0.8s var(--ease-out);
+}
+
+.logo-link:hover .logo-shine {
+  translate: 120% 0;
 }
 
 /* Unrevealed content must still print */

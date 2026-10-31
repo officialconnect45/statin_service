@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Container } from "@/components/ui/container";
@@ -6,43 +7,58 @@ import { PointerField } from "@/components/ui/pointer-field";
 import { Eyebrow, SplitText } from "@/components/ui/typography";
 import { Specimen } from "@/components/work/specimens";
 import { CountUp } from "@/components/ui/count-up";
+import { ArrowIcon } from "@/components/ui/icons";
 import { stats } from "@/lib/site";
 
-/** Floating capability cards around the hero visual. */
+/**
+ * Capability cards around the hero visual. Each links to a service and lights
+ * up the matching screen on hover (see `.showcase` in globals.css).
+ */
 const chips: {
+  id: "saas" | "ai" | "commerce" | "security";
   title: string;
   detail: string;
+  href: string;
+  /** Position when floating beside the frame (xl and up). */
   className: string;
   delay: string;
   icon: ReactNode;
 }[] = [
   {
+    id: "saas",
     title: "Web apps & SaaS",
     detail: "Built to scale",
-    className: "-top-10 -left-6 xl:-left-12",
+    href: "/services/saas",
+    className: "top-[16%] -left-24",
     delay: "0s",
     icon: <path d="M3 5.5h14v9H3zM3 8.5h14M7 17.5h6" />,
   },
   {
+    id: "ai",
     title: "AI integrations",
     detail: "Into real workflows",
-    className: "-top-10 -right-6 xl:-right-12",
+    href: "/services/integrations",
+    className: "-right-24 bottom-[18%]",
     delay: "-2s",
     icon: (
       <path d="M10 2.5v3M10 14.5v3M2.5 10h3M14.5 10h3M5.2 5.2l2 2M12.8 12.8l2 2M14.8 5.2l-2 2M7.2 12.8l-2 2M10 7.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z" />
     ),
   },
   {
+    id: "commerce",
     title: "Commerce",
     detail: "Shopify · WooCommerce",
-    className: "-bottom-10 -left-6 xl:-left-12",
+    href: "/services/ecommerce",
+    className: "top-[16%] -right-24",
     delay: "-4s",
     icon: <path d="M3 3.5h2l1.6 9h8.9l1.5-6.5H6M8 16.5h.01M14 16.5h.01" />,
   },
   {
+    id: "security",
     title: "Security built in",
     detail: "From the first release",
-    className: "-right-6 -bottom-10 xl:-right-12",
+    href: "/approach",
+    className: "bottom-[18%] -left-24",
     delay: "-1s",
     icon: <path d="M10 2.5 4 5v4.5c0 3.6 2.6 6.4 6 7.5 3.4-1.1 6-3.9 6-7.5V5l-6-2.5ZM7.5 10l1.8 1.8L13 8" />,
   },
@@ -85,7 +101,7 @@ export function Hero() {
 
         <Container className="relative pt-44 pb-20 text-center sm:pt-35 lg:pt-40 lg:pb-28">
           <Eyebrow className="fade-load mx-auto bg-white/70 text-cobalt shadow-[0_8px_24px_-12px_rgb(91_70_240/0.45)] backdrop-blur">
-            Product engineering · Web · Commerce · Mobile Apps · AI
+            Product engineering · Web · Commerce · AI
           </Eyebrow>
 
           <SplitText
@@ -142,7 +158,7 @@ export function Hero() {
 
           {/* Signature visual in a glowing glass frame, with floating capability cards */}
           <div
-            className="fade-load relative mx-auto mt-20 max-w-[1120px] text-left"
+            className="showcase fade-load relative mx-auto mt-20 max-w-[980px] text-left"
             style={{ "--d": 900 } as CSSProperties}
           >
             <div
@@ -153,44 +169,36 @@ export function Hero() {
               <span aria-hidden="true" className="glow-ring" />
               {/* Product showcase: what we build, as the screens a customer would see */}
               <div className="grid gap-2 sm:gap-3 lg:grid-cols-12">
-                <Showcase label="Web apps & SaaS" className="lg:col-span-7 lg:row-span-2">
-                  <Specimen variant="saas" className={FRAMELESS} />
+                <Showcase tile="saas" label="Web apps & SaaS" className="lg:col-span-7 lg:row-span-2">
+                  <Specimen variant="saas" fill className={FRAMELESS} />
                 </Showcase>
-                <Showcase label="Commerce" className="hidden sm:block lg:col-span-5">
+                <Showcase tile="commerce" label="Commerce" className="hidden sm:block lg:col-span-5">
                   <Specimen variant="commerce" className={FRAMELESS} />
                 </Showcase>
-                <Showcase label="Integrations & AI" className="hidden sm:block lg:col-span-5">
+                <Showcase tile="ai" label="Integrations & AI" className="hidden sm:block lg:col-span-5">
                   <Specimen variant="integration" className={FRAMELESS} />
                 </Showcase>
               </div>
             </div>
 
+            {/* Floating beside the frame, above everything (xl and up) */}
             {chips.map((chip) => (
-              <div
-                key={chip.title}
-                aria-hidden="true"
-                className={`float-y glass absolute hidden items-center gap-3 rounded-2xl px-4 py-3 lg:flex ${chip.className}`}
+              <Chip
+                key={chip.id}
+                chip={chip}
+                className={`float-y absolute z-20 hidden w-[216px] xl:flex ${chip.className}`}
                 style={{ "--delay": chip.delay } as CSSProperties}
-              >
-                <span className="bg-brand flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-[0_8px_20px_-8px_rgb(91_70_240/0.8)]">
-                  <svg
-                    viewBox="0 0 20 20"
-                    className="h-[18px] w-[18px]"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    {chip.icon}
-                  </svg>
-                </span>
-                <span>
-                  <span className="block text-sm font-semibold text-ink">{chip.title}</span>
-                  <span className="block text-xs text-mist">{chip.detail}</span>
-                </span>
-              </div>
+              />
             ))}
+
+            {/* Below the frame on smaller screens */}
+            <ul className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4 xl:hidden">
+              {chips.map((chip) => (
+                <li key={chip.id}>
+                  <Chip chip={chip} className="flex h-full" />
+                </li>
+              ))}
+            </ul>
           </div>
         </Container>
       </PointerField>
@@ -201,13 +209,62 @@ export function Hero() {
 /** A specimen fills its showcase tile; the tile supplies the corners. */
 const FRAMELESS = "h-full rounded-none border-0 shadow-none";
 
-function Showcase({ label, className = "", children }: { label: string; className?: string; children: ReactNode }) {
+function Showcase({
+  tile,
+  label,
+  className = "",
+  children,
+}: {
+  tile: string;
+  label: string;
+  className?: string;
+  children: ReactNode;
+}) {
   return (
-    <div className={`relative overflow-hidden rounded-[1.5rem] bg-night ${className}`}>
+    <div data-tile={tile} className={`relative overflow-hidden rounded-[1.5rem] bg-night ${className}`}>
       {children}
       <span className="absolute top-3 right-3 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
         {label}
       </span>
     </div>
+  );
+}
+
+function Chip({
+  chip,
+  className = "",
+  style,
+}: {
+  chip: (typeof chips)[number];
+  className?: string;
+  style?: CSSProperties;
+}) {
+  return (
+    <Link
+      href={chip.href}
+      data-chip={chip.id}
+      style={style}
+      className={`glass group/chip items-center gap-3 rounded-2xl px-4 py-3 transition-[box-shadow,translate,scale] duration-300 hover:scale-[1.04] hover:shadow-[0_24px_50px_-18px_rgb(91_70_240/0.6)] ${className}`}
+    >
+      <span className="bg-brand flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white shadow-[0_8px_20px_-8px_rgb(91_70_240/0.8)] transition-transform duration-300 group-hover/chip:rotate-[-8deg]">
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 20 20"
+          className="h-[18px] w-[18px]"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          {chip.icon}
+        </svg>
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-semibold text-ink">{chip.title}</span>
+        <span className="block truncate text-xs text-mist">{chip.detail}</span>
+      </span>
+      <ArrowIcon className="h-3.5 w-3.5 shrink-0 -translate-x-1 text-cobalt opacity-0 transition-[opacity,translate] duration-300 group-hover/chip:translate-x-0 group-hover/chip:opacity-100" />
+    </Link>
   );
 }

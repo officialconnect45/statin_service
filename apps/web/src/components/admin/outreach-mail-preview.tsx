@@ -1,32 +1,39 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { BOLD } from "@/components/admin/mail-body";
 
 // Must match textToHtml in apps/api/src/mail.ts: paragraphs on blank lines,
-// line breaks on single newlines, http(s) links clickable.
+// line breaks on single newlines, **text** bold, http(s) links clickable.
 const LINK = /(https?:\/\/[^\s<]+)/g;
 
+function renderLinks(text: string, key: string) {
+  return text.split(LINK).map((part, index) =>
+    index % 2 === 1 ? (
+      <a
+        key={`${key}-${index}`}
+        href={part}
+        target="_blank"
+        rel="noreferrer"
+        className="break-all text-[#1a0dab] underline"
+      >
+        {part}
+      </a>
+    ) : (
+      part
+    ),
+  );
+}
+
 function renderBlock(block: string, key: number) {
-  const lines = block.split("\n");
   const parts: ReactNode[] = [];
-  lines.forEach((line, lineIndex) => {
+  block.split("\n").forEach((line, lineIndex) => {
     if (lineIndex > 0) parts.push(<br key={`br-${lineIndex}`} />);
-    line.split(LINK).forEach((part, partIndex) => {
-      if (partIndex % 2 === 1) {
-        parts.push(
-          <a
-            key={`${lineIndex}-${partIndex}`}
-            href={part}
-            target="_blank"
-            rel="noreferrer"
-            className="break-all text-[#1a0dab] underline"
-          >
-            {part}
-          </a>,
-        );
-      } else if (part) {
-        parts.push(part);
-      }
+    line.split(BOLD).forEach((segment, segmentIndex) => {
+      const id = `${lineIndex}-${segmentIndex}`;
+      // split() with a capture group puts the bold text at odd indexes.
+      if (segmentIndex % 2 === 1) parts.push(<strong key={id}>{renderLinks(segment, id)}</strong>);
+      else if (segment) parts.push(...renderLinks(segment, id));
     });
   });
   return (
@@ -34,6 +41,12 @@ function renderBlock(block: string, key: number) {
       {parts}
     </p>
   );
+}
+
+/** A message body rendered the way the API sends it. */
+export function MailBody({ body, empty }: { body: string; empty: string }) {
+  const blocks = body.replace(/\r\n/g, "\n").trim().split(/\n{2,}/).filter(Boolean);
+  return blocks.length > 0 ? blocks.map(renderBlock) : <p className="text-mist">{empty}</p>;
 }
 
 function initialsOf(from: string) {
@@ -59,7 +72,6 @@ export function OutreachMailPreview({
   onEdit: () => void;
 }) {
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
-  const blocks = body.replace(/\r\n/g, "\n").trim().split(/\n{2,}/).filter(Boolean);
   const sender = from || "Statin <hello@statin.eu>";
   const to = recipients[0] ?? "recipient@example.com";
   const others = Math.max(0, recipients.length - 1);
@@ -121,11 +133,7 @@ export function OutreachMailPreview({
           className="px-5 py-5 text-[15px] leading-[1.6] text-[#111]"
           style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
         >
-          {blocks.length > 0 ? (
-            blocks.map(renderBlock)
-          ) : (
-            <p className="text-mist">Nothing written yet.</p>
-          )}
+          <MailBody body={body} empty="Nothing written yet." />
         </div>
       </div>
 

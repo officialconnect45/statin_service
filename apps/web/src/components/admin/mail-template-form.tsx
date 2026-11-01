@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useActionState, useState, type ReactNode } from "react";
 import { deleteMailTemplate, saveMailTemplate, type MailTemplateFormState } from "@/app/admin/mail-templates/actions";
+import { boldShortcut, pasteKeepingBold } from "@/components/admin/mail-body";
+import { MailBody } from "@/components/admin/outreach-mail-preview";
 
 export type MailTemplateFormValues = {
   id?: string;
@@ -59,7 +61,7 @@ export function MailTemplateForm({ initial }: { initial: MailTemplateFormValues 
 
         <Field
           label="Message"
-          hint="Plain text, sent exactly as written. Blank lines become paragraphs, links become clickable."
+          hint="Plain text. **Text** or Ctrl + B for bold; pasted bold is kept. Blank lines become paragraphs, links become clickable."
           error={errors.body}
         >
           <textarea
@@ -70,6 +72,8 @@ export function MailTemplateForm({ initial }: { initial: MailTemplateFormValues 
             rows={14}
             value={values.body}
             onChange={(event) => set("body", event.target.value)}
+            onPaste={(event) => pasteKeepingBold(event, values.body, (next) => set("body", next))}
+            onKeyDown={(event) => boldShortcut(event, values.body, (next) => set("body", next))}
             placeholder={"Hi,\n\n...\n\nBest,\nTeam Statin\nhttps://statin.io"}
             aria-invalid={errors.body ? true : undefined}
             className={`${inputClass} resize-y leading-6`}
@@ -116,9 +120,9 @@ export function MailTemplateForm({ initial }: { initial: MailTemplateFormValues 
           <div className="mt-4 rounded-2xl border border-line bg-white p-5">
             <p className="text-xs text-mist">Subject</p>
             <p className="font-medium">{values.subject || "—"}</p>
-            <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-ink-soft">
-              {values.body || "Your message appears here."}
-            </p>
+            <div className="mt-4 text-sm leading-6 text-ink-soft">
+              <MailBody body={values.body} empty="Your message appears here." />
+            </div>
           </div>
           {!values.active ? <p className="mt-3 text-xs text-mist">Inactive: hidden from the outreach selector.</p> : null}
         </div>

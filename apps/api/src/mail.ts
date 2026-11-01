@@ -93,13 +93,25 @@ function escapeHtml(value: string) {
     .replace(/"/g, "&quot;");
 }
 
-/** Plain text → simple HTML: paragraphs on blank lines, <br> on single breaks, links clickable. */
+/** **text** on one line marks bold. */
+const BOLD = /\*\*(?=\S)([^\n]*?\S)\*\*/g;
+
+/** The plain-text part: the message with the bold markers taken out. */
+export function textToPlain(text: string) {
+  return text.replace(BOLD, "$1");
+}
+
+/**
+ * Message → simple HTML: paragraphs on blank lines, <br> on single breaks,
+ * **text** bold, links clickable.
+ */
 export function textToHtml(text: string) {
   const paragraphs = text
     .trim()
     .split(/\n{2,}/)
     .map((block) =>
       escapeHtml(block)
+        .replace(BOLD, "<strong>$1</strong>")
         .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1">$1</a>')
         .replace(/\n/g, "<br>"),
     )
@@ -113,7 +125,7 @@ export function textToHtml(text: string) {
 export type EmailInput = {
   to: string;
   subject: string;
-  /** Plain text body; the HTML part is generated from it. */
+  /** Message body (plain text, **bold** allowed); the text and HTML parts are generated from it. */
   text: string;
   kind: EmailKind;
   batch?: Types.ObjectId;
@@ -146,7 +158,7 @@ export async function deliverEmail(config: MailConfig, message: IEmailMessage): 
       replyTo: config.replyTo,
       to: message.to,
       subject: message.subject,
-      text: message.text,
+      text: textToPlain(message.text),
       html: textToHtml(message.text),
     });
     result = { status: "sent", messageId: String(info.messageId ?? "") };

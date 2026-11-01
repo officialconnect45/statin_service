@@ -12,6 +12,7 @@ import {
 import type { MailTemplateRecord } from "@statin/types";
 import Link from "next/link";
 import { sendOutreach, type OutreachFormState } from "@/app/admin/outreach/actions";
+import { boldShortcut, pasteKeepingBold } from "@/components/admin/mail-body";
 import { OutreachMailPreview } from "@/components/admin/outreach-mail-preview";
 import { OutreachTemplatePicker } from "@/components/admin/outreach-template-picker";
 
@@ -384,12 +385,15 @@ export function OutreachForm({
               name="body"
               value={body}
               onChange={(event) => setBody(event.target.value)}
+              onPaste={(event) => pasteKeepingBold(event, body, setBody)}
               onKeyDown={(event) => {
                 // Ctrl/Cmd + Enter jumps to the preview.
                 if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
                   event.preventDefault();
                   showPreview();
+                  return;
                 }
+                boldShortcut(event, body, setBody);
               }}
               rows={14}
               maxLength={20_000}
@@ -416,7 +420,7 @@ export function OutreachForm({
               <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-xs text-mist">
                 <span>
                   {view === "write"
-                    ? "Plain text. Blank lines become paragraphs, links become clickable. Ctrl + Enter to preview."
+                    ? "Plain text. **Text** or Ctrl + B for bold; pasted bold is kept. Blank lines become paragraphs, links become clickable. Ctrl + Enter to preview."
                     : "This is how each recipient sees the email."}
                 </span>
                 <span className="font-mono">

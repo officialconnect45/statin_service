@@ -706,3 +706,83 @@ body {
     transform: none !important;
   }
 }
+
+/* Header nav: a pill glides between items, the current page gets a gradient dot */
+.nav-glide {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgb(91 70 240 / 0.1), rgb(192 107 240 / 0.12));
+  box-shadow:
+    inset 0 0 0 1px rgb(91 70 240 / 0.14),
+    0 8px 22px -12px rgb(91 70 240 / 0.55);
+  transition:
+    left 0.45s var(--ease-out),
+    top 0.45s var(--ease-out),
+    width 0.45s var(--ease-out),
+    height 0.45s var(--ease-out),
+    opacity 0.25s;
+}
+
+.nav-item {
+  position: relative;
+  z-index: 1;
+  transition:
+    color 0.25s,
+    background-color 0.25s,
+    scale 0.2s var(--ease-out);
+}
+
+.nav-item:active {
+  scale: 0.95;
+}
+
+.nav-item.is-open {
+  background: rgb(91 70 240 / 0.1);
+}
+
+.nav-item::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 1px;
+  height: 3px;
+  width: 3px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--color-cobalt), #c06bf0);
+  opacity: 0;
+  translate: -50% 3px;
+  transition:
+    width 0.4s var(--ease-out),
+    opacity 0.3s,
+    translate 0.4s var(--ease-out);
+}
+
+.nav-item.is-active::after {
+  width: 16px;
+  opacity: 1;
+  translate: -50% 0;
+}
+
+.nav-item:hover::after {
+  opacity: 1;
+  translate: -50% 0;
+}
+
+.nav-item.is-active:hover::after {
+  width: 24px;
+}
+
+.nav-item:focus-visible {
+  outline: 2px solid var(--color-cobalt);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-glide,
+  .nav-item,
+  .nav-item::after {
+    transition: none;
+  }
+}

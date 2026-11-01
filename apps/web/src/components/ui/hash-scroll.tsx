@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 const USER_SCROLL = ["wheel", "touchstart", "keydown"] as const;
 
@@ -38,6 +38,25 @@ export function scrollToSectionOnPage(event: React.MouseEvent<HTMLAnchorElement>
  */
 export function HashScroll() {
   const pathname = usePathname();
+  const firstRender = useRef(true);
+
+  // Every page opens at its top (or its section): don't let the browser put
+  // back an old scroll position on reload or back/forward.
+  useEffect(() => {
+    history.scrollRestoration = "manual";
+    if (!window.location.hash) window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
+
+  // The router only scrolls up when the new page's top looks off-screen, and
+  // it checks while the page is still streaming in, so it can leave you
+  // mid-page. Layout effects run child-first, so this runs after it.
+  useLayoutEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    if (!window.location.hash) window.scrollTo({ top: 0, behavior: "instant" });
+  }, [pathname]);
 
   useEffect(() => {
     const id = decodeURIComponent(window.location.hash.slice(1));
@@ -52,7 +71,8 @@ export function HashScroll() {
       const target = visibleById(id);
       if (target) {
         stop();
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        // A fresh page: land on the section rather than animating down to it.
+        target.scrollIntoView({ behavior: "instant", block: "start" });
       } else if (++tries > 100) {
         stop();
       }

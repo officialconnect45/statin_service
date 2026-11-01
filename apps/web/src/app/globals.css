@@ -674,6 +674,20 @@ body {
   translate: 0 -2px;
 }
 
+/* The wordmark's Λ lifts a little higher and glows */
+.logo-lambda {
+  margin-right: 0.16em;
+  transition:
+    translate 0.35s var(--ease-out),
+    filter 0.35s;
+  transition-delay: calc(var(--i) * 35ms);
+}
+
+.logo-link:hover .logo-lambda {
+  translate: 0 -4px;
+  filter: drop-shadow(0 4px 8px rgb(37 117 252 / 0.6));
+}
+
 .logo-shine {
   background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.55) 50%, transparent 70%);
   translate: -120% 0;

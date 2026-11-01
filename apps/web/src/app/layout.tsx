@@ -138,6 +138,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      // Next 16 only makes route changes jump instantly (instead of animating
+      // the CSS smooth scroll, which can stop mid-page) when this is set.
+      data-scroll-behavior="smooth"
       className={`${geist.variable} ${geistMono.variable} ${sora.variable} ${orbitron.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">

@@ -356,7 +356,7 @@ function CompanyPanel({ open, onNavigate, onPointerEnter }: PanelProps) {
       <ul className="grid grid-cols-2 gap-4">
         {companyNav.map((item) => (
           <li key={item.href}>
-            <Link href={item.href} onClick={onNavigate} className="card-premium group block h-full rounded-2xl p-6">
+            <Link href={item.href} onClick={onNavigate} className="card-premium group block h-full rounded-2xl p-4">
               <span className="flex items-center gap-2 font-[family-name:var(--font-display)] text-lg font-semibold tracking-tight text-ink">
                 {item.label}
                 <ArrowIcon className="h-4 w-4 -translate-x-1 opacity-0 transition-[opacity,translate] duration-300 group-hover:translate-x-0 group-hover:opacity-100" />

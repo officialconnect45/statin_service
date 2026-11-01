@@ -66,6 +66,15 @@ export function Header() {
     closeTimer.current = window.setTimeout(() => setMenu(null), 160);
   }, []);
 
+  // A pill glides under whichever item the pointer or keyboard focus is on.
+  const [glide, setGlide] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
+  const moveGlide = useCallback((target: EventTarget) => {
+    const item = (target as HTMLElement).closest<HTMLElement>("[data-nav-item]");
+    if (item) {
+      setGlide({ left: item.offsetLeft, top: item.offsetTop, width: item.offsetWidth, height: item.offsetHeight });
+    }
+  }, []);
+
   const closeAll = useCallback(() => {
     setMenu(null);
     setMobileOpen(false);
@@ -88,7 +97,21 @@ export function Header() {
       >
         <Logo tone={mobileOpen ? "dark" : "light"} onNavigate={closeAll} />
 
-        <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
+        <nav
+          aria-label="Primary"
+          className="hidden items-center gap-1 lg:flex"
+          onPointerOver={(event) => moveGlide(event.target)}
+          onFocus={(event) => moveGlide(event.target)}
+          onPointerLeave={() => setGlide(null)}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) setGlide(null);
+          }}
+        >
+          <span
+            aria-hidden="true"
+            className={`nav-glide ${glide ? "opacity-100" : "opacity-0"}`}
+            style={glide ? { left: glide.left, top: glide.top, width: glide.width, height: glide.height } : undefined}
+          />
           <NavLink href="/" active={pathname === "/"} onPointerEnter={() => openMenu(null)}>
             Home
           </NavLink>
@@ -187,9 +210,8 @@ function NavLink({
       onPointerEnter={onPointerEnter}
       onClick={onClick}
       aria-current={active ? "page" : undefined}
-      className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-        active ? "bg-cobalt/10 text-cobalt" : "text-ink-soft hover:bg-paper-deep hover:text-ink"
-      }`}
+      data-nav-item
+      className={`nav-item rounded-full px-4 py-2 text-sm font-medium ${active ? "is-active text-cobalt" : "text-ink-soft hover:text-ink"}`}
     >
       {children}
     </Link>
@@ -221,8 +243,9 @@ function MenuTrigger({
         if (event.pointerType === "mouse") onOpen(id);
       }}
       onClick={onToggle}
-      className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-        open || active ? "bg-cobalt/10 text-cobalt" : "text-ink-soft hover:bg-paper-deep hover:text-ink"
+      data-nav-item
+      className={`nav-item inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium ${
+        open ? "is-open text-cobalt" : active ? "is-active text-cobalt" : "text-ink-soft hover:text-ink"
       }`}
     >
       {label}

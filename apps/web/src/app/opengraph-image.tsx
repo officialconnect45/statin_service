@@ -1,8 +1,12 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
 export const alt = "Statin: engineering for web apps, commerce, and AI integrations";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+const logoSrc = `data:image/png;base64,${await readFile(join(process.cwd(), "public/icon-192.png"), "base64")}`;
 
 export default function OpengraphImage() {
   const layers = ["Request", "Edge", "Interface", "Services", "Data", "Intelligence", "Insight"];
@@ -24,21 +28,8 @@ export default function OpengraphImage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 11,
-              background: "#2a4ff6",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 20,
-              fontWeight: 700,
-            }}
-          >
-            ST
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse needs a plain img */}
+          <img src={logoSrc} alt="" width={44} height={44} />
           <div style={{ fontSize: 24, letterSpacing: 6, fontWeight: 600 }}>STATIN</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>

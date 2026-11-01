@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { buttonClass } from "@/components/ui/button-link";
+import { scrollToSectionOnPage } from "@/components/ui/hash-scroll";
 import { ArrowIcon, ChevronIcon } from "@/components/ui/icons";
 import { Logo } from "@/components/ui/logo";
 import { services } from "@/lib/services";
@@ -130,7 +131,12 @@ export function Header() {
           <NavLink href="/work" active={isActive("/work")} onPointerEnter={() => openMenu(null)}>
             Work
           </NavLink>
-          <NavLink href="/#testimonials" active={false} onPointerEnter={() => openMenu(null)}>
+          <NavLink
+            href="/#testimonials"
+            active={false}
+            onPointerEnter={() => openMenu(null)}
+            onClick={(event) => scrollToSectionOnPage(event, pathname)}
+          >
             Testimonials
           </NavLink>
           <MenuTrigger
@@ -190,16 +196,19 @@ function NavLink({
   active,
   children,
   onPointerEnter,
+  onClick,
 }: {
   href: string;
   active: boolean;
   children: string;
   onPointerEnter?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }) {
   return (
     <Link
       href={href}
       onPointerEnter={onPointerEnter}
+      onClick={onClick}
       aria-current={active ? "page" : undefined}
       data-nav-item
       className={`nav-item rounded-full px-4 py-2 text-sm font-medium ${active ? "is-active text-cobalt" : "text-ink-soft hover:text-ink"}`}

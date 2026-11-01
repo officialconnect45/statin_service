@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, type CSSProperties } from "react";
 import { buttonClass } from "@/components/ui/button-link";
+import { scrollToSectionOnPage } from "@/components/ui/hash-scroll";
 import { ArrowIcon } from "@/components/ui/icons";
 import { SocialLinks } from "@/components/ui/social-links";
 import { services } from "@/lib/services";
@@ -20,6 +22,7 @@ const primary = [
 
 export function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
   const firstLink = useRef<HTMLAnchorElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!open) return;
@@ -71,7 +74,10 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
               <Link
                 ref={index === 0 ? firstLink : undefined}
                 href={item.href}
-                onClick={onClose}
+                onClick={(event) => {
+                  scrollToSectionOnPage(event, pathname);
+                  onClose();
+                }}
                 className="flex items-center justify-between py-4 font-[family-name:var(--font-display)] text-[2.2rem] leading-none font-semibold tracking-[-0.04em] text-white"
               >
                 {item.label}

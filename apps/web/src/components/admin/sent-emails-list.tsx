@@ -2,6 +2,7 @@
 
 import type { SentEmailRecord } from "@statin/types";
 import { useDeferredValue, useMemo, useState } from "react";
+import { MailBody } from "@/components/admin/outreach-mail-preview";
 import { ChevronIcon } from "@/components/ui/icons";
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
@@ -133,9 +134,9 @@ export function SentEmailsList({ emails }: { emails: SentEmailRecord[] }) {
                 <div className="grid gap-6 border-t border-line bg-paper px-5 py-6 md:grid-cols-[1fr_360px] md:px-6">
                   <div className="min-w-0">
                     <p className="t-eyebrow text-mist">Message</p>
-                    <p className="mt-3 text-[15px] leading-relaxed break-words whitespace-pre-wrap text-ink-soft">
-                      {email.body}
-                    </p>
+                    <div className="mt-3 text-[15px] leading-relaxed break-words text-ink-soft">
+                      <MailBody body={email.body} empty="(empty message)" />
+                    </div>
                     <p className="mt-5 text-xs text-mist">
                       From {email.from}
                       {email.sentBy ? ` · sent by ${email.sentBy}` : ""}

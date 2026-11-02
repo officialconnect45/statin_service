@@ -21,8 +21,23 @@ const VARIABLE = /\{\{\s*([a-z_][a-z0-9_]*)\s*\}\}/gi;
 const variablesIn = (...texts: string[]) => [
   ...new Set(texts.flatMap((value) => [...value.matchAll(VARIABLE)].map((m) => m[1].toLowerCase()))),
 ];
+function websiteDomain(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return value;
+  try {
+    const url = new URL(/^(?:[a-z][a-z\d+.-]*:\/\/|\/\/)/i.test(trimmed) ? trimmed : `https://${trimmed}`);
+    return url.protocol === "http:" || url.protocol === "https:" ? url.hostname : value;
+  } catch {
+    return value;
+  }
+}
 const fillVariables = (value: string, values: Record<string, string>) =>
-  value.replace(VARIABLE, (whole, name: string) => values[name.toLowerCase()] ?? whole);
+  value.replace(VARIABLE, (whole, name: string) => {
+    const key = name.toLowerCase();
+    const replacement = values[key];
+    if (replacement === undefined || replacement === "") return whole;
+    return key === "website" ? websiteDomain(replacement) : replacement;
+  });
 
 function parseRecipients(value: unknown): string[] {
   if (!Array.isArray(value)) return [];

@@ -16,6 +16,14 @@ const SEND_GAP_MS = 200;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// {{name}} placeholders in a template. Must match VARIABLE in outreach-form.tsx.
+const VARIABLE = /\{\{\s*([a-z_][a-z0-9_]*)\s*\}\}/gi;
+const variablesIn = (...texts: string[]) => [
+  ...new Set(texts.flatMap((value) => [...value.matchAll(VARIABLE)].map((m) => m[1].toLowerCase()))),
+];
+const fillVariables = (value: string, values: Record<string, string>) =>
+  value.replace(VARIABLE, (whole, name: string) => values[name.toLowerCase()] ?? whole);
+
 function parseRecipients(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   const emails = value.map((item) => String(item ?? "").trim().toLowerCase()).filter(Boolean);
@@ -56,6 +64,21 @@ export async function sendOutreach(
   const test = body.test === true;
   const sentBy = String(body.sentBy ?? "").trim().slice(0, 80);
   let recipients = parseRecipients(body.recipients);
+  const names = variablesIn(subject, text);
+  const rawVariables: Record<string, string[]> = {};
+  for (const name of names) {
+    const list = body.variables?.[name];
+    rawVariables[name] = Array.isArray(list) ? list.map((item) => String(item ?? "").trim()) : [];
+  }
+  // variables[name][i] belongs to the i-th address as sent; a duplicate address is dropped with its values.
+  const valuesOf = new Map<string, Record<string, string>>();
+  if (Array.isArray(body.recipients)) {
+    body.recipients.forEach((item, index) => {
+      const email = String(item ?? "").trim().toLowerCase();
+      if (!email || valuesOf.has(email)) return;
+      valuesOf.set(email, Object.fromEntries(names.map((name) => [name, rawVariables[name][index] ?? ""])));
+    });
+  }
 
   const errors: Partial<Record<OutreachField, string>> = {};
   if (subject.length < 1 || subject.length > 200) errors.subject = "Enter a subject (up to 200 characters).";
@@ -65,6 +88,12 @@ export async function sendOutreach(
     if (!EMAIL.test(config.testTo)) {
       return res.status(503).json({ status: "error", message: "Set MAIL_TEST_TO on the API to send tests." });
     }
+    const first = valuesOf.values().next().value as Record<string, string> | undefined;
+    valuesOf.clear();
+    valuesOf.set(
+      config.testTo,
+      Object.fromEntries(names.map((name) => [name, first?.[name] || `[${name}]`])),
+    );
     recipients = [config.testTo];
   } else {
     const invalid = recipients.filter((email) => !EMAIL.test(email) || email.length > 254);
@@ -72,6 +101,13 @@ export async function sendOutreach(
     else if (invalid.length > 0) errors.recipients = `Fix invalid addresses: ${invalid.join(", ")}`;
     else if (recipients.length > MAX_RECIPIENTS) {
       errors.recipients = `Send to at most ${MAX_RECIPIENTS} addresses at a time.`;
+    }
+    for (const name of names) {
+      const missing = recipients.filter((email) => !valuesOf.get(email)?.[name]);
+      if (missing.length > 0) {
+        errors.variables = `{{${name}}} is required for every email: ${missing.length} missing (first: ${missing[0]}).`;
+        break;
+      }
     }
   }
 
@@ -95,7 +131,16 @@ export async function sendOutreach(
     });
     const messages = await recordEmails(
       config,
-      recipients.map((to) => ({ to, subject: fullSubject, text, kind, batch: batch._id })),
+      recipients.map((to) => {
+        const values = valuesOf.get(to) ?? {};
+        return {
+          to,
+          subject: (test ? "[Test] " : "") + fillVariables(subject, values),
+          text: fillVariables(text, values),
+          kind,
+          batch: batch._id,
+        };
+      }),
     );
     stored = { batch, messages };
   } catch (err) {

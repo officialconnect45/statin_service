@@ -55,7 +55,6 @@ async function Outreach() {
         <h1 className="mt-3 text-4xl font-medium tracking-tight md:text-5xl">Outreach</h1>
         <p className="mt-3 max-w-2xl text-sm text-mist">
           Paste or upload recipients on the left and write the message on the right. Each person gets their own email;
-          nobody sees the other addresses. Send a test to yourself first.
         </p>
         {sender?.configured ? (
           <p className="mt-4 inline-flex flex-wrap items-center gap-x-2 gap-y-1 rounded-full border border-line bg-white px-4 py-2 text-sm">

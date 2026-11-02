@@ -114,8 +114,10 @@ export type SaveMailTemplateResponse =
 export type SendOutreachRequest = {
   /** Recipient email addresses; every one gets the same subject and body. */
   recipients: string[];
+  /** Values for {{name}} placeholders in the subject/body: variables[name][i] belongs to recipients[i]. */
+  variables?: Record<string, string[]>;
   subject: string;
-  /** Plain text, sent as-is. */
+  /** Plain text; {{name}} placeholders are replaced per recipient. */
   body: string;
   /** Sends one copy to MAIL_TEST_TO instead of the recipients. */
   test?: boolean;
@@ -129,7 +131,7 @@ export type OutreachResult = {
   error?: string;
 };
 
-export type OutreachField = "recipients" | "subject" | "body";
+export type OutreachField = "recipients" | "variables" | "subject" | "body";
 
 /** Who outreach mail goes out as; `configured: false` when the API cannot send outreach. */
 export type OutreachSenderResponse =

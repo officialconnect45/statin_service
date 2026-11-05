@@ -112,13 +112,23 @@ export function textToHtml(text: string) {
     .map((block) =>
       escapeHtml(block)
         .replace(BOLD, "<strong>$1</strong>")
-        .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1">$1</a>')
+        .replace(/(https?:\/\/[^\s<]+)/g, `<a href="$1" style="${LINK_STYLE}">$1</a>`)
         .replace(/\n/g, "<br>"),
     )
-    .map((block) => `<p style="margin:0 0 16px">${block}</p>`)
+    .map((block) => `<p style="margin:0 0 18px;padding:0">${block}</p>`)
     .join("");
-  return `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#111">${paragraphs}</div>`;
+  return (
+    `<div style="max-width:600px;margin:0;padding:8px 0;font-family:${FONT_STACK};` +
+    `font-size:16px;line-height:1.65;color:#1f2933;-webkit-text-size-adjust:100%">${paragraphs}</div>`
+  );
 }
+
+/**
+ * Email clients ignore web fonts (Gmail/Outlook), so use a system stack that
+ * renders as Segoe UI on Windows, San Francisco on Apple devices and Roboto on Android.
+ */
+const FONT_STACK = `'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,'Helvetica Neue',Arial,sans-serif`;
+const LINK_STYLE = "color:#0b5cad;text-decoration:underline";
 
 // ── Sending (always through here, so every email is stored) ──────────────────
 

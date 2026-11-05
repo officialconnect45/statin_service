@@ -6,6 +6,31 @@ import type { ClipboardEvent, KeyboardEvent } from "react";
  */
 export const BOLD = /\*\*(?=\S)([^\n]*?\S)\*\*/g;
 
+/**
+ * Look of the sent email. Keep in step with textToHtml in apps/api/src/mail.ts
+ * (FONT_STACK, font-size, color, LINK_STYLE, LINKABLE); the editor and the
+ * preview both use these so they match what recipients get.
+ */
+export const MAIL_FONT = `'Trebuchet MS',sans-serif,Arial,-apple-system,BlinkMacSystemFont,Roboto,'Helvetica Neue',sans-serif`;
+export const MAIL_FONT_SIZE = "14px";
+export const MAIL_LINE_HEIGHT = 1.65;
+export const MAIL_TEXT_COLOR = "#1f2933";
+export const MAIL_LINK_COLOR = "#0b5cad";
+
+const TLDS =
+  "com|net|org|io|eu|se|studio|co|in|dev|app|online|site|store|shop|info|biz|nu|dk|no|fi|de|uk|fr|es|nl|ai|agency|design|tech|xyz|me|us|ca|au|digital|website|cloud|pro|work";
+/** Full URLs, www.… and bare domains (pixelflow.studio) become links. Same pattern as the API. */
+export const LINKABLE = new RegExp(
+  `(https?:\\/\\/[^\\s<]+)|(?<![\\w@./-])((?:www\\.)?(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+(?:${TLDS})(?![\\w@-])(?:\\/[^\\s<]*)?)`,
+  "gi",
+);
+
+/** Splits a matched link from the sentence punctuation after it. */
+export function splitLink(match: string) {
+  const [, url, trailing = ""] = match.match(/^(.*?)([.,;:!?)]*)$/) ?? [, match];
+  return { url, trailing, href: /^https?:\/\//i.test(url) ? url : `https://${url}` };
+}
+
 const BLOCK = /^(P|DIV|LI|H[1-6]|TR|UL|OL|TABLE|BLOCKQUOTE)$/;
 
 function isBoldElement(el: HTMLElement) {

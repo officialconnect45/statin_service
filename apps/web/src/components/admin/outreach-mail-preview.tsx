@@ -1,28 +1,43 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { BOLD } from "@/components/admin/mail-body";
+import {
+  BOLD,
+  LINKABLE,
+  MAIL_FONT,
+  MAIL_FONT_SIZE,
+  MAIL_LINE_HEIGHT,
+  MAIL_LINK_COLOR,
+  MAIL_TEXT_COLOR,
+  splitLink,
+} from "@/components/admin/mail-body";
 
 // Must match textToHtml in apps/api/src/mail.ts: paragraphs on blank lines,
-// line breaks on single newlines, **text** bold, http(s) links clickable.
-const LINK = /(https?:\/\/[^\s<]+)/g;
-
+// line breaks on single newlines, **text** bold, links and domains clickable.
 function renderLinks(text: string, key: string) {
-  return text.split(LINK).map((part, index) =>
-    index % 2 === 1 ? (
+  const out: ReactNode[] = [];
+  let last = 0;
+  for (const match of text.matchAll(LINKABLE)) {
+    const { url, trailing, href } = splitLink(match[0]);
+    const start = match.index ?? 0;
+    if (start > last) out.push(text.slice(last, start));
+    out.push(
       <a
-        key={`${key}-${index}`}
-        href={part}
+        key={`${key}-${start}`}
+        href={href}
         target="_blank"
         rel="noreferrer"
-        className="break-all text-[#1a0dab] underline"
+        className="break-all underline"
+        style={{ color: MAIL_LINK_COLOR }}
       >
-        {part}
-      </a>
-    ) : (
-      part
-    ),
-  );
+        {url}
+      </a>,
+    );
+    if (trailing) out.push(trailing);
+    last = start + match[0].length;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out;
 }
 
 function renderBlock(block: string, key: number) {
@@ -130,8 +145,13 @@ export function OutreachMailPreview({
         </div>
 
         <div
-          className="px-5 py-5 text-[15px] leading-[1.6] text-[#111]"
-          style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+          className="px-5 py-5"
+          style={{
+            fontFamily: MAIL_FONT,
+            fontSize: MAIL_FONT_SIZE,
+            lineHeight: MAIL_LINE_HEIGHT,
+            color: MAIL_TEXT_COLOR,
+          }}
         >
           <MailBody body={body} empty="Nothing written yet." />
         </div>

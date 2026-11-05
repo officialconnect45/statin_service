@@ -4,7 +4,14 @@ import { useActionState, useMemo, useRef, useState, type ChangeEvent, type React
 import type { MailTemplateRecord } from "@statin/types";
 import Link from "next/link";
 import { sendOutreach, type OutreachFormState } from "@/app/admin/outreach/actions";
-import { boldShortcut, pasteKeepingBold } from "@/components/admin/mail-body";
+import {
+  boldShortcut,
+  MAIL_FONT,
+  MAIL_FONT_SIZE,
+  MAIL_LINE_HEIGHT,
+  MAIL_TEXT_COLOR,
+  pasteKeepingBold,
+} from "@/components/admin/mail-body";
 import { OutreachMailPreview } from "@/components/admin/outreach-mail-preview";
 import { EMAIL_IN_TEXT, fillVariables, parseSheet, variablesIn, type Row } from "@/components/admin/outreach-sheet";
 import { OutreachTemplatePicker } from "@/components/admin/outreach-template-picker";
@@ -392,7 +399,13 @@ export function OutreachForm({
               maxLength={20_000}
               placeholder={"Hi,\n\n...\n\nBest,\nTeam Statin\nhttps://statin.io"}
               aria-invalid={errors.body ? true : undefined}
-              className={`${inputClass} resize-y leading-6 ${view === "preview" ? "hidden" : ""}`}
+              style={{
+                fontFamily: MAIL_FONT,
+                fontSize: MAIL_FONT_SIZE,
+                lineHeight: MAIL_LINE_HEIGHT,
+                color: MAIL_TEXT_COLOR,
+              }}
+              className={`${inputClass} resize-y ${view === "preview" ? "hidden" : ""}`}
             />
 
             {view === "preview" ? (

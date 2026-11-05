@@ -112,14 +112,14 @@ export function textToHtml(text: string) {
     .map((block) =>
       escapeHtml(block)
         .replace(BOLD, "<strong>$1</strong>")
-        .replace(/(https?:\/\/[^\s<]+)/g, `<a href="$1" style="${LINK_STYLE}">$1</a>`)
+        .replace(LINKABLE, linkify)
         .replace(/\n/g, "<br>"),
     )
     .map((block) => `<p style="margin:0 0 18px;padding:0">${block}</p>`)
     .join("");
   return (
     `<div style="max-width:600px;margin:0;padding:8px 0;font-family:${FONT_STACK};` +
-    `font-size:16px;line-height:1.65;color:#1f2933;-webkit-text-size-adjust:100%">${paragraphs}</div>`
+    `font-size:14px;line-height:1.65;color:#1f2933;-webkit-text-size-adjust:100%">${paragraphs}</div>`
   );
 }
 
@@ -127,8 +127,27 @@ export function textToHtml(text: string) {
  * Email clients ignore web fonts (Gmail/Outlook), so use a system stack that
  * renders as Segoe UI on Windows, San Francisco on Apple devices and Roboto on Android.
  */
-const FONT_STACK = `'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,'Helvetica Neue',Arial,sans-serif`;
+const FONT_STACK = `'Trebuchet MS',sans-serif,Arial,-apple-system,BlinkMacSystemFont,Roboto,'Helvetica Neue',sans-serif`;
 const LINK_STYLE = "color:#0b5cad;text-decoration:underline";
+
+/**
+ * Full URLs, www.… and bare domains (pixelflow.studio, statin.io/page) become
+ * clickable. Bare domains need a known ending so "end.Next" is left alone, and
+ * an email address (name@site.com) is never linked.
+ */
+const TLDS =
+  "com|net|org|io|eu|se|studio|co|in|dev|app|online|site|store|shop|info|biz|nu|dk|no|fi|de|uk|fr|es|nl|ai|agency|design|tech|xyz|me|us|ca|au|digital|website|cloud|pro|work";
+const LINKABLE = new RegExp(
+  `(https?:\\/\\/[^\\s<]+)|(?<![\\w@./-])((?:www\\.)?(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+(?:${TLDS})(?![\\w@-])(?:\\/[^\\s<]*)?)`,
+  "gi",
+);
+
+function linkify(match: string) {
+  // Keep sentence punctuation outside the link.
+  const [, url, trailing = ""] = match.match(/^(.*?)([.,;:!?)]*)$/) ?? [, match];
+  const href = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+  return `<a href="${href}" style="${LINK_STYLE}">${url}</a>${trailing}`;
+}
 
 // ── Sending (always through here, so every email is stored) ──────────────────
 

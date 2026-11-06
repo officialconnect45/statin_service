@@ -116,6 +116,38 @@ export const processSteps = [
 ] as const;
 
 /* ------------------------------------------------------------------ */
+/* Company products (shown at the top of the Work page)                */
+/* ------------------------------------------------------------------ */
+
+export type Product = {
+  name: string;
+  url: string;
+  host: string;
+  description: string;
+};
+
+export const products: Product[] = [
+  {
+    name: "Statin",
+    url: "https://statin.io",
+    host: "statin.io",
+    description: "Our flagship product, built and run by the Statin team.",
+  },
+  {
+    name: "Statin Traffic",
+    url: "https://traffic.statin.io",
+    host: "traffic.statin.io",
+    description: "Traffic tooling from Statin, live at traffic.statin.io.",
+  },
+  {
+    name: "YouLinks",
+    url: "https://youlinks.in",
+    host: "youlinks.in",
+    description: "A link product from the Statin team, live at youlinks.in.",
+  },
+];
+
+/* ------------------------------------------------------------------ */
 /* Build patterns (shown in place of client case studies)              */
 /* ------------------------------------------------------------------ */
 

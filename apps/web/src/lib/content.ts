@@ -119,31 +119,111 @@ export const processSteps = [
 /* Company products (shown at the top of the Work page)                */
 /* ------------------------------------------------------------------ */
 
+export type ProductDemo = "shorten" | "traffic" | "earn";
+
 export type Product = {
+  id: string;
   name: string;
   url: string;
   host: string;
+  category: string;
+  tagline: string;
   description: string;
+  features: { title: string; detail: string }[];
+  facts: string[];
+  demo: ProductDemo;
 };
 
 export const products: Product[] = [
   {
+    id: "statin",
     name: "Statin",
     url: "https://statin.io",
     host: "statin.io",
-    description: "Our flagship product, built and run by the Statin team.",
+    category: "URL intelligence",
+    tagline: "Intelligent short links with analytics built in.",
+    description:
+      "Statin helps teams shorten, track, and optimize every URL on branded domains, with real-time insight into clicks, conversions, and traffic so marketing and growth teams work from one source of truth.",
+    features: [
+      {
+        title: "Click intelligence",
+        detail: "Geography, devices, referrers, and conversion paths in real time, exportable for BI and reporting.",
+      },
+      {
+        title: "Branded link infrastructure",
+        detail: "Run short links on statin.io or your own domains, with bulk import, API access, and link bundles.",
+      },
+      {
+        title: "Conversion tracking",
+        detail: "Track goals and attribute conversions to links from the same dashboard as your click data.",
+      },
+      {
+        title: "Developer API",
+        detail: "A REST API to automate link creation and pull analytics into your own product.",
+      },
+    ],
+    facts: ["Custom domains", "QR codes", "UTM builder", "Free plan available"],
+    demo: "shorten",
   },
   {
+    id: "traffic",
     name: "Statin Traffic",
     url: "https://traffic.statin.io",
     host: "traffic.statin.io",
-    description: "Traffic tooling from Statin, live at traffic.statin.io.",
+    category: "Traffic security",
+    tagline: "Know which traffic to trust before it reaches your product.",
+    description:
+      "Statin Traffic detects bots, proxies, VPNs, and abusive traffic with a single API call, returning explainable signals and a unified risk score instead of a simple yes or no.",
+    features: [
+      {
+        title: "One-call IP checks",
+        detail: "Proxy, VPN, Tor, hosting, bot probability, and risk score in a single response.",
+      },
+      {
+        title: "Explainable reasons",
+        detail: "Every score comes with the signals behind it, such as VPN range or datacenter IP.",
+      },
+      {
+        title: "Dashboard & live feed",
+        detail: "Monitor traffic quality, high-risk events, API usage, and threat trends over time.",
+      },
+      {
+        title: "Keys & quotas",
+        detail: "Create, rotate, and revoke API keys per organization with usage limits and metering.",
+      },
+    ],
+    facts: ["Bulk IP checks", "Risk score 0–100", "Team access", "Free plan available"],
+    demo: "traffic",
   },
   {
+    id: "youlinks",
     name: "YouLinks",
     url: "https://youlinks.in",
     host: "youlinks.in",
-    description: "A link product from the Statin team, live at youlinks.in.",
+    category: "Link monetization",
+    tagline: "Shorten links and get paid for every visit.",
+    description:
+      "YouLinks is a free link shortener for publishers and creators. Create an account, shorten a link, share it, and earn for the visits it brings, with detailed stats and an API for automation.",
+    features: [
+      {
+        title: "Earn per visit",
+        detail: "Fixed CPM payouts, with a higher rate for YouTubers and Telegram channel owners.",
+      },
+      {
+        title: "Referral bonus",
+        detail: "Earn 15% of the earnings of every friend you refer.",
+      },
+      {
+        title: "Detailed stats",
+        detail: "See which links and strategies bring the most income.",
+      },
+      {
+        title: "API & admin panel",
+        detail: "Shorten links programmatically and manage everything from one panel.",
+      },
+    ],
+    facts: ["No captcha or pop-ups", "No adult ads", "Low minimum payout", "24x7 support"],
+    demo: "earn",
   },
 ];
 
